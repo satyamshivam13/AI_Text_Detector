@@ -1,4 +1,4 @@
-# AI Text Analysis & Plagiarism Detection
+# LLM Plagiarism Checker
 
 This project provides two Streamlit-based web applications that analyze input text for patterns commonly associated with AI-generated content. The tools use metrics such as perplexity and burstiness to detect whether a piece of text is likely written by a human or a language model.
 
