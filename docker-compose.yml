@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  nltk-detector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-detector-nltk
+    ports:
+      - "8501:8501"
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - PYTHONPATH=/app/src
+    volumes:
+      - nltk_data:/home/appuser/nltk_data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  gpt2-detector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-detector-gpt2
+    ports:
+      - "8502:8501"
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - PYTHONPATH=/app/src
+    command: ["test.py"]
+    volumes:
+      - model_cache:/home/appuser/.cache
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '4.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+
+  ensemble-detector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-detector-ensemble
+    ports:
+      - "8503:8501"
+    environment:
+      - STREAMLIT_SERVER_PORT=8501
+      - PYTHONPATH=/app/src
+    command: ["ensemble.py"]
+    volumes:
+      - model_cache:/home/appuser/.cache
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+          cpus: '4.0'
+        reservations:
+          memory: 4G
+          cpus: '2.0'
+
+volumes:
+  nltk_data:
+  model_cache:
