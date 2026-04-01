@@ -26,7 +26,12 @@ This milestone closes the loop on the brownfield product: **analysis paths** ret
   3. A caller can run ensemble analysis combining GPT-2 and NLTK (and optional RoBERTa when enabled) with behavior that matches documented weighting.
   4. Every analysis path returns a structured result including verdict, confidence, key metrics, human-readable explanation, and timing where applicable.
   5. Short, empty, or invalid input produces validation warnings rather than silent failure.
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 01-01-PLAN.md — BaseAnalyzer early-return timing + contract tests (DET-04, QLT-02)
+- [ ] 01-02-PLAN.md — Ensemble validation parity + documented weighting (DET-03, DET-04, QLT-02)
+- [ ] 01-03-PLAN.md — Ensemble tests, fusion unit test, API.md (DET-03, DET-04, QLT-02)
+- [ ] 01-04-PLAN.md — NLTK/GPT-2/result contract tests (DET-01, DET-02, DET-04, QLT-02)
 **UI hint**: no
 
 ### Phase 2: Streamlit experience & ethics copy
