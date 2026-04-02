@@ -140,3 +140,54 @@ class TestAnalysisResult:
         d = result.to_dict()
         assert "metrics" in d
         assert d["metrics"]["total_words"] == 100
+
+    def test_to_dict_canonical_keys(self):
+        result = AnalysisResult(
+            verdict=Verdict.LIKELY_AI,
+            confidence=73.4,
+            confidence_level=ConfidenceLevel.MEDIUM,
+            perplexity=88.1,
+            burstiness=0.24,
+            lexical_diversity=0.61,
+            sentence_variance=0.37,
+            method="unit-test",
+            analysis_time=0.321,
+            timestamp="2026-04-02T10:30:00",
+            text_length=123,
+            explanation="Contract test payload",
+            metrics=TextMetrics(total_words=20, unique_words=12),
+            warnings=["test warning"],
+        )
+        result.add_score(
+            DetectionScore(
+                name="Test score",
+                value=0.7,
+                weight=0.5,
+                interpretation="mock",
+                indicates_ai=True,
+            )
+        )
+
+        payload = result.to_dict()
+
+        expected_keys = frozenset(
+            {
+                "verdict",
+                "confidence",
+                "confidence_level",
+                "perplexity",
+                "burstiness",
+                "lexical_diversity",
+                "sentence_variance",
+                "method",
+                "analysis_time",
+                "timestamp",
+                "text_length",
+                "warnings",
+                "explanation",
+                "metrics",
+                "scores",
+            }
+        )
+
+        assert frozenset(payload.keys()) == expected_keys
