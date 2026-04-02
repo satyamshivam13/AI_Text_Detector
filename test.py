@@ -333,7 +333,7 @@ if text_input:
 analyze_clicked = st.button(
     "ðŸ§  Deep Analyze with GPT-2",
     type="primary",
-    width="stretch",
+    use_container_width=True,
     disabled=not text_input or len(text_input.strip()) < 10,
 )
 
@@ -394,7 +394,7 @@ if analyze_clicked and text_input:
         # ── Confidence Gauge ── â”€â”€
         if show_gauge:
             fig_gauge = charts.create_metrics_gauge(result)
-            st.plotly_chart(fig_gauge, width="stretch")
+            st.plotly_chart(fig_gauge, use_container_width=True)
 
         # â”€â”€ Warnings â”€â”€
         if result.warnings:
@@ -486,14 +486,14 @@ if analyze_clicked and text_input:
                 top_n=top_words,
                 title=f"Top {top_words} Content Words",
             )
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
         # Score Radar tab
         tab_idx = 1
         if show_radar:
             with tab_objects[tab_idx]:
                 fig_radar = charts.create_score_breakdown_chart(result)
-                st.plotly_chart(fig_radar, width="stretch")
+                st.plotly_chart(fig_radar, use_container_width=True)
             tab_idx += 1
 
         # Sentence Analysis tab
@@ -503,7 +503,7 @@ if analyze_clicked and text_input:
                     fig_sent = charts.create_sentence_length_chart(
                         result.metrics.sentence_lengths
                     )
-                    st.plotly_chart(fig_sent, width="stretch")
+                    st.plotly_chart(fig_sent, use_container_width=True)
                 else:
                     st.info("Not enough sentences for length analysis.")
 
@@ -603,6 +603,8 @@ st.markdown("""
     <p>No text is stored or transmitted. All processing happens locally.</p>
 </div>
 """, unsafe_allow_html=True)
+
+
 
 
 

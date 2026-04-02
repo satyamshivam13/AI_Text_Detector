@@ -332,7 +332,7 @@ if text_input:
 analyze_clicked = st.button(
     "ðŸ” Analyze Text",
     type="primary",
-    width="stretch",
+    use_container_width=True,
     disabled=not text_input or len(text_input.strip()) < 10,
 )
 
@@ -473,18 +473,18 @@ if analyze_clicked and text_input:
                     filtered_freq, top_n=top_words,
                     title=f"Top {top_words} Content Words (min freq: {min_word_count})",
                 )
-                st.plotly_chart(fig, width="stretch")
+                st.plotly_chart(fig, use_container_width=True)
 
             with tab2:
                 fig_radar = charts.create_score_breakdown_chart(result)
-                st.plotly_chart(fig_radar, width="stretch")
+                st.plotly_chart(fig_radar, use_container_width=True)
 
             with tab3:
                 if result.metrics.sentence_lengths:
                     fig_sent = charts.create_sentence_length_chart(
                         result.metrics.sentence_lengths
                     )
-                    st.plotly_chart(fig_sent, width="stretch")
+                    st.plotly_chart(fig_sent, use_container_width=True)
                 else:
                     st.info("Not enough sentences for length analysis.")
 
@@ -561,6 +561,8 @@ st.markdown("""
     <p>No text is stored or transmitted. All processing happens locally.</p>
 </div>
 """, unsafe_allow_html=True)
+
+
 
 
 
