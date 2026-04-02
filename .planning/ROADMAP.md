@@ -11,7 +11,7 @@ This milestone closes the loop on the brownfield product: **analysis paths** ret
 - Decimal phases (2.1, 2.2): Urgent insertions via `/gsd-insert-phase`
 
 - [x] **Phase 1: Detection pipeline & structured results** â€” NLTK, GPT-2, and ensemble paths return validated `AnalysisResult` with verdict, metrics, explanation, and timing (completed 2026-04-02)
-- [ ] **Phase 2: Streamlit experience & ethics copy** â€” Documented apps launch; charts match metrics; user-facing text states limitations
+- [x] **Phase 2: Streamlit experience & ethics copy** â€” Documented apps launch; charts match metrics; user-facing text states limitations (completed 2026-04-02)
 - [ ] **Phase 3: Quality gate & documentation truth** â€” Core tests pass; README, API, and deployment docs match behavior
 
 ## Phase Details
@@ -46,7 +46,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — Shared UI copy contract + tests (UI-02, QLT-03)
 - [x] 02-02-PLAN.md — NLTK/GPT-2 Streamlit normalization + contract tests (UI-01, UI-02, QLT-03)
-- [ ] 02-03-PLAN.md — Ensemble Streamlit normalization + contract tests (UI-01, UI-02, QLT-03)
+- [x] 02-03-PLAN.md — Ensemble Streamlit normalization + contract tests (UI-01, UI-02, QLT-03)
 **UI hint**: yes
 
 ### Phase 3: Quality gate & documentation truth
@@ -65,6 +65,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Detection pipeline & structured results | 4/4 | Complete | 2026-04-02 |
-| 2. Streamlit experience & ethics copy | 2/3 | In Progress|  |
+| 2. Streamlit experience & ethics copy | 3/3 | Complete    | 2026-04-02 |
 | 3. Quality gate & documentation truth | 0/TBD | Not started | - |
 
