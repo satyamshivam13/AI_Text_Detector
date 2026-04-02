@@ -45,7 +45,7 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 02-01-PLAN.md — Shared UI copy contract + tests (UI-02, QLT-03)
-- [ ] 02-02-PLAN.md — NLTK/GPT-2 Streamlit normalization + contract tests (UI-01, UI-02, QLT-03)
+- [x] 02-02-PLAN.md — NLTK/GPT-2 Streamlit normalization + contract tests (UI-01, UI-02, QLT-03)
 - [ ] 02-03-PLAN.md — Ensemble Streamlit normalization + contract tests (UI-01, UI-02, QLT-03)
 **UI hint**: yes
 
@@ -65,6 +65,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Detection pipeline & structured results | 4/4 | Complete | 2026-04-02 |
-| 2. Streamlit experience & ethics copy | 1/3 | In Progress|  |
+| 2. Streamlit experience & ethics copy | 2/3 | In Progress|  |
 | 3. Quality gate & documentation truth | 0/TBD | Not started | - |
 
