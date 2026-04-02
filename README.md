@@ -22,7 +22,7 @@ A local, explainable toolkit for estimating how likely text is machine-generated
 ### Install
 
 ```bash
-git clone https://github.com/yourusername/AI_Text_Detector.git
+git clone https://github.com/satyamshivam13/AI_Text_Detector.git
 cd AI_Text_Detector
 python -m venv venv
 source venv/bin/activate  # Windows PowerShell: .\\venv\\Scripts\\Activate.ps1
