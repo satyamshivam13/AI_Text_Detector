@@ -56,7 +56,7 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Automated tests pass for core analyzers, ensemble behavior, text processing, and result models (`tests/`).
   2. `README.md` accurately describes install, run modes, and limitations; `docs/API.md` and `docs/DEPLOYMENT.md` match actual entrypoints and deployment artifacts (Docker, compose, commands).
-**Plans**: TBD
+**Plans**: 2 plans`r`nPlans:`r`n- [ ] 03-01-PLAN.md — Quality gate command contract + static gate checks (QLT-01)`r`n- [ ] 03-02-PLAN.md — README/API/deployment truth alignment (DOC-01)
 
 ## Progress
 
@@ -66,5 +66,6 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Detection pipeline & structured results | 4/4 | Complete | 2026-04-02 |
 | 2. Streamlit experience & ethics copy | 3/3 | Complete    | 2026-04-02 |
-| 3. Quality gate & documentation truth | 0/TBD | Not started | - |
+| 3. Quality gate & documentation truth | 0/2 | Planned | - |
+
 
