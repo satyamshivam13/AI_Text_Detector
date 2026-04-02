@@ -23,7 +23,14 @@ logger = get_logger(__name__)
 
 
 class EnsembleAnalyzer(BaseAnalyzer):
-    """Ensemble analyzer combining multiple detection methods."""
+    """Ensemble analyzer combining multiple detection methods.
+
+    Default weights are RoBERTa=0.0, GPT-2=0.65, and NLTK=0.35.
+    The fused score is computed as:
+    ensemble_ai_score = sum(weight_i * ai_score_i)
+    where GPT-2 and NLTK AI scores are normalized from perplexity with
+    max(0, min(1, 1 - (perplexity / 500))).
+    """
 
     def __init__(self):
         super().__init__()
@@ -91,12 +98,20 @@ class EnsembleAnalyzer(BaseAnalyzer):
             result.confidence_level = ConfidenceLevel.VERY_LOW
             result.add_warning("Empty or invalid text provided.")
             result.explanation = "No text to analyze."
+            result.analysis_time = round(time.time() - start_time, 3)
+            result.timestamp = time.strftime("%Y-%m-%dT%H:%M:%S")
             return result
 
         if len(cleaned_text) < self.thresholds.min_text_length:
             result.add_warning(
                 f"Text is very short ({len(cleaned_text)} chars). "
                 f"Minimum {self.thresholds.min_text_length} characters recommended."
+            )
+
+        if len(cleaned_text) < self.thresholds.recommended_text_length:
+            result.add_warning(
+                f"For better accuracy, provide at least "
+                f"{self.thresholds.recommended_text_length} characters."
             )
 
         try:
@@ -339,6 +354,12 @@ class EnsembleAnalyzer(BaseAnalyzer):
             f"• RoBERTa: {roberta_result.verdict.value} ({roberta_result.confidence:.1f}%)\n"
             f"• GPT-2: {gpt2_result.verdict.value} ({gpt2_result.confidence:.1f}%)\n"
             f"• NLTK: {nltk_result.verdict.value} ({nltk_result.confidence:.1f}%)"
+        )
+
+        parts.append(
+            f"\n⚖️ **Weights**: RoBERTa {self.weights['roberta'] * 100:.0f}%, "
+            f"GPT-2 {self.weights['gpt2'] * 100:.0f}%, "
+            f"NLTK {self.weights['nltk'] * 100:.0f}%."
         )
 
         # Key metrics
