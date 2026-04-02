@@ -7,7 +7,7 @@ Mark tests with @pytest.mark.slow for CI/CD filtering.
 
 import pytest
 from src.analyzers.gpt2_analyzer import GPT2Analyzer
-from src.config.settings import Verdict
+from src.config.settings import ConfidenceLevel, Verdict
 
 
 # Skip all tests in this module if torch is not available or in CI
@@ -62,6 +62,10 @@ class TestGPT2Analysis:
         result = self.analyzer.analyze(empty_text)
         assert result.verdict == Verdict.UNCERTAIN
         assert result.confidence == 0.0
+        assert result.confidence_level == ConfidenceLevel.VERY_LOW
+        assert result.analysis_time >= 0
+        assert isinstance(result.timestamp, str)
+        assert result.timestamp
 
     def test_analyze_has_scores(self, sample_ai_text):
         result = self.analyzer.analyze(sample_ai_text)
@@ -76,3 +80,27 @@ class TestGPT2Analysis:
     def test_analyze_records_time(self, sample_ai_text):
         result = self.analyzer.analyze(sample_ai_text)
         assert result.analysis_time > 0
+
+    def test_analyze_to_dict_contract(self, sample_ai_text):
+        result = self.analyzer.analyze(sample_ai_text)
+        payload = result.to_dict()
+
+        expected_keys = {
+            "verdict",
+            "confidence",
+            "confidence_level",
+            "perplexity",
+            "burstiness",
+            "lexical_diversity",
+            "sentence_variance",
+            "method",
+            "analysis_time",
+            "timestamp",
+            "text_length",
+            "warnings",
+            "explanation",
+            "metrics",
+            "scores",
+        }
+
+        assert expected_keys.issubset(set(payload.keys()))
