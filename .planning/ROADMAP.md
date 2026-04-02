@@ -12,7 +12,7 @@ This milestone closes the loop on the brownfield product: analysis paths return 
 
 - [x] **Phase 1: Detection pipeline & structured results** - NLTK, GPT-2, and ensemble paths return validated AnalysisResult with verdict, metrics, explanation, and timing (completed 2026-04-02)
 - [x] **Phase 2: Streamlit experience & ethics copy** - Documented apps launch; charts match metrics; user-facing text states limitations (completed 2026-04-02)
-- [ ] **Phase 3: Quality gate & documentation truth** - Core tests pass; README, API, and deployment docs match behavior
+- [x] **Phase 3: Quality gate & documentation truth** - Core tests pass; README, API, and deployment docs match behavior (completed 2026-04-02)
 
 ## Phase Details
 
@@ -59,7 +59,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 03-01-PLAN.md - Quality gate command contract + static gate checks (QLT-01)
-- [ ] 03-02-PLAN.md - README/API/deployment truth alignment (DOC-01)
+- [x] 03-02-PLAN.md - README/API/deployment truth alignment (DOC-01)
 
 ## Progress
 
@@ -69,4 +69,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Detection pipeline & structured results | 4/4 | Complete | 2026-04-02 |
 | 2. Streamlit experience & ethics copy | 3/3 | Complete | 2026-04-02 |
-| 3. Quality gate & documentation truth | 1/2 | In Progress | - |
+| 3. Quality gate & documentation truth | 2/2 | Complete | 2026-04-02 |
+
