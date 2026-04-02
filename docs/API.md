@@ -1,6 +1,6 @@
-# API Documentation
+﻿# API Documentation
 
-## Analyzer Usage
+## Analyzer Call Pattern
 
 All analyzers expose the same call pattern:
 
@@ -8,7 +8,9 @@ All analyzers expose the same call pattern:
 result = analyzer.analyze(text)
 ```
 
-Each call returns an AnalysisResult object with a stable programmatic contract.
+Each call returns an AnalysisResult instance.
+
+## Analyzer Modules
 
 ### NLTKAnalyzer
 
@@ -16,12 +18,7 @@ Each call returns an AnalysisResult object with a stable programmatic contract.
 from src.analyzers.nltk_analyzer import NLTKAnalyzer
 
 analyzer = NLTKAnalyzer(ngram_size=3)
-result = analyzer.analyze("Your text here...")
-
-print(result.verdict)
-print(result.confidence)
-print(result.perplexity)
-print(result.analysis_time)
+result = analyzer.analyze("Your text here")
 ```
 
 ### GPT2Analyzer
@@ -30,12 +27,7 @@ print(result.analysis_time)
 from src.analyzers.gpt2_analyzer import GPT2Analyzer
 
 analyzer = GPT2Analyzer()
-result = analyzer.analyze("Your text here...")
-
-print(result.verdict)
-print(result.confidence_level)
-print(result.perplexity)
-print(result.warnings)
+result = analyzer.analyze("Your text here")
 ```
 
 ### EnsembleAnalyzer
@@ -44,40 +36,48 @@ print(result.warnings)
 from src.analyzers.ensemble_analyzer import EnsembleAnalyzer
 
 analyzer = EnsembleAnalyzer()
-result = analyzer.analyze("Your text here...")
-
-print(result.verdict)
-print(result.confidence)
-print(result.scores[0].name)
-print(result.explanation)
+result = analyzer.analyze("Your text here")
 ```
 
-Default ensemble weights:
+Default ensemble weights in current implementation:
+
 - RoBERTa: 0.0 (disabled by default)
 - GPT-2: 0.65
 - NLTK: 0.35
 
-Weighted fusion formula:
-
-```text
-ensemble_ai_score = sum(weight_i * ai_score_i)
-```
-
-Where GPT-2 and NLTK AI scores are derived from normalized perplexity:
-
-```text
-ai_score = max(0, min(1, 1 - (perplexity / 500)))
-```
-
 ## AnalysisResult Contract
 
-Use AnalysisResult.to_dict() for API-safe serialization:
+AnalysisResult is defined in src/models/result.py and serializes through to_dict() and to_json().
+
+### Core fields
+
+- verdict
+- confidence
+- confidence_level
+- method
+- analysis_time
+- timestamp
+- text_length
+- warnings
+- explanation
+
+### Score and metric fields
+
+- perplexity
+- burstiness
+- lexical_diversity
+- sentence_variance
+- metrics (TextMetrics payload)
+- scores (list of DetectionScore payloads)
+
+### Serialization example
 
 ```python
 payload = result.to_dict()
 ```
 
-Contract fields in the serialized result include:
+Serialized keys include:
+
 - verdict
 - confidence
 - confidence_level
@@ -94,6 +94,7 @@ Contract fields in the serialized result include:
 - metrics
 - scores
 
-metrics contains text statistics (word/sentence counts and lexical diversity), and
-scores contains detailed per-signal entries (name, value, weight, interpretation,
-indicates_ai) for transparent analysis output.
+## Notes
+
+- Empty or invalid text is handled with warnings and an UNCERTAIN verdict.
+- Consumers should treat scores as probabilistic signals, not proof of authorship.
