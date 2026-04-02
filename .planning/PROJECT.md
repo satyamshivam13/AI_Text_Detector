@@ -26,6 +26,7 @@ Users get a **transparent, multi-signal** AI-likelihood assessment (verdict, con
 
 ### Active
 
+- [x] Phase 1 validated in code and tests: structured analyzer outputs, deterministic ensemble weighting coverage, and API contract documentation alignment
 - [ ] Keep **documented behavior** in `README.md`, `docs/API.md`, and code aligned as the codebase changes
 - [ ] Address high-impact maintainability items called out in `.planning/codebase/CONCERNS.md` (e.g. dependency drift, RoBERTa defaults, validation strategy)
 - [ ] Preserve **local-first** processing and clear limitation/ethics messaging in user-facing copy
@@ -52,6 +53,7 @@ Brownfield monolith: Streamlit scripts at repo root import `src/` analyzers and 
 |----------|-----------|---------|
 | Initialize GSD from repo + codebase map (no live interview) | User invoked `/gsd/new-project` on an existing, documented codebase | — Pending |
 | Defer parallel domain research agents | Stack and product are already mapped in `.planning/codebase/`; external ecosystem research can be added before major pivots | — Pending |
+| Complete Phase 1 with explicit contract coverage | Ensure DET-01..DET-04 and QLT-02 are regression-safe and documented | 2026-04-02: Completed via plans 01-01 through 01-04 |
 
 ## Evolution
 
@@ -73,4 +75,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-02 after initialization*
+*Last updated: 2026-04-02 after Phase 1 execution*

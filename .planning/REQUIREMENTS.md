@@ -9,10 +9,10 @@ Maintained capabilities and quality bars for the current brownfield product. Eac
 
 ### Detection & analysis
 
-- [ ] **DET-01**: User or API consumer can run NLTK-based statistical analysis on pasted or supplied text and receive scores and verdict metadata.
-- [ ] **DET-02**: User or API consumer can run GPT-2 perplexity-based analysis on supplied text and receive scores and verdict metadata.
-- [ ] **DET-03**: User or API consumer can run ensemble analysis combining GPT-2 and NLTK (and optional RoBERTa when enabled) with documented weighting behavior.
-- [ ] **DET-04**: Every analysis path returns a structured result including verdict, confidence, key metrics, human-readable explanation, and timing where applicable.
+- [x] **DET-01**: User or API consumer can run NLTK-based statistical analysis on pasted or supplied text and receive scores and verdict metadata.
+- [x] **DET-02**: User or API consumer can run GPT-2 perplexity-based analysis on supplied text and receive scores and verdict metadata.
+- [x] **DET-03**: User or API consumer can run ensemble analysis combining GPT-2 and NLTK (and optional RoBERTa when enabled) with documented weighting behavior.
+- [x] **DET-04**: Every analysis path returns a structured result including verdict, confidence, key metrics, human-readable explanation, and timing where applicable.
 
 ### User interface
 
@@ -22,7 +22,7 @@ Maintained capabilities and quality bars for the current brownfield product. Eac
 ### Quality, safety, and ethics
 
 - [ ] **QLT-01**: Automated tests pass for core analyzers, ensemble behavior, text processing, and result models (`tests/`).
-- [ ] **QLT-02**: Short, empty, or invalid input is handled with validation warnings rather than silent failure.
+- [x] **QLT-02**: Short, empty, or invalid input is handled with validation warnings rather than silent failure.
 - [ ] **QLT-03**: User-facing copy states limitations (accuracy, English focus, no sole proof of authorship) in line with README ethical guidance.
 
 ### Documentation & operations
@@ -57,11 +57,11 @@ Which phases cover which requirements. Populated when `ROADMAP.md` is created.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DET-01 | 1 | Pending |
-| DET-02 | 1 | Pending |
-| DET-03 | 1 | Pending |
-| DET-04 | 1 | Pending |
-| QLT-02 | 1 | Pending |
+| DET-01 | 1 | Complete |
+| DET-02 | 1 | Complete |
+| DET-03 | 1 | Complete |
+| DET-04 | 1 | Complete |
+| QLT-02 | 1 | Complete |
 | UI-01 | 2 | Pending |
 | UI-02 | 2 | Pending |
 | QLT-03 | 2 | Pending |
@@ -76,4 +76,4 @@ Which phases cover which requirements. Populated when `ROADMAP.md` is created.
 
 ---
 *Requirements defined: 2026-04-02*  
-*Last updated: 2026-04-02 — traceability linked to ROADMAP.md*
+*Last updated: 2026-04-02 — Phase 1 requirements validated and traceability updated*
