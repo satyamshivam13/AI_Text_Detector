@@ -55,6 +55,8 @@ class BaseAnalyzer(ABC):
             result.confidence_level = ConfidenceLevel.VERY_LOW
             result.add_warning("Empty or invalid text provided.")
             result.explanation = "No text to analyze."
+            result.analysis_time = round(time.time() - start_time, 3)
+            result.timestamp = time.strftime("%Y-%m-%dT%H:%M:%S")
             return result
 
         if len(cleaned_text) < self.thresholds.min_text_length:
