@@ -1,5 +1,5 @@
 ﻿"""
-AI Text Detector â€” NLTK-Based Analysis
+AI Text Detector — NLTK-Based Analysis
 ========================================
 
 Streamlit application using NLTK n-gram language models
@@ -27,22 +27,22 @@ from src.utils.ui_contract import (
 )
 from src.utils.visualization import ChartGenerator
 
-# â”€â”€â”€ Setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Setup ───────────────────────────────────────────────────────────────────
 
 setup_logging("INFO")
 logger = get_logger(__name__)
 settings = get_settings()
 
-# â”€â”€â”€ Page Configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Page Configuration ─────────────────────────────────────────────────────
 
 st.set_page_config(
-    page_title="AI Text Detector â€” NLTK",
-    page_icon="ðŸ›¡ï¸",
+    page_title="AI Text Detector — NLTK",
+    page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# â”€â”€â”€ Custom CSS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Custom CSS ──────────────────────────────────────────────────────────────
 
 st.markdown("""
 <style>
@@ -185,7 +185,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# â”€â”€â”€ Cached Resources â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Cached Resources ───────────────────────────────────────────────────────
 
 @st.cache_resource(show_spinner="Loading NLTK language model...")
 def load_analyzer(ngram_size: int) -> NLTKAnalyzer:
@@ -202,10 +202,10 @@ def load_chart_generator() -> ChartGenerator:
     return ChartGenerator()
 
 
-# â”€â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Sidebar ─────────────────────────────────────────────────────────────────
 
 with st.sidebar:
-    st.markdown("## âš™ï¸ Settings")
+    st.markdown("## ⚙️ Settings")
     st.markdown("---")
 
     ngram_size = st.selectbox(
@@ -217,7 +217,7 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.markdown("### ðŸ“Š Visualization")
+    st.markdown("### 📊 Visualization")
 
     top_words = st.slider(
         "Words in Chart",
@@ -236,7 +236,7 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.markdown("### â„¹ï¸ About")
+    st.markdown("### ℹ️ About")
     st.markdown(
         """
         **NLTK-Based Detector** uses n-gram language models
@@ -262,7 +262,7 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.markdown("### 📖 Interpretation Guide")
+    st.markdown("### ?? Interpretation Guide")
 
     with st.expander("Perplexity Scores"):
         st.markdown("""
@@ -289,18 +289,18 @@ with st.sidebar:
     st.markdown("---")
     st.markdown(build_limitations_markdown())
 
-# â”€â”€â”€ Main Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Main Content ────────────────────────────────────────────────────────────
 
 # Header
 st.markdown("""
 <div class="main-header">
-    <h1>ðŸ›¡ï¸ AI Text Detector</h1>
-    <p>NLTK-Based Analysis â€¢ N-gram Language Models â€¢ Statistical Pattern Detection</p>
+    <h1>🛡️ AI Text Detector</h1>
+    <p>NLTK-Based Analysis • N-gram Language Models • Statistical Pattern Detection</p>
 </div>
 """, unsafe_allow_html=True)
 
 # Text Input
-st.markdown("### ðŸ“ Enter Text for Analysis")
+st.markdown("### 📝 Enter Text for Analysis")
 
 text_input = st.text_area(
     label="Paste or type the text you want to analyze",
@@ -308,9 +308,9 @@ text_input = st.text_area(
     placeholder=(
         "Enter the text you want to analyze here...\n\n"
         "For best results:\n"
-        "â€¢ Provide at least 200 characters\n"
-        "â€¢ Longer texts give more accurate results\n"
-        "â€¢ English text is recommended"
+        "• Provide at least 200 characters\n"
+        "• Longer texts give more accurate results\n"
+        "• English text is recommended"
     ),
     label_visibility="collapsed",
 )
@@ -321,25 +321,25 @@ if text_input:
     word_count = len(text_input.split())
     col_info1, col_info2, col_info3 = st.columns(3)
     with col_info1:
-        st.caption(f"ðŸ“ {char_count} characters")
+        st.caption(f"📏 {char_count} characters")
     with col_info2:
-        st.caption(f"ðŸ“ {word_count} words")
+        st.caption(f"📝 {word_count} words")
     with col_info3:
-        quality = "ðŸŸ¢ Good" if char_count >= 200 else "ðŸŸ¡ Short" if char_count >= 50 else "ðŸ”´ Very short"
+        quality = "🟢 Good" if char_count >= 200 else "🟡 Short" if char_count >= 50 else "🔴 Very short"
         st.caption(f"Quality: {quality}")
 
 # Analyze button
 analyze_clicked = st.button(
-    "ðŸ” Analyze Text",
+    "🔍 Analyze Text",
     type="primary",
     use_container_width=True,
     disabled=not text_input or len(text_input.strip()) < 10,
 )
 
-# â”€â”€â”€ Analysis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Analysis ────────────────────────────────────────────────────────────────
 
 if analyze_clicked and text_input:
-    with st.spinner("ðŸ”„ Analyzing text patterns..."):
+    with st.spinner("🔄 Analyzing text patterns..."):
         try:
             # Load analyzer with selected n-gram size
             analyzer = load_analyzer(ngram_size)
@@ -348,9 +348,9 @@ if analyze_clicked and text_input:
             # Run analysis
             result = analyzer.analyze(text_input)
 
-            # â”€â”€ Verdict Display â”€â”€
+            # ── Verdict Display ──
             st.markdown("---")
-            st.markdown("### ðŸŽ¯ Detection Result")
+            st.markdown("### 🎯 Detection Result")
 
             verdict_class = {
                 Verdict.AI_GENERATED: "verdict-ai",
@@ -361,35 +361,35 @@ if analyze_clicked and text_input:
             }
 
             verdict_emoji = {
-                Verdict.AI_GENERATED: "ðŸ¤–",
-                Verdict.LIKELY_AI: "ðŸ¤–",
-                Verdict.UNCERTAIN: "â“",
-                Verdict.LIKELY_HUMAN: "ðŸ‘¤",
-                Verdict.HUMAN_WRITTEN: "ðŸ‘¤",
+                Verdict.AI_GENERATED: "🤖",
+                Verdict.LIKELY_AI: "🤖",
+                Verdict.UNCERTAIN: "❓",
+                Verdict.LIKELY_HUMAN: "👤",
+                Verdict.HUMAN_WRITTEN: "👤",
             }
 
             css_class = verdict_class.get(result.verdict, "verdict-uncertain")
-            emoji = verdict_emoji.get(result.verdict, "â“")
+            emoji = verdict_emoji.get(result.verdict, "❓")
 
             st.markdown(f"""
             <div class="verdict-card {css_class}">
                 <h2>{emoji} {result.verdict.value}</h2>
                 <p>Confidence: {result.confidence:.1f}% ({result.confidence_level.value})
-                • Analysis Time: {result.analysis_time:.2f}s</p>
+                � Analysis Time: {result.analysis_time:.2f}s</p>
             </div>
             """, unsafe_allow_html=True)
 
             st.caption(build_result_reminder_markdown())
 
-            # ── Warnings ── â”€â”€
+            # -- Warnings -- ──
             if result.warnings:
                 for warning in result.warnings:
                     st.markdown(f"""
-                    <div class="warning-box">âš ï¸ {warning}</div>
+                    <div class="warning-box">⚠️ {warning}</div>
                     """, unsafe_allow_html=True)
 
-            # â”€â”€ Key Metrics â”€â”€
-            st.markdown("### ðŸ“Š Key Metrics")
+            # ── Key Metrics ──
+            st.markdown("### 📊 Key Metrics")
 
             col1, col2, col3, col4 = st.columns(4)
 
@@ -437,29 +437,29 @@ if analyze_clicked and text_input:
                 </div>
                 """, unsafe_allow_html=True)
 
-            # â”€â”€ Explanation â”€â”€
-            st.markdown("### ðŸ’¡ Analysis Explanation")
+            # ── Explanation ──
+            st.markdown("### 💡 Analysis Explanation")
             st.info(result.explanation)
 
-            # â”€â”€ Detailed Scores â”€â”€
-            st.markdown("### ðŸ”¬ Detailed Score Breakdown")
+            # ── Detailed Scores ──
+            st.markdown("### 🔬 Detailed Score Breakdown")
 
             for score in result.scores:
-                indicator = "ðŸ”´" if score.indicates_ai else "ðŸŸ¢"
+                indicator = "🔴" if score.indicates_ai else "🟢"
                 st.markdown(f"""
                 <div class="score-row">
                     {indicator} <strong>{score.name}</strong>: {score.value:.4f}
-                    (Weight: {score.weight:.0%}) â€” <em>{score.interpretation}</em>
+                    (Weight: {score.weight:.0%}) — <em>{score.interpretation}</em>
                 </div>
                 """, unsafe_allow_html=True)
 
-            # â”€â”€ Visualizations â”€â”€
-            st.markdown("### ðŸ“ˆ Visualizations")
+            # ── Visualizations ──
+            st.markdown("### 📈 Visualizations")
 
             tab1, tab2, tab3 = st.tabs([
-                "ðŸ“Š Word Frequencies",
-                "ðŸ“ Score Radar",
-                "ðŸ“ Sentence Lengths",
+                "📊 Word Frequencies",
+                "📐 Score Radar",
+                "📏 Sentence Lengths",
             ])
 
             with tab1:
@@ -488,8 +488,8 @@ if analyze_clicked and text_input:
                 else:
                     st.info("Not enough sentences for length analysis.")
 
-            # â”€â”€ Text Text â”€â”€
-            st.markdown("### ðŸ“‹ Text Statistics")
+            # ── Text Text ──
+            st.markdown("### 📋 Text Statistics")
 
             stat_col1, stat_col2, stat_col3 = st.columns(3)
 
@@ -505,18 +505,18 @@ if analyze_clicked and text_input:
                 st.metric("Avg Word Length", f"{result.metrics.avg_word_length:.1f}")
                 st.metric("Avg Sentence Length", f"{result.metrics.avg_sentence_length:.1f}")
 
-            # â”€â”€ Analysis Metadata â”€â”€
-            with st.expander("ðŸ”§ Analysis Metadata"):
+            # ── Analysis Metadata ──
+            with st.expander("🔧 Analysis Metadata"):
                 st.json(result.to_dict())
 
             logger.info(f"Analysis displayed: {result.verdict.value}")
 
         except Exception as e:
             logger.error(f"Application error: {e}", exc_info=True)
-            st.error(f"âŒ An error occurred during analysis: {str(e)}")
-            st.info("ðŸ’¡ Try refreshing the page or using a different text.")
+            st.error(f"❌ An error occurred during analysis: {str(e)}")
+            st.info("💡 Try refreshing the page or using a different text.")
 
-# â”€â”€â”€ Empty State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Empty State ─────────────────────────────────────────────────────────────
 
 elif not text_input:
     st.markdown("---")
@@ -524,7 +524,7 @@ elif not text_input:
     col_demo1, col_demo2 = st.columns(2)
 
     with col_demo1:
-        st.markdown("#### ðŸ¤– AI-Generated Example")
+        st.markdown("#### 🤖 AI-Generated Example")
         st.code(
             "Artificial intelligence has revolutionized numerous industries "
             "by providing innovative solutions to complex problems. The integration "
@@ -536,7 +536,7 @@ elif not text_input:
         )
 
     with col_demo2:
-        st.markdown("#### ðŸ‘¤ Human-Written Example")
+        st.markdown("#### 👤 Human-Written Example")
         st.code(
             "So I was trying to fix my computer yesterday and, well, let me tell "
             "you - it was a disaster! The thing kept crashing every five minutes. "
@@ -548,19 +548,20 @@ elif not text_input:
 
     st.markdown("""
     <div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.4);">
-        ðŸ‘† Paste some text above and click <strong>Analyze Text</strong> to get started
+        👆 Paste some text above and click <strong>Analyze Text</strong> to get started
     </div>
     """, unsafe_allow_html=True)
 
-# â”€â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Footer ──────────────────────────────────────────────────────────────────
 
 st.markdown("""
 <div class="footer">
-    <p>ðŸ›¡ï¸ AI Text Detector v2.0.0 â€¢ NLTK Analysis Engine</p>
-    <p>âš ï¸ Results are probabilistic estimates, not definitive classifications.</p>
+    <p>🛡️ AI Text Detector v2.0.0 • NLTK Analysis Engine</p>
+    <p>⚠️ Results are probabilistic estimates, not definitive classifications.</p>
     <p>No text is stored or transmitted. All processing happens locally.</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

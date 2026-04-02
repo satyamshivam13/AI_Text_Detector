@@ -1,5 +1,5 @@
 ﻿"""
-AI Text Detector â€” GPT-2 Deep Analysis
+AI Text Detector — GPT-2 Deep Analysis
 ========================================
 
 Streamlit application using GPT-2 transformer model
@@ -27,22 +27,22 @@ from src.utils.ui_contract import (
 )
 from src.utils.visualization import ChartGenerator
 
-# â”€â”€â”€ Setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Setup ───────────────────────────────────────────────────────────────────
 
 setup_logging("INFO")
 logger = get_logger(__name__)
 settings = get_settings()
 
-# â”€â”€â”€ Page Configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Page Configuration ─────────────────────────────────────────────────────
 
 st.set_page_config(
-    page_title="AI Text Detector â€” GPT-2",
-    page_icon="ðŸ§ ",
+    page_title="AI Text Detector — GPT-2",
+    page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# â”€â”€â”€ Custom CSS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Custom CSS ──────────────────────────────────────────────────────────────
 
 st.markdown("""
 <style>
@@ -178,7 +178,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# â”€â”€â”€ Cached Resources â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Cached Resources ───────────────────────────────────────────────────────
 
 @st.cache_resource(show_spinner="Loading GPT-2 model... (this may take a minute on first run)")
 def load_analyzer() -> GPT2Analyzer:
@@ -196,13 +196,13 @@ def load_chart_generator() -> ChartGenerator:
     return ChartGenerator()
 
 
-# â”€â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Sidebar ─────────────────────────────────────────────────────────────────
 
 with st.sidebar:
-    st.markdown("## âš™ï¸ Settings")
+    st.markdown("## ⚙️ Settings")
     st.markdown("---")
 
-    st.markdown("### ðŸ“Š Visualization")
+    st.markdown("### 📊 Visualization")
 
     top_words = st.slider(
         "Words in Chart",
@@ -217,7 +217,7 @@ with st.sidebar:
     show_sentence_chart = st.checkbox("Show Sentence Analysis", value=True)
 
     st.markdown("---")
-    st.markdown("### â„¹ï¸ About")
+    st.markdown("### ℹ️ About")
     st.markdown(
         """
         **GPT-2 Deep Analyzer** uses the GPT-2 transformer model
@@ -245,7 +245,7 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.markdown("### 📖 Interpretation Guide")
+    st.markdown("### ?? Interpretation Guide")
 
     with st.expander("GPT-2 Perplexity"):
         st.markdown("""
@@ -263,8 +263,8 @@ with st.sidebar:
         st.markdown("""
         GPT-2 calculates how "surprised" it is by each word in the text.
 
-        - **AI text**: GPT-2 is NOT surprised â†’ Low perplexity
-        - **Human text**: GPT-2 IS surprised â†’ High perplexity
+        - **AI text**: GPT-2 is NOT surprised → Low perplexity
+        - **Human text**: GPT-2 IS surprised → High perplexity
 
         This works because AI models produce text that
         other AI models find very predictable.
@@ -273,20 +273,20 @@ with st.sidebar:
     st.markdown("---")
     st.markdown(build_limitations_markdown())
 
-# â”€â”€â”€ Main Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Main Content ────────────────────────────────────────────────────────────
 
 # Header
 st.markdown("""
 <div class="main-header-gpt2">
-    <h1>ðŸ§  AI Text Detector</h1>
-    <p>GPT-2 Deep Analysis â€¢ Transformer-Based Detection â€¢ Advanced Pattern Recognition</p>
+    <h1>🧠 AI Text Detector</h1>
+    <p>GPT-2 Deep Analysis • Transformer-Based Detection • Advanced Pattern Recognition</p>
 </div>
 """, unsafe_allow_html=True)
 
 # Model loading notice
 st.markdown("""
 <div class="loading-info">
-    ðŸ’¡ <strong>First-time setup:</strong> The GPT-2 model (~500MB) will be downloaded
+    💡 <strong>First-time setup:</strong> The GPT-2 model (~500MB) will be downloaded
     and cached automatically. Subsequent runs will be much faster.
 </div>
 """, unsafe_allow_html=True)
@@ -294,7 +294,7 @@ st.markdown("""
 st.markdown("")
 
 # Text Input
-st.markdown("### ðŸ“ Enter Text for Analysis")
+st.markdown("### 📝 Enter Text for Analysis")
 
 text_input = st.text_area(
     label="Paste or type the text you want to analyze",
@@ -302,9 +302,9 @@ text_input = st.text_area(
     placeholder=(
         "Enter the text you want to analyze here...\n\n"
         "For best results with GPT-2 analysis:\n"
-        "â€¢ Provide at least 200 characters (500+ recommended)\n"
-        "â€¢ Longer texts significantly improve accuracy\n"
-        "â€¢ English text works best"
+        "• Provide at least 200 characters (500+ recommended)\n"
+        "• Longer texts significantly improve accuracy\n"
+        "• English text works best"
     ),
     label_visibility="collapsed",
 )
@@ -315,29 +315,29 @@ if text_input:
     word_count = len(text_input.split())
     col_info1, col_info2, col_info3 = st.columns(3)
     with col_info1:
-        st.caption(f"ðŸ“ {char_count} characters")
+        st.caption(f"📏 {char_count} characters")
     with col_info2:
-        st.caption(f"ðŸ“ {word_count} words")
+        st.caption(f"📝 {word_count} words")
     with col_info3:
         if char_count >= 500:
-            quality = "ðŸŸ¢ Optimal"
+            quality = "🟢 Optimal"
         elif char_count >= 200:
-            quality = "ðŸŸ¢ Good"
+            quality = "🟢 Good"
         elif char_count >= 50:
-            quality = "ðŸŸ¡ Short"
+            quality = "🟡 Short"
         else:
-            quality = "ðŸ”´ Very short"
+            quality = "🔴 Very short"
         st.caption(f"Quality: {quality}")
 
 # Analyze button
 analyze_clicked = st.button(
-    "ðŸ§  Deep Analyze with GPT-2",
+    "🧠 Deep Analyze with GPT-2",
     type="primary",
     use_container_width=True,
     disabled=not text_input or len(text_input.strip()) < 10,
 )
 
-# â”€â”€â”€ Analysis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Analysis ────────────────────────────────────────────────────────────────
 
 if analyze_clicked and text_input:
     progress_bar = st.progress(0, text="Initializing GPT-2 model...")
@@ -355,12 +355,12 @@ if analyze_clicked and text_input:
 
         progress_bar.progress(90, text="Generating visualizations...")
 
-        # â”€â”€ Verdict Display â”€â”€
+        # ── Verdict Display ──
         progress_bar.progress(100, text="Analysis complete!")
         progress_bar.empty()
 
         st.markdown("---")
-        st.markdown("### ðŸŽ¯ Detection Result")
+        st.markdown("### 🎯 Detection Result")
 
         verdict_class = {
             Verdict.AI_GENERATED: "verdict-ai",
@@ -371,40 +371,40 @@ if analyze_clicked and text_input:
         }
 
         verdict_emoji = {
-            Verdict.AI_GENERATED: "ðŸ¤–",
-            Verdict.LIKELY_AI: "ðŸ¤–",
-            Verdict.UNCERTAIN: "â“",
-            Verdict.LIKELY_HUMAN: "ðŸ‘¤",
-            Verdict.HUMAN_WRITTEN: "ðŸ‘¤",
+            Verdict.AI_GENERATED: "🤖",
+            Verdict.LIKELY_AI: "🤖",
+            Verdict.UNCERTAIN: "❓",
+            Verdict.LIKELY_HUMAN: "👤",
+            Verdict.HUMAN_WRITTEN: "👤",
         }
 
         css_class = verdict_class.get(result.verdict, "verdict-uncertain")
-        emoji = verdict_emoji.get(result.verdict, "â“")
+        emoji = verdict_emoji.get(result.verdict, "❓")
 
         st.markdown(f"""
         <div class="verdict-card {css_class}">
             <h2>{emoji} {result.verdict.value}</h2>
             <p>Confidence: {result.confidence:.1f}% ({result.confidence_level.value})
-            â€¢ Analysis Time: {result.analysis_time:.2f}s</p>
+            • Analysis Time: {result.analysis_time:.2f}s</p>
         </div>
         """, unsafe_allow_html=True)
 
         st.caption(build_result_reminder_markdown())
 
-        # ── Confidence Gauge ── â”€â”€
+        # -- Confidence Gauge -- ──
         if show_gauge:
             fig_gauge = charts.create_metrics_gauge(result)
             st.plotly_chart(fig_gauge, use_container_width=True)
 
-        # â”€â”€ Warnings â”€â”€
+        # ── Warnings ──
         if result.warnings:
             for warning in result.warnings:
                 st.markdown(f"""
-                <div class="warning-box">âš ï¸ {warning}</div>
+                <div class="warning-box">⚠️ {warning}</div>
                 """, unsafe_allow_html=True)
 
-        # â”€â”€ Key Metrics â”€â”€
-        st.markdown("### ðŸ“Š Key Metrics")
+        # ── Key Metrics ──
+        st.markdown("### 📊 Key Metrics")
 
         col1, col2, col3, col4 = st.columns(4)
 
@@ -452,30 +452,30 @@ if analyze_clicked and text_input:
             </div>
             """, unsafe_allow_html=True)
 
-        # â”€â”€ Explanation â”€â”€
-        st.markdown("### ðŸ’¡ Analysis Explanation")
+        # ── Explanation ──
+        st.markdown("### 💡 Analysis Explanation")
         st.info(result.explanation)
 
-        # â”€â”€ Detailed Scores â”€â”€
-        st.markdown("### ðŸ”¬ Detailed Score Breakdown")
+        # ── Detailed Scores ──
+        st.markdown("### 🔬 Detailed Score Breakdown")
 
         for score in result.scores:
-            indicator = "ðŸ”´" if score.indicates_ai else "ðŸŸ¢"
+            indicator = "🔴" if score.indicates_ai else "🟢"
             st.markdown(f"""
             <div class="score-row">
                 {indicator} <strong>{score.name}</strong>: {score.value:.4f}
-                (Weight: {score.weight:.0%}) â€” <em>{score.interpretation}</em>
+                (Weight: {score.weight:.0%}) — <em>{score.interpretation}</em>
             </div>
             """, unsafe_allow_html=True)
 
-        # â”€â”€ Visualizations â”€â”€
-        st.markdown("### ðŸ“ˆ Visualizations")
+        # ── Visualizations ──
+        st.markdown("### 📈 Visualizations")
 
-        tabs = ["ðŸ“Š Word Frequencies"]
+        tabs = ["📊 Word Frequencies"]
         if show_radar:
-            tabs.append("ðŸ“ Score Radar")
+            tabs.append("📐 Score Radar")
         if show_sentence_chart:
-            tabs.append("ðŸ“ Sentence Analysis")
+            tabs.append("📏 Sentence Analysis")
 
         tab_objects = st.tabs(tabs)
 
@@ -507,8 +507,8 @@ if analyze_clicked and text_input:
                 else:
                     st.info("Not enough sentences for length analysis.")
 
-        # â”€â”€ Text Statistics â”€â”€
-        st.markdown("### ðŸ“‹ Text Statistics")
+        # ── Text Statistics ──
+        st.markdown("### 📋 Text Statistics")
 
         stat_col1, stat_col2, stat_col3 = st.columns(3)
 
@@ -524,8 +524,8 @@ if analyze_clicked and text_input:
             st.metric("Avg Word Length", f"{result.metrics.avg_word_length:.1f}")
             st.metric("Avg Sentence Length", f"{result.metrics.avg_sentence_length:.1f}")
 
-        # â”€â”€ Raw Data â”€â”€
-        with st.expander("ðŸ”§ Full Analysis Data (JSON)"):
+        # ── Raw Data ──
+        with st.expander("🔧 Full Analysis Data (JSON)"):
             st.json(result.to_dict())
 
         logger.info(f"GPT-2 analysis displayed: {result.verdict.value}")
@@ -533,25 +533,25 @@ if analyze_clicked and text_input:
     except Exception as e:
         progress_bar.empty()
         logger.error(f"Application error: {e}", exc_info=True)
-        st.error(f"âŒ An error occurred: {str(e)}")
+        st.error(f"❌ An error occurred: {str(e)}")
         st.info(
-            "ðŸ’¡ This might be due to:\n"
+            "💡 This might be due to:\n"
             "- Insufficient memory for GPT-2 model\n"
             "- Network issues during model download\n"
             "- Try the NLTK-based detector (`streamlit run app.py`) as an alternative"
         )
 
-# â”€â”€â”€ Empty State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Empty State ─────────────────────────────────────────────────────────────
 
 elif not text_input:
     st.markdown("---")
 
-    st.markdown("### ðŸ§ª Try These Examples")
+    st.markdown("### 🧪 Try These Examples")
 
     col_demo1, col_demo2 = st.columns(2)
 
     with col_demo1:
-        st.markdown("#### ðŸ¤– Typical AI-Generated Text")
+        st.markdown("#### 🤖 Typical AI-Generated Text")
         example_ai = (
             "The advancement of artificial intelligence has fundamentally transformed "
             "the landscape of modern technology. Machine learning algorithms, particularly "
@@ -563,12 +563,12 @@ elif not text_input:
             "significant breakthroughs in language understanding and generation tasks."
         )
         st.code(example_ai, language=None)
-        if st.button("ðŸ“‹ Use AI Example", key="ai_example"):
+        if st.button("📋 Use AI Example", key="ai_example"):
             st.session_state["text_example"] = example_ai
             st.rerun()
 
     with col_demo2:
-        st.markdown("#### ðŸ‘¤ Typical Human-Written Text")
+        st.markdown("#### 👤 Typical Human-Written Text")
         example_human = (
             "OK so here's the thing about my neighbor's cat - this little furball "
             "has been sneaking into my yard EVERY single morning at like 5am. And "
@@ -580,13 +580,13 @@ elif not text_input:
             "and a destroyed herb garden. Life's weird sometimes, you know?"
         )
         st.code(example_human, language=None)
-        if st.button("ðŸ“‹ Use Human Example", key="human_example"):
+        if st.button("📋 Use Human Example", key="human_example"):
             st.session_state["text_example"] = example_human
             st.rerun()
 
     st.markdown("""
     <div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.4);">
-        ðŸ‘† Paste text above or use an example, then click <strong>Deep Analyze with GPT-2</strong>
+        👆 Paste text above or use an example, then click <strong>Deep Analyze with GPT-2</strong>
     </div>
     """, unsafe_allow_html=True)
 
@@ -594,15 +594,16 @@ elif not text_input:
 if "text_example" in st.session_state:
     text_input = st.session_state.pop("text_example")
 
-# â”€â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Footer ──────────────────────────────────────────────────────────────────
 
 st.markdown("""
 <div class="footer">
-    <p>ðŸ§  AI Text Detector v2.0.0 â€¢ GPT-2 Deep Analysis Engine</p>
-    <p>âš ï¸ Results are probabilistic estimates, not definitive classifications.</p>
+    <p>🧠 AI Text Detector v2.0.0 • GPT-2 Deep Analysis Engine</p>
+    <p>⚠️ Results are probabilistic estimates, not definitive classifications.</p>
     <p>No text is stored or transmitted. All processing happens locally.</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 

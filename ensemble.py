@@ -1,5 +1,5 @@
 ﻿"""  
-AI Text Detector â€” Ensemble Analysis
+AI Text Detector — Ensemble Analysis
 ======================================
 
 Streamlit application using ensemble of GPT-2 and NLTK
@@ -29,22 +29,22 @@ from src.utils.ui_contract import (
 )
 from src.utils.visualization import ChartGenerator
 
-# â”€â”€â”€ Setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Setup ───────────────────────────────────────────────────────────────────
 
 setup_logging("INFO")
 logger = get_logger(__name__)
 settings = get_settings()
 
-# â”€â”€â”€ Page Configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Page Configuration ─────────────────────────────────────────────────────
 
 st.set_page_config(
-    page_title="AI Text Detector â€” Ensemble",
-    page_icon="ðŸŽ¯",
+    page_title="AI Text Detector — Ensemble",
+    page_icon="🎯",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# â”€â”€â”€ Custom CSS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Custom CSS ──────────────────────────────────────────────────────────────
 
 st.markdown("""
 <style>
@@ -195,7 +195,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# â”€â”€â”€ Cached Resources â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Cached Resources ───────────────────────────────────────────────────────
 
 @st.cache_resource(show_spinner="Loading ensemble models... (this may take 2-3 minutes on first run)")
 def load_analyzer() -> EnsembleAnalyzer:
@@ -214,13 +214,13 @@ def load_chart_generator() -> ChartGenerator:
     return ChartGenerator()
 
 
-# â”€â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Sidebar ─────────────────────────────────────────────────────────────────
 
 with st.sidebar:
-    st.markdown("## âš™ï¸ Settings")
+    st.markdown("## ⚙️ Settings")
     st.markdown("---")
 
-    st.markdown("### ðŸ“Š Visualization")
+    st.markdown("### 📊 Visualization")
 
     top_words = st.slider(
         "Words in Chart",
@@ -235,20 +235,20 @@ with st.sidebar:
     show_comparison = st.checkbox("Show Analyzer Comparison", value=True)
 
     st.markdown("---")
-    st.markdown("### â„¹ï¸ About")
+    st.markdown("### ℹ️ About")
     st.markdown(
         """
         **Ensemble Analyzer** combines two powerful detection methods:
         
-        ðŸ§  **GPT-2** (65% weight)
+        🧠 **GPT-2** (65% weight)
         - Deep perplexity analysis
         - Transformer-based patterns
         
-        ðŸ“Š **NLTK** (35% weight)
+        📊 **NLTK** (35% weight)
         - Statistical n-gram models
         - Linguistic features
         
-        âš ï¸ **Note**: RoBERTa is disabled (requires fine-tuning).
+        ⚠️ **Note**: RoBERTa is disabled (requires fine-tuning).
         See README for fine-tuning guide.
         
         **Accuracy:** ~78-82%
@@ -272,34 +272,34 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.markdown("### 🎯 Why Ensemble?")
+    st.markdown("### ?? Why Ensemble?")
     
     st.markdown("""
     Combining multiple models provides:
     
-    âœ… **Higher Accuracy** - Each model's strengths compensate for others' weaknesses
+    ✅ **Higher Accuracy** - Each model's strengths compensate for others' weaknesses
     
-    âœ… **More Reliable** - Reduces false positives/negatives
+    ✅ **More Reliable** - Reduces false positives/negatives
     
-    âœ… **Transparent** - See how each analyzer votes
+    ✅ **Transparent** - See how each analyzer votes
     
-    âœ… **Robust** - Works across different text styles
+    ✅ **Robust** - Works across different text styles
     """)
 
     st.markdown("---")
     st.markdown(build_limitations_markdown())
 
-# â”€â”€â”€ Main Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Main Content ────────────────────────────────────────────────────────────
 
 # Header
 st.markdown("""
 <div class="main-header-ensemble">
-    <h1>ðŸŽ¯ AI Text Detector â€” Ensemble</h1>
+    <h1>🎯 AI Text Detector — Ensemble</h1>
     <p>
         <span class="analyzer-badge badge-roberta">RoBERTa</span>
         <span class="analyzer-badge badge-gpt2">GPT-2</span>
         <span class="analyzer-badge badge-nltk">NLTK</span>
-        â€¢ Maximum Accuracy â€¢ Multi-Model Consensus â€¢ Production Ready
+        • Maximum Accuracy • Multi-Model Consensus • Production Ready
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -307,7 +307,7 @@ st.markdown("""
 # Model loading notice
 st.markdown("""
 <div class="loading-info">
-    ðŸ’¡ <strong>First-time setup:</strong> The ensemble will download RoBERTa (~500MB), 
+    💡 <strong>First-time setup:</strong> The ensemble will download RoBERTa (~500MB), 
     GPT-2 (~500MB), and NLTK data (~50MB). Subsequent runs will be much faster.
 </div>
 """, unsafe_allow_html=True)
@@ -315,7 +315,7 @@ st.markdown("""
 st.markdown("")
 
 # Text Input
-st.markdown("### ðŸ“ Enter Text for Analysis")
+st.markdown("### 📝 Enter Text for Analysis")
 
 text_input = st.text_area(
     label="Paste or type the text you want to analyze",
@@ -323,9 +323,9 @@ text_input = st.text_area(
     placeholder=(
         "Enter the text you want to analyze here...\n\n"
         "For best results with Ensemble analysis:\n"
-        "â€¢ Provide at least 200 characters (500+ recommended)\n"
-        "â€¢ Longer texts significantly improve accuracy\n"
-        "â€¢ English text works best"
+        "• Provide at least 200 characters (500+ recommended)\n"
+        "• Longer texts significantly improve accuracy\n"
+        "• English text works best"
     ),
     label_visibility="collapsed",
 )
@@ -336,29 +336,29 @@ if text_input:
     word_count = len(text_input.split())
     col_info1, col_info2, col_info3 = st.columns(3)
     with col_info1:
-        st.caption(f"ðŸ“ {char_count} characters")
+        st.caption(f"📏 {char_count} characters")
     with col_info2:
-        st.caption(f"ðŸ“ {word_count} words")
+        st.caption(f"📝 {word_count} words")
     with col_info3:
         if char_count >= 500:
-            quality = "ðŸŸ¢ Optimal"
+            quality = "🟢 Optimal"
         elif char_count >= 200:
-            quality = "ðŸŸ¢ Good"
+            quality = "🟢 Good"
         elif char_count >= 50:
-            quality = "ðŸŸ¡ Short"
+            quality = "🟡 Short"
         else:
-            quality = "ðŸ”´ Very short"
+            quality = "🔴 Very short"
         st.caption(f"Quality: {quality}")
 
 # Analyze button
 analyze_clicked = st.button(
-    "ðŸŽ¯ Analyze with Ensemble",
+    "🎯 Analyze with Ensemble",
     type="primary",
     use_container_width=True,
     disabled=not text_input or len(text_input.strip()) < 10,
 )
 
-# â”€â”€â”€ Analysis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Analysis ────────────────────────────────────────────────────────────────
 
 if analyze_clicked and text_input:
     progress_bar = st.progress(0, text="Initializing ensemble models...")
@@ -379,9 +379,9 @@ if analyze_clicked and text_input:
         progress_bar.progress(100, text="Analysis complete!")
         progress_bar.empty()
 
-        # â”€â”€ Verdict Display â”€â”€
+        # ── Verdict Display ──
         st.markdown("---")
-        st.markdown("### ðŸŽ¯ Detection Result")
+        st.markdown("### 🎯 Detection Result")
 
         verdict_class = {
             Verdict.AI_GENERATED: "verdict-ai",
@@ -392,62 +392,62 @@ if analyze_clicked and text_input:
         }
 
         verdict_emoji = {
-            Verdict.AI_GENERATED: "ðŸ¤–",
-            Verdict.LIKELY_AI: "ðŸ¤–",
-            Verdict.UNCERTAIN: "â“",
-            Verdict.LIKELY_HUMAN: "ðŸ‘¤",
-            Verdict.HUMAN_WRITTEN: "ðŸ‘¤",
+            Verdict.AI_GENERATED: "🤖",
+            Verdict.LIKELY_AI: "🤖",
+            Verdict.UNCERTAIN: "❓",
+            Verdict.LIKELY_HUMAN: "👤",
+            Verdict.HUMAN_WRITTEN: "👤",
         }
 
         css_class = verdict_class.get(result.verdict, "verdict-uncertain")
-        emoji = verdict_emoji.get(result.verdict, "â“")
+        emoji = verdict_emoji.get(result.verdict, "❓")
 
         st.markdown(f"""
         <div class="verdict-card {css_class}">
             <h2>{emoji} {result.verdict.value}</h2>
             <p>Confidence: {result.confidence:.1f}% ({result.confidence_level.value})
-            â€¢ Analysis Time: {result.analysis_time:.2f}s</p>
+            • Analysis Time: {result.analysis_time:.2f}s</p>
         </div>
         """, unsafe_allow_html=True)
 
         st.caption(build_result_reminder_markdown())
 
-        # ── Confidence Gauge ── â”€â”€
+        # -- Confidence Gauge -- ──
         if show_gauge:
             fig_gauge = charts.create_metrics_gauge(result)
             st.plotly_chart(fig_gauge, use_container_width=True)
 
-        # â”€â”€ Warnings â”€â”€
+        # ── Warnings ──
         if result.warnings:
             for warning in result.warnings:
                 st.markdown(f"""
-                <div class="warning-box">âš ï¸ {warning}</div>
+                <div class="warning-box">⚠️ {warning}</div>
                 """, unsafe_allow_html=True)
 
-        # â”€â”€ Explanation â”€â”€
-        st.markdown("### ðŸ’¡ Analysis Explanation")
+        # ── Explanation ──
+        st.markdown("### 💡 Analysis Explanation")
         st.info(result.explanation)
 
-        # â”€â”€ Detailed Scores â”€â”€
-        st.markdown("### ðŸ”¬ Ensemble Score Breakdown")
+        # ── Detailed Scores ──
+        st.markdown("### 🔬 Ensemble Score Breakdown")
 
         for score in result.scores:
-            indicator = "ðŸ”´" if score.indicates_ai else "ðŸŸ¢"
+            indicator = "🔴" if score.indicates_ai else "🟢"
             st.markdown(f"""
             <div class="score-row">
                 {indicator} <strong>{score.name}</strong>: {score.value:.4f}
-                (Weight: {score.weight:.0%}) â€” <em>{score.interpretation}</em>
+                (Weight: {score.weight:.0%}) — <em>{score.interpretation}</em>
             </div>
             """, unsafe_allow_html=True)
 
-        # â”€â”€ Visualizations â”€â”€
-        st.markdown("### ðŸ“ˆ Visualizations")
+        # ── Visualizations ──
+        st.markdown("### 📈 Visualizations")
 
-        tabs = ["ðŸ“Š Word Frequencies"]
+        tabs = ["📊 Word Frequencies"]
         if show_radar:
-            tabs.append("ðŸ“ Score Radar")
+            tabs.append("📐 Score Radar")
         if show_comparison:
-            tabs.append("ðŸ” Analyzer Comparison")
+            tabs.append("🔍 Analyzer Comparison")
 
         tab_objects = st.tabs(tabs)
 
@@ -488,8 +488,8 @@ if analyze_clicked and text_input:
                     df = pd.DataFrame(scores_data)
                     st.dataframe(df, hide_index=True, use_container_width=True)
 
-        # â”€â”€ Text Statistics â”€â”€
-        st.markdown("### ðŸ“‹ Text Statistics")
+        # ── Text Statistics ──
+        st.markdown("### 📋 Text Statistics")
 
         stat_col1, stat_col2, stat_col3 = st.columns(3)
 
@@ -505,8 +505,8 @@ if analyze_clicked and text_input:
             st.metric("Lexical Diversity", f"{result.lexical_diversity:.1%}")
             st.metric("Avg Perplexity", f"{result.perplexity:.1f}")
 
-        # â”€â”€ Raw Data â”€â”€
-        with st.expander("ðŸ”§ Full Analysis Data (JSON)"):
+        # ── Raw Data ──
+        with st.expander("🔧 Full Analysis Data (JSON)"):
             st.json(result.to_dict())
 
         logger.info(f"Ensemble analysis displayed: {result.verdict.value}")
@@ -514,25 +514,25 @@ if analyze_clicked and text_input:
     except Exception as e:
         progress_bar.empty()
         logger.error(f"Application error: {e}", exc_info=True)
-        st.error(f"âŒ An error occurred: {str(e)}")
+        st.error(f"❌ An error occurred: {str(e)}")
         st.info(
-            "ðŸ’¡ This might be due to:\n"
+            "💡 This might be due to:\n"
             "- Insufficient memory (ensemble requires 4-6GB RAM)\n"
             "- Network issues during model download\n"
             "- Try individual analyzers (`streamlit run app.py` or `streamlit run test.py`) as alternatives"
         )
 
-# â”€â”€â”€ Empty State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Empty State ─────────────────────────────────────────────────────────────
 
 elif not text_input:
     st.markdown("---")
 
-    st.markdown("### ðŸ§ª Try These Examples")
+    st.markdown("### 🧪 Try These Examples")
 
     col_demo1, col_demo2 = st.columns(2)
 
     with col_demo1:
-        st.markdown("#### ðŸ¤– Typical AI-Generated Text")
+        st.markdown("#### 🤖 Typical AI-Generated Text")
         example_ai = (
             "The advancement of artificial intelligence has fundamentally transformed "
             "the landscape of modern technology. Machine learning algorithms, particularly "
@@ -544,12 +544,12 @@ elif not text_input:
             "significant breakthroughs in language understanding and generation tasks."
         )
         st.code(example_ai, language=None)
-        if st.button("ðŸ“‹ Use AI Example", key="ai_example"):
+        if st.button("📋 Use AI Example", key="ai_example"):
             st.session_state["text_example"] = example_ai
             st.rerun()
 
     with col_demo2:
-        st.markdown("#### ðŸ‘¤ Typical Human-Written Text")
+        st.markdown("#### 👤 Typical Human-Written Text")
         example_human = (
             "OK so here's the thing about my neighbor's cat - this little furball "
             "has been sneaking into my yard EVERY single morning at like 5am. And "
@@ -561,13 +561,13 @@ elif not text_input:
             "and a destroyed herb garden. Life's weird sometimes, you know?"
         )
         st.code(example_human, language=None)
-        if st.button("ðŸ“‹ Use Human Example", key="human_example"):
+        if st.button("📋 Use Human Example", key="human_example"):
             st.session_state["text_example"] = example_human
             st.rerun()
 
     st.markdown("""
     <div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.4);">
-        ðŸ‘† Paste text above or use an example, then click <strong>Analyze with Ensemble</strong>
+        👆 Paste text above or use an example, then click <strong>Analyze with Ensemble</strong>
     </div>
     """, unsafe_allow_html=True)
 
@@ -575,16 +575,17 @@ elif not text_input:
 if "text_example" in st.session_state:
     text_input = st.session_state.pop("text_example")
 
-# â”€â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Footer ──────────────────────────────────────────────────────────────────
 
 st.markdown("""
 <div class="footer">
-    <p>ðŸŽ¯ AI Text Detector v2.0.0 â€¢ Ensemble Analysis Engine (GPT-2 + NLTK)<br>
-    <small>âš ï¸ RoBERTa disabled (requires fine-tuning)</small></p>
-    <p>âš ï¸ Results are probabilistic estimates, not definitive classifications.</p>
+    <p>🎯 AI Text Detector v2.0.0 • Ensemble Analysis Engine (GPT-2 + NLTK)<br>
+    <small>⚠️ RoBERTa disabled (requires fine-tuning)</small></p>
+    <p>⚠️ Results are probabilistic estimates, not definitive classifications.</p>
     <p>No text is stored or transmitted. All processing happens locally.</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
