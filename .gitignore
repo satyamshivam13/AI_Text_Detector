@@ -10,8 +10,12 @@ eggs/
 *.egg
 .eggs/
 
+# Local session/audit artifacts (not part of the published repo)
+SESSION_AUDIT_LOG.md
+
 # Virtual Environment
 venv/
+.venv/
 env/
 .env
 ENV/
