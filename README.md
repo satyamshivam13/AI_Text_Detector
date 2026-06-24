@@ -34,17 +34,21 @@ pip install -r requirements.txt
 python -c "import nltk; nltk.download(['punkt', 'punkt_tab', 'stopwords', 'brown'])"
 ```
 
-## Run Modes
+## Application Modes
 
-```bash
-streamlit run app.py
-streamlit run test.py
-streamlit run ensemble.py
-```
+This project ships **three independent Streamlit apps** — one per detection engine. Run whichever one matches your needs (they do not run together).
 
-- app.py: NLTK analyzer UI
-- test.py: GPT-2 analyzer UI
-- ensemble.py: ensemble analyzer UI
+> ⚠️ **Note on `test.py`:** despite its name, `test.py` is **not** a test suite — it is the GPT-2 application. The automated tests live in `tests/` (see [Testing and Quality Gate](#testing-and-quality-gate)).
+
+| Mode | Entry file | Launch command | Purpose | Intended user | Speed¹ | Memory |
+|------|-----------|----------------|---------|---------------|--------|--------|
+| **NLTK** | `app.py` | `streamlit run app.py` | Statistical detection via NLTK n-gram language models (Brown corpus). No deep-learning model download. | Quick checks; low-resource machines; default starting point | `<1s` | `<1 GB` |
+| **GPT-2** | `test.py` | `streamlit run test.py` | Perplexity-based detection using the GPT-2 transformer. | Users wanting a deep-learning signal | `2–5s` | `2–3 GB` |
+| **Ensemble** | `ensemble.py` | `streamlit run ensemble.py` | Weighted fusion of GPT-2 + NLTK signals into one verdict (RoBERTa is present but disabled — it is not fine-tuned). | Users wanting the most robust multi-signal verdict | `5–10s` | `2–3 GB` |
+
+¹ Per-analysis time after models are loaded. The first run is slower: the NLTK mode builds its n-gram model from the Brown corpus, and the GPT-2/Ensemble modes download model weights on first launch (cached thereafter).
+
+**Not sure which to use?** Start with `app.py` (NLTK) — it is the lightest and needs no model download.
 
 ## Testing and Quality Gate
 
