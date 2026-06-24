@@ -251,7 +251,7 @@ with st.sidebar:
         ⚠️ **Note**: RoBERTa is disabled (requires fine-tuning).
         See README for fine-tuning guide.
         
-        **Accuracy:** ~78-82%
+        **Benchmarks:** pending validation
         
         **Processing:** 5-10 seconds
         
@@ -277,13 +277,13 @@ with st.sidebar:
     st.markdown("""
     Combining multiple models provides:
     
-    ✅ **Higher Accuracy** - Each model's strengths compensate for others' weaknesses
+    ✅ **Multi-signal** - Combines GPT-2 perplexity with NLTK statistics
     
-    ✅ **More Reliable** - Reduces false positives/negatives
+    ✅ **Consensus** - Aggregates analyzer outputs into a single verdict
     
     ✅ **Transparent** - See how each analyzer votes
     
-    ✅ **Robust** - Works across different text styles
+    ✅ **Weighted fusion** - GPT-2 65% / NLTK 35% (configurable)
     """)
 
     st.markdown("---")
@@ -296,10 +296,9 @@ st.markdown("""
 <div class="main-header-ensemble">
     <h1>🎯 AI Text Detector — Ensemble</h1>
     <p>
-        <span class="analyzer-badge badge-roberta">RoBERTa</span>
         <span class="analyzer-badge badge-gpt2">GPT-2</span>
         <span class="analyzer-badge badge-nltk">NLTK</span>
-        • Maximum Accuracy • Multi-Model Consensus • Production Ready
+        • Multi-Signal Detection • Multi-Model Consensus • Experimental
     </p>
 </div>
 """, unsafe_allow_html=True)
