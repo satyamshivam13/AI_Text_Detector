@@ -1,10 +1,21 @@
+# ============================================================================
+# Streamlit Community Cloud deploy manifest (LEAN — app.py / NLTK mode only)
+# ============================================================================
+# This branch (deploy/streamlit-cloud) exists so Streamlit Community Cloud, which
+# only installs from the root requirements.txt, gets a fast, torch-free build for
+# the NLTK app (app.py). The transformer stack (torch/transformers) is omitted on
+# purpose — app.py runs torch-free thanks to lazy analyzer imports.
+#
+# Do NOT deploy test.py or ensemble.py from this branch: they require torch/
+# transformers. For those, use the full requirements.txt on main + a host with
+# 2-6 GB RAM (Docker on a VM / paid tier).
+# ============================================================================
+
 # Core Framework
 streamlit>=1.28.0,<2.0.0
 
 # NLP Libraries
 nltk>=3.8.1,<4.0.0
-transformers>=4.35.0,<5.0.0
-torch>=2.0.0,<3.0.0
 
 # Data Processing
 numpy>=1.24.0,<2.0.0
