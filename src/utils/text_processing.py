@@ -97,12 +97,12 @@ class TextProcessor:
         # Normalize whitespace
         text = re.sub(r"\s+", " ", text.strip())
 
-        # Remove unusual unicode characters but keep basic punctuation
-        text = re.sub(r"[^\x00-\x7F]+", " ", text)
-
-        # Normalize quotes
+        # Normalize quotes (before stripping non-ASCII, so smart quotes survive)
         text = text.replace("\u2018", "'").replace("\u2019", "'")
         text = text.replace("\u201c", '"').replace("\u201d", '"')
+
+        # Remove unusual unicode characters but keep basic punctuation
+        text = re.sub(r"[^\x00-\x7F]+", " ", text)
 
         # Remove excessive punctuation
         text = re.sub(r"([!?.]){3,}", r"\1\1", text)

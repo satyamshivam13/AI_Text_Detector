@@ -25,7 +25,11 @@ A local, explainable toolkit for estimating how likely text is machine-generated
 git clone https://github.com/satyamshivam13/AI_Text_Detector.git
 cd AI_Text_Detector
 python -m venv venv
-source venv/bin/activate  # Windows PowerShell: .\\venv\\Scripts\\Activate.ps1
+# Activate the virtual environment:
+#   Linux / macOS:        source venv/bin/activate
+#   Windows (PowerShell): .\venv\Scripts\Activate.ps1
+#   Windows (cmd):        venv\Scripts\activate.bat
+source venv/bin/activate
 pip install -r requirements.txt
 python -c "import nltk; nltk.download(['punkt', 'punkt_tab', 'stopwords', 'brown'])"
 ```
@@ -44,23 +48,30 @@ streamlit run ensemble.py
 
 ## Testing and Quality Gate
 
-Primary quality gate:
+These commands are portable and behave identically on Windows (PowerShell or cmd), Linux, and macOS. `tests/conftest.py` adds `src/` to the path, so no `PYTHONPATH` setup is required.
+
+Primary quality gate (tests with coverage):
 
 ```bash
-make test
+python -m pytest tests/ -v --cov=src --cov-report=html --cov-report=term-missing
 ```
 
-Windows-safe equivalent:
+Linters and formatters:
 
-```powershell
-$env:PYTHONPATH='src'; C:/Users/Asus/AppData/Local/Programs/Python/Python310/python.exe -m pytest tests/ -v --cov=src --cov-report=html --cov-report=term-missing
+```bash
+python -m flake8 src/ tests/ app.py test.py ensemble.py --max-line-length=100
+python -m black src/ tests/ app.py test.py ensemble.py --line-length=100 --check
+python -m isort src/ tests/ app.py test.py ensemble.py --profile=black --check-only
+python -m mypy src/ --ignore-missing-imports
 ```
 
 Optional slow-model verification only:
 
 ```bash
-pytest -m slow -v
+python -m pytest -m slow -v
 ```
+
+On Linux/macOS with `make` installed, the `Makefile` wraps these as convenience targets (`make test`, `make lint`, `make format`). `make` is not available on Windows by default, so use the `python -m ...` commands above there.
 
 ## Docker and Compose
 

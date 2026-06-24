@@ -20,10 +20,14 @@ This guide documents deployment paths that match current repository artifacts:
 ### Steps
 
 ```bash
-git clone https://github.com/yourusername/AI_Text_Detector.git
+git clone https://github.com/satyamshivam13/AI_Text_Detector.git
 cd AI_Text_Detector
 python -m venv venv
-source venv/bin/activate  # Windows PowerShell: .\\venv\\Scripts\\Activate.ps1
+# Activate the virtual environment:
+#   Linux / macOS:        source venv/bin/activate
+#   Windows (PowerShell): .\venv\Scripts\Activate.ps1
+#   Windows (cmd):        venv\Scripts\activate.bat
+source venv/bin/activate
 pip install -r requirements.txt
 python -c "import nltk; nltk.download(['punkt', 'punkt_tab', 'stopwords', 'brown'])"
 ```
