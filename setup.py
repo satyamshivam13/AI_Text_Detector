@@ -15,12 +15,15 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 setup(
     name="ai-text-detector",
     version="2.0.0",
-    author="AI Detection Community",
-    author_email="support@ai-text-detector.dev",
-    description="Production-ready AI text detection system",
+    author="Satyam Shivam",
+    author_email="shivamsatyam35@gmail.com",
+    description=(
+        "Explainable, local, multi-signal toolkit for estimating how likely "
+        "text is AI-generated"
+    ),
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/ai-text-detector",
+    url="https://github.com/satyamshivam13/AI_Text_Detector",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[

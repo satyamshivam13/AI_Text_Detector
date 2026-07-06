@@ -2,8 +2,9 @@
 Application Settings
 ====================
 
-Centralized configuration management using Pydantic.
-All settings can be overridden via environment variables.
+Centralized configuration using frozen ``dataclasses`` with an ``lru_cache``
+singleton (:func:`get_settings`). A few runtime values can be overridden via
+environment variables (see :meth:`Settings.__post_init__`).
 """
 
 from __future__ import annotations
