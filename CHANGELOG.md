@@ -15,7 +15,9 @@ discriminating, and there is a real evaluation layer.
   cross-perplexity detection (observer `gpt2` + performer `distilgpt2`) after
   Hans et al., 2024 — the modern, prompt-robust signal recommended by the audit.
   Available standalone and via the benchmark (`--analyzer binoculars`);
-  benchmark AUROC 1.000, FPR 0.000, ECE 0.066.
+  benchmark AUROC 1.000, FPR 0.000, ECE 0.066. Can also be fused into the
+  ensemble via `EnsembleConfig.weight_binoculars` (off by default; loaded only
+  when weighted, mirroring the RoBERTa gating).
 - **Evaluation layer** (`src/evaluation/`): metrics (accuracy, precision,
   recall, F1, ROC/AUROC, false-positive/negative rates, expected calibration
   error), a labelled benchmark dataset + loader, and a benchmark runner with a

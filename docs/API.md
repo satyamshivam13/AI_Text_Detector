@@ -110,7 +110,13 @@ cfg.nltk_ppl_midpoint   # 1550  (Brown NLTK: higher perplexity => more AI)
 cfg.weight_gpt2         # 0.75
 cfg.weight_nltk         # 0.25
 cfg.weight_roberta      # 0.0   (disabled: not loaded or run)
+cfg.weight_binoculars   # 0.0   (optional; not loaded unless > 0)
 ```
+
+To fuse the Binoculars cross-perplexity signal into the ensemble, give it a
+non-zero `weight_binoculars` and rebalance the other weights so they sum to 1.
+It is off by default because it needs a second model; when enabled it is loaded
+lazily and contributes a "Binoculars Score" row.
 
 NLTK smoothing is configurable via `NLTKConfig.smoothing_method`
 (`wittenbell` default, `kneserney`, `lidstone`).

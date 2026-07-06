@@ -8,8 +8,10 @@ Combines RoBERTa, GPT-2, and NLTK analyzers for maximum accuracy.
 from __future__ import annotations
 
 import time
+from typing import Optional
 
 from src.analyzers.base_analyzer import BaseAnalyzer
+from src.analyzers.binoculars_analyzer import BinocularsAnalyzer
 from src.analyzers.calibration import logistic_ai_probability
 from src.analyzers.gpt2_analyzer import GPT2Analyzer
 from src.analyzers.nltk_analyzer import NLTKAnalyzer
@@ -51,6 +53,7 @@ class EnsembleAnalyzer(BaseAnalyzer):
         self._roberta_analyzer = None
         self._gpt2_analyzer = None
         self._nltk_analyzer = None
+        self._binoculars_analyzer = None
 
         # Fusion weights, sourced from config so calibration lives in one place.
         cfg = self.ensemble_config
@@ -58,6 +61,7 @@ class EnsembleAnalyzer(BaseAnalyzer):
             "roberta": cfg.weight_roberta,
             "gpt2": cfg.weight_gpt2,
             "nltk": cfg.weight_nltk,
+            "binoculars": cfg.weight_binoculars,
         }
 
     @property
@@ -83,6 +87,14 @@ class EnsembleAnalyzer(BaseAnalyzer):
             logger.info("Loading NLTK analyzer...")
             self._nltk_analyzer = NLTKAnalyzer(ngram_size=3)
         return self._nltk_analyzer
+
+    @property
+    def binoculars_analyzer(self) -> BinocularsAnalyzer:
+        """Lazy-load Binoculars analyzer (only used when its weight > 0)."""
+        if self._binoculars_analyzer is None:
+            logger.info("Loading Binoculars analyzer...")
+            self._binoculars_analyzer = BinocularsAnalyzer()
+        return self._binoculars_analyzer
 
     def analyze(self, text: str) -> AnalysisResult:
         """
@@ -147,8 +159,17 @@ class EnsembleAnalyzer(BaseAnalyzer):
             logger.info("Running NLTK analysis...")
             nltk_result = self.nltk_analyzer.analyze(cleaned_text)
 
+            # Binoculars is optional and off by default; only load/run it when
+            # it carries weight.
+            binoculars_ai = None
+            if self.weights.get("binoculars", 0.0) > 0:
+                logger.info("Running Binoculars analysis...")
+                binoculars_ai = self.binoculars_analyzer.ai_probability(cleaned_text)
+
             # Combine results
-            result = self._combine_results(result, roberta_result, gpt2_result, nltk_result)
+            result = self._combine_results(
+                result, roberta_result, gpt2_result, nltk_result, binoculars_ai
+            )
 
             # Determine final verdict
             result = self._determine_verdict(result)
@@ -184,6 +205,7 @@ class EnsembleAnalyzer(BaseAnalyzer):
         roberta_result: AnalysisResult,
         gpt2_result: AnalysisResult,
         nltk_result: AnalysisResult,
+        binoculars_ai: Optional[float] = None,
     ) -> AnalysisResult:
         """
         Combine results from all three analyzers.
@@ -231,10 +253,14 @@ class EnsembleAnalyzer(BaseAnalyzer):
             + self.weights["gpt2"] * gpt2_ai_score
             + self.weights["nltk"] * nltk_ai_score
         )
+        # Optional Binoculars term (only present when its weight > 0).
+        if binoculars_ai is not None:
+            ensemble_ai_score += self.weights.get("binoculars", 0.0) * binoculars_ai
 
         logger.info(
             f"Ensemble scores - RoBERTa: {roberta_ai_score:.3f}, "
             f"GPT-2: {gpt2_ai_score:.3f}, NLTK: {nltk_ai_score:.3f}, "
+            f"Binoculars: {binoculars_ai if binoculars_ai is not None else 'off'}, "
             f"Combined: {ensemble_ai_score:.3f}"
         )
 
@@ -285,6 +311,18 @@ class EnsembleAnalyzer(BaseAnalyzer):
                 indicates_ai=nltk_ai_score > 0.5,
             )
         )
+
+        # Optional Binoculars row (only when enabled), for transparency.
+        if binoculars_ai is not None:
+            result.add_score(
+                DetectionScore(
+                    name="Binoculars Score",
+                    value=binoculars_ai,
+                    weight=self.weights.get("binoculars", 0.0),
+                    interpretation=f"Binoculars cross-perplexity: {binoculars_ai:.2f} AI-prob",
+                    indicates_ai=binoculars_ai > 0.5,
+                )
+            )
 
         # Aggregate reported metrics from the analyzers that actually run
         # (GPT-2 + NLTK), so a disabled RoBERTa placeholder cannot skew them.

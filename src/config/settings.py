@@ -185,9 +185,12 @@ class EnsembleConfig:
 
     # Fusion weights. RoBERTa stays disabled until a fine-tuned checkpoint is
     # wired in; GPT-2 is the strongest signal and dominates the blend.
+    # Binoculars is available but off by default (it needs a second model); to
+    # enable it, give it a non-zero weight and rebalance so the weights sum to 1.
     weight_roberta: float = 0.0
     weight_gpt2: float = 0.75
     weight_nltk: float = 0.25
+    weight_binoculars: float = 0.0
 
     # Verdict thresholds on the fused, calibrated AI-probability.
     ai_threshold: float = 0.70

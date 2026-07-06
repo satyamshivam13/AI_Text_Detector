@@ -70,6 +70,42 @@ def test_human_scale_perplexity_is_not_flagged_ai():
     assert combined.verdict in (Verdict.HUMAN_WRITTEN, Verdict.LIKELY_HUMAN, Verdict.UNCERTAIN)
 
 
+def test_binoculars_off_by_default_no_row_no_effect():
+    analyzer = EnsembleAnalyzer()
+    assert analyzer.weights["binoculars"] == 0.0
+
+    base_result = AnalysisResult(metrics=TextMetrics(total_words=40, unique_words=30))
+    roberta_result = analyzer._disabled_roberta_result()
+    gpt2_result = AnalysisResult(verdict=Verdict.LIKELY_AI, perplexity=58.0)
+    nltk_result = AnalysisResult(verdict=Verdict.LIKELY_HUMAN, perplexity=1200.0)
+
+    # binoculars_ai defaults to None -> no term, no row.
+    combined = analyzer._combine_results(base_result, roberta_result, gpt2_result, nltk_result)
+    names = [s.name for s in combined.scores]
+    assert "Binoculars Score" not in names
+
+
+def test_binoculars_contributes_when_weighted():
+    analyzer = EnsembleAnalyzer()
+    # Enable Binoculars and rebalance so weights still sum to 1.
+    analyzer.weights = {"roberta": 0.0, "gpt2": 0.5, "nltk": 0.2, "binoculars": 0.3}
+
+    base_result = AnalysisResult(metrics=TextMetrics(total_words=40, unique_words=30))
+    roberta_result = analyzer._disabled_roberta_result()
+    gpt2_result = AnalysisResult(verdict=Verdict.LIKELY_HUMAN, perplexity=58.0)
+    nltk_result = AnalysisResult(verdict=Verdict.LIKELY_HUMAN, perplexity=1200.0)
+
+    combined = analyzer._combine_results(
+        base_result, roberta_result, gpt2_result, nltk_result, binoculars_ai=0.9
+    )
+    names = [s.name for s in combined.scores]
+    assert "Binoculars Score" in names
+    # The strong AI binoculars signal (0.9) at 0.3 weight lifts the ensemble
+    # score above what GPT-2+NLTK (both human-leaning here) would give alone.
+    ensemble_score = combined.scores[0].value
+    assert ensemble_score >= 0.3 * 0.9
+
+
 def test_disabled_roberta_excluded_from_agreement():
     analyzer = EnsembleAnalyzer()
     base_result = AnalysisResult(metrics=TextMetrics(total_words=40, unique_words=30))
