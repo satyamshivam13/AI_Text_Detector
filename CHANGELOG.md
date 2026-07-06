@@ -28,6 +28,10 @@ discriminating, and there is a real evaluation layer.
   `SECURITY.md`, issue/PR templates.
 - Configurable NLTK smoothing (`smoothing_method`) and a process-wide model
   cache.
+- Substantially expanded test suite (121 → 219 tests; ~92% coverage of `src/`
+  with the full suite), covering the evaluation layer, calibration, dataset
+  loader, visualization, analyzer verdict/explanation logic, and the Binoculars
+  compute path.
 - Pinnable Hub `revision` for GPT-2/RoBERTa loading (`GPT2Config`,
   `RoBERTaConfig`).
 
