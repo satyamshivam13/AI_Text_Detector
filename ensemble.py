@@ -20,7 +20,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 import streamlit as st
 
 from src.analyzers.ensemble_analyzer import EnsembleAnalyzer
-from src.config.settings import Verdict, get_settings
+from src.config.settings import get_settings
+from src.ui import inject_css, render_footer, render_verdict_card, render_warnings
 from src.utils.logging_config import get_logger, setup_logging
 from src.utils.ui_contract import (
     build_limitations_markdown,
@@ -46,15 +47,9 @@ st.set_page_config(
 
 # ─── Custom CSS ──────────────────────────────────────────────────────────────
 
-st.markdown(
-    """
-<style>
-    .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        max-width: 1200px;
-    }
-
+# Shared styling lives in src.ui.styles; only the ensemble header and analyzer
+# badges are local.
+inject_css("""
     .main-header-ensemble {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         padding: 2rem 2.5rem;
@@ -72,91 +67,6 @@ st.markdown(
         color: rgba(255, 255, 255, 0.85);
         margin: 0.5rem 0 0 0;
         font-size: 1.05rem;
-    }
-
-    .verdict-card {
-        padding: 1.5rem 2rem;
-        border-radius: 12px;
-        text-align: center;
-        margin: 1rem 0;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    .verdict-ai {
-        background: linear-gradient(135deg, #ff416c, #ff4b2b);
-        border: 2px solid #ff416c;
-    }
-    .verdict-likely-ai {
-        background: linear-gradient(135deg, #f7971e, #ffd200);
-        border: 2px solid #f7971e;
-    }
-    .verdict-uncertain {
-        background: linear-gradient(135deg, #a8a8a8, #6c6c6c);
-        border: 2px solid #a8a8a8;
-    }
-    .verdict-likely-human {
-        background: linear-gradient(135deg, #56ab2f, #a8e063);
-        border: 2px solid #56ab2f;
-    }
-    .verdict-human {
-        background: linear-gradient(135deg, #11998e, #38ef7d);
-        border: 2px solid #11998e;
-    }
-    .verdict-card h2 {
-        color: white;
-        margin: 0;
-        font-size: 1.6rem;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-    .verdict-card p {
-        color: rgba(255, 255, 255, 0.9);
-        margin: 0.5rem 0 0 0;
-    }
-
-    .metric-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1.2rem;
-        border-radius: 10px;
-        text-align: center;
-        transition: transform 0.2s ease;
-    }
-    .metric-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(102, 126, 234, 0.5);
-    }
-    .metric-value {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #667eea;
-    }
-    .metric-label {
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.6);
-        margin-top: 0.3rem;
-    }
-
-    .score-row {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        padding: 0.8rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-    }
-
-    .loading-info {
-        background: rgba(102, 126, 234, 0.1);
-        border: 1px solid rgba(102, 126, 234, 0.3);
-        border-radius: 10px;
-        padding: 1rem;
-        text-align: center;
-    }
-
-    .warning-box {
-        background: rgba(255, 170, 0, 0.1);
-        border: 1px solid rgba(255, 170, 0, 0.3);
-        border-radius: 8px;
-        padding: 0.8rem 1rem;
-        margin: 0.5rem 0;
     }
 
     .analyzer-badge {
@@ -179,23 +89,7 @@ st.markdown(
         background: linear-gradient(135deg, #56ab2f, #a8e063);
         color: white;
     }
-
-    .footer {
-        text-align: center;
-        padding: 2rem 0 1rem 0;
-        color: rgba(255, 255, 255, 0.3);
-        font-size: 0.8rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        margin-top: 3rem;
-    }
-
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-</style>
-""",
-    unsafe_allow_html=True,
-)
+""")
 
 
 # ─── Cached Resources ───────────────────────────────────────────────────────
@@ -396,52 +290,17 @@ if analyze_clicked and text_input:
         st.markdown("---")
         st.markdown("### 🎯 Detection Result")
 
-        verdict_class = {
-            Verdict.AI_GENERATED: "verdict-ai",
-            Verdict.LIKELY_AI: "verdict-likely-ai",
-            Verdict.UNCERTAIN: "verdict-uncertain",
-            Verdict.LIKELY_HUMAN: "verdict-likely-human",
-            Verdict.HUMAN_WRITTEN: "verdict-human",
-        }
-
-        verdict_emoji = {
-            Verdict.AI_GENERATED: "🤖",
-            Verdict.LIKELY_AI: "🤖",
-            Verdict.UNCERTAIN: "❓",
-            Verdict.LIKELY_HUMAN: "👤",
-            Verdict.HUMAN_WRITTEN: "👤",
-        }
-
-        css_class = verdict_class.get(result.verdict, "verdict-uncertain")
-        emoji = verdict_emoji.get(result.verdict, "❓")
-
-        st.markdown(
-            f"""
-        <div class="verdict-card {css_class}">
-            <h2>{emoji} {result.verdict.value}</h2>
-            <p>Confidence: {result.confidence:.1f}% ({result.confidence_level.value})
-            • Analysis Time: {result.analysis_time:.2f}s</p>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+        render_verdict_card(result)
 
         st.caption(build_result_reminder_markdown())
 
-        # -- Confidence Gauge -- ──
+        # -- Confidence Gauge --
         if show_gauge:
             fig_gauge = charts.create_metrics_gauge(result)
             st.plotly_chart(fig_gauge, use_container_width=True)
 
         # ── Warnings ──
-        if result.warnings:
-            for warning in result.warnings:
-                st.markdown(
-                    f"""
-                <div class="warning-box">⚠️ {warning}</div>
-                """,
-                    unsafe_allow_html=True,
-                )
+        render_warnings(result)
 
         # ── Explanation ──
         st.markdown("### 💡 Analysis Explanation")
@@ -608,14 +467,8 @@ if "text_example" in st.session_state:
 
 # ─── Footer ──────────────────────────────────────────────────────────────────
 
-st.markdown(
-    """
-<div class="footer">
-    <p>🎯 AI Text Detector v2.0.0 • Ensemble Analysis Engine (GPT-2 + NLTK)<br>
-    <small>⚠️ RoBERTa disabled (requires fine-tuning)</small></p>
-    <p>⚠️ Results are probabilistic estimates, not definitive classifications.</p>
-    <p>No text is stored or transmitted. All processing happens locally.</p>
-</div>
-""",
-    unsafe_allow_html=True,
+render_footer(
+    "Ensemble Analysis Engine (GPT-2 + NLTK)",
+    icon="🎯",
+    note="RoBERTa disabled (requires fine-tuning)",
 )

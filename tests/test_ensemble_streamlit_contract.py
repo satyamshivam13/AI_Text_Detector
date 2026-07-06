@@ -25,7 +25,12 @@ def test_ensemble_uses_shared_ui_contract_helpers() -> None:
 def test_ensemble_contains_launch_hint_and_probabilistic_warning() -> None:
     content = _read("ensemble.py")
     assert "streamlit run ensemble.py" in content
-    assert "probabilistic" in content.lower()
+    # The probabilistic-results disclaimer is rendered via the shared footer
+    # component (src.ui.components.render_footer), so assert the app uses it and
+    # that the shared component carries the warning.
+    assert "render_footer(" in content
+    shared_footer = _read("src/ui/components.py")
+    assert "probabilistic" in shared_footer.lower()
 
 
 def test_ensemble_keeps_analyzer_comparison_section() -> None:
