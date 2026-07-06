@@ -7,14 +7,13 @@ Chart generation for analysis results.
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
 
-import plotly.graph_objects as go
-import plotly.express as px
-from plotly.subplots import make_subplots
-import matplotlib.pyplot as plt
 import matplotlib
-import numpy as np
+import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 from src.config.settings import get_settings
 from src.models.result import AnalysisResult
@@ -51,8 +50,11 @@ class ChartGenerator:
             fig = go.Figure()
             fig.add_annotation(
                 text="No word frequency data available",
-                xref="paper", yref="paper",
-                x=0.5, y=0.5, showarrow=False,
+                xref="paper",
+                yref="paper",
+                x=0.5,
+                y=0.5,
+                showarrow=False,
                 font=dict(size=16, color="gray"),
             )
             fig.update_layout(
@@ -131,9 +133,14 @@ class ChartGenerator:
 
         if not word_frequencies:
             ax.text(
-                0.5, 0.5, "No word frequency data available",
-                transform=ax.transAxes, ha="center", va="center",
-                fontsize=14, color="gray",
+                0.5,
+                0.5,
+                "No word frequency data available",
+                transform=ax.transAxes,
+                ha="center",
+                va="center",
+                fontsize=14,
+                color="gray",
             )
             ax.set_title(title)
             return fig
@@ -153,8 +160,10 @@ class ChartGenerator:
                 bar.get_x() + bar.get_width() / 2.0,
                 bar.get_height() + 0.3,
                 str(count),
-                ha="center", va="bottom",
-                fontsize=9, fontweight="bold",
+                ha="center",
+                va="bottom",
+                fontsize=9,
+                fontweight="bold",
             )
 
         ax.set_title(title, fontsize=14, fontweight="bold", pad=15)
@@ -307,8 +316,11 @@ class ChartGenerator:
             fig = go.Figure()
             fig.add_annotation(
                 text="No sentence data available",
-                xref="paper", yref="paper",
-                x=0.5, y=0.5, showarrow=False,
+                xref="paper",
+                yref="paper",
+                x=0.5,
+                y=0.5,
+                showarrow=False,
             )
             return fig
 
@@ -326,7 +338,8 @@ class ChartGenerator:
                 name="Distribution",
                 hovertemplate="Length: %{x}<br>Count: %{y}<extra></extra>",
             ),
-            row=1, col=1,
+            row=1,
+            col=1,
         )
 
         # Line chart showing trend
@@ -340,14 +353,18 @@ class ChartGenerator:
                 name="Sentence Length",
                 hovertemplate="Sentence %{x}: %{y} words<extra></extra>",
             ),
-            row=1, col=2,
+            row=1,
+            col=2,
         )
 
         # Add mean line
         mean_length = sum(sentence_lengths) / len(sentence_lengths)
         fig.add_hline(
-            y=mean_length, row=1, col=2,
-            line_dash="dash", line_color="rgba(255,170,0,0.7)",
+            y=mean_length,
+            row=1,
+            col=2,
+            line_dash="dash",
+            line_color="rgba(255,170,0,0.7)",
             annotation_text=f"Mean: {mean_length:.1f}",
             annotation_font_color="rgba(255,170,0,0.9)",
         )

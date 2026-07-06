@@ -10,12 +10,10 @@ from __future__ import annotations
 import math
 from typing import Optional
 
-import numpy as np
 import torch
 from transformers import GPT2LMHeadModel, GPT2TokenizerFast
 
 from src.analyzers.base_analyzer import BaseAnalyzer
-from src.config.settings import get_settings
 from src.models.result import AnalysisResult, DetectionScore
 from src.utils.logging_config import get_logger
 from src.utils.text_processing import TextProcessor
@@ -54,6 +52,7 @@ class GPT2Analyzer(BaseAnalyzer):
             self._tokenizer = GPT2TokenizerFast.from_pretrained(
                 self.settings.gpt2.model_name,
                 cache_dir=self.settings.gpt2.cache_dir,
+                revision=self.settings.gpt2.revision,
             )
         return self._tokenizer
 
@@ -62,9 +61,13 @@ class GPT2Analyzer(BaseAnalyzer):
         """Lazy-load the GPT-2 model."""
         if self._model is None:
             logger.info("Loading GPT-2 model...")
+            # use_safetensors avoids loading pickled weights (a known RCE class
+            # in torch.load); revision pins a reproducible Hub commit.
             self._model = GPT2LMHeadModel.from_pretrained(
                 self.settings.gpt2.model_name,
                 cache_dir=self.settings.gpt2.cache_dir,
+                revision=self.settings.gpt2.revision,
+                use_safetensors=True,
             )
             self._model.to(self.device)
             self._model.eval()
@@ -220,62 +223,72 @@ class GPT2Analyzer(BaseAnalyzer):
         logger.info("Computing GPT-2 perplexity...")
         result.perplexity = self._compute_perplexity_gpt2(text)
 
-        result.add_score(DetectionScore(
-            name="GPT-2 Perplexity",
-            value=result.perplexity,
-            weight=0.40,
-            interpretation=self._interpret_gpt2_perplexity(result.perplexity),
-            indicates_ai=result.perplexity < self.thresholds.perplexity_medium,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="GPT-2 Perplexity",
+                value=result.perplexity,
+                weight=0.40,
+                interpretation=self._interpret_gpt2_perplexity(result.perplexity),
+                indicates_ai=result.perplexity < self.thresholds.perplexity_medium,
+            )
+        )
 
         # 2. Compute burstiness
         logger.info("Computing burstiness...")
         burstiness, _ = TextProcessor.compute_burstiness(text)
         result.burstiness = burstiness
 
-        result.add_score(DetectionScore(
-            name="Burstiness",
-            value=result.burstiness,
-            weight=0.20,
-            interpretation=self._interpret_burstiness(result.burstiness),
-            indicates_ai=result.burstiness < self.thresholds.burstiness_medium,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="Burstiness",
+                value=result.burstiness,
+                weight=0.20,
+                interpretation=self._interpret_burstiness(result.burstiness),
+                indicates_ai=result.burstiness < self.thresholds.burstiness_medium,
+            )
+        )
 
         # 3. Compute lexical diversity
         logger.info("Computing lexical diversity...")
         result.lexical_diversity = result.metrics.lexical_diversity
 
-        result.add_score(DetectionScore(
-            name="Lexical Diversity",
-            value=result.lexical_diversity,
-            weight=0.15,
-            interpretation=self._interpret_lexical_diversity(result.lexical_diversity),
-            indicates_ai=result.lexical_diversity < self.thresholds.lexical_diversity_medium,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="Lexical Diversity",
+                value=result.lexical_diversity,
+                weight=0.15,
+                interpretation=self._interpret_lexical_diversity(result.lexical_diversity),
+                indicates_ai=result.lexical_diversity < self.thresholds.lexical_diversity_medium,
+            )
+        )
 
         # 4. Compute sentence variance
         logger.info("Computing sentence variance...")
         result.sentence_variance = TextProcessor.compute_sentence_variance(text)
 
-        result.add_score(DetectionScore(
-            name="Sentence Variance",
-            value=result.sentence_variance,
-            weight=0.15,
-            interpretation=self._interpret_sentence_variance(result.sentence_variance),
-            indicates_ai=result.sentence_variance < 0.25,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="Sentence Variance",
+                value=result.sentence_variance,
+                weight=0.15,
+                interpretation=self._interpret_sentence_variance(result.sentence_variance),
+                indicates_ai=result.sentence_variance < 0.25,
+            )
+        )
 
         # 5. Compute token-level entropy (GPT-2 specific)
         logger.info("Computing token entropy...")
         try:
             entropy = self._compute_token_entropy(text)
-            result.add_score(DetectionScore(
-                name="Token Entropy",
-                value=entropy,
-                weight=0.10,
-                interpretation=self._interpret_entropy(entropy),
-                indicates_ai=entropy < 6.0,
-            ))
+            result.add_score(
+                DetectionScore(
+                    name="Token Entropy",
+                    value=entropy,
+                    weight=0.10,
+                    interpretation=self._interpret_entropy(entropy),
+                    indicates_ai=entropy < 6.0,
+                )
+            )
         except Exception as e:
             logger.warning(f"Token entropy computation failed: {e}")
 

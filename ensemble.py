@@ -1,4 +1,4 @@
-﻿"""  
+﻿"""
 AI Text Detector — Ensemble Analysis
 ======================================
 
@@ -11,8 +11,8 @@ Usage:
     streamlit run ensemble.py
 """
 
-import sys
 import os
+import sys
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
@@ -20,7 +20,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 import streamlit as st
 
 from src.analyzers.ensemble_analyzer import EnsembleAnalyzer
-from src.config.settings import Verdict, get_settings
+from src.config.settings import get_settings
+from src.ui import (
+    inject_css,
+    render_error,
+    render_footer,
+    render_verdict_card,
+    render_warnings,
+)
 from src.utils.logging_config import get_logger, setup_logging
 from src.utils.ui_contract import (
     build_limitations_markdown,
@@ -46,14 +53,9 @@ st.set_page_config(
 
 # ─── Custom CSS ──────────────────────────────────────────────────────────────
 
-st.markdown("""
-<style>
-    .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        max-width: 1200px;
-    }
-
+# Shared styling lives in src.ui.styles; only the ensemble header and analyzer
+# badges are local.
+inject_css("""
     .main-header-ensemble {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         padding: 2rem 2.5rem;
@@ -71,91 +73,6 @@ st.markdown("""
         color: rgba(255, 255, 255, 0.85);
         margin: 0.5rem 0 0 0;
         font-size: 1.05rem;
-    }
-
-    .verdict-card {
-        padding: 1.5rem 2rem;
-        border-radius: 12px;
-        text-align: center;
-        margin: 1rem 0;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    .verdict-ai {
-        background: linear-gradient(135deg, #ff416c, #ff4b2b);
-        border: 2px solid #ff416c;
-    }
-    .verdict-likely-ai {
-        background: linear-gradient(135deg, #f7971e, #ffd200);
-        border: 2px solid #f7971e;
-    }
-    .verdict-uncertain {
-        background: linear-gradient(135deg, #a8a8a8, #6c6c6c);
-        border: 2px solid #a8a8a8;
-    }
-    .verdict-likely-human {
-        background: linear-gradient(135deg, #56ab2f, #a8e063);
-        border: 2px solid #56ab2f;
-    }
-    .verdict-human {
-        background: linear-gradient(135deg, #11998e, #38ef7d);
-        border: 2px solid #11998e;
-    }
-    .verdict-card h2 {
-        color: white;
-        margin: 0;
-        font-size: 1.6rem;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-    .verdict-card p {
-        color: rgba(255, 255, 255, 0.9);
-        margin: 0.5rem 0 0 0;
-    }
-
-    .metric-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1.2rem;
-        border-radius: 10px;
-        text-align: center;
-        transition: transform 0.2s ease;
-    }
-    .metric-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(102, 126, 234, 0.5);
-    }
-    .metric-value {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #667eea;
-    }
-    .metric-label {
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.6);
-        margin-top: 0.3rem;
-    }
-
-    .score-row {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        padding: 0.8rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-    }
-
-    .loading-info {
-        background: rgba(102, 126, 234, 0.1);
-        border: 1px solid rgba(102, 126, 234, 0.3);
-        border-radius: 10px;
-        padding: 1rem;
-        text-align: center;
-    }
-
-    .warning-box {
-        background: rgba(255, 170, 0, 0.1);
-        border: 1px solid rgba(255, 170, 0, 0.3);
-        border-radius: 8px;
-        padding: 0.8rem 1rem;
-        margin: 0.5rem 0;
     }
 
     .analyzer-badge {
@@ -178,31 +95,23 @@ st.markdown("""
         background: linear-gradient(135deg, #56ab2f, #a8e063);
         color: white;
     }
-
-    .footer {
-        text-align: center;
-        padding: 2rem 0 1rem 0;
-        color: rgba(255, 255, 255, 0.3);
-        font-size: 0.8rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        margin-top: 3rem;
-    }
-
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
+""")
 
 
 # ─── Cached Resources ───────────────────────────────────────────────────────
 
-@st.cache_resource(show_spinner="Loading ensemble models... (this may take 2-3 minutes on first run)")
+
+@st.cache_resource(
+    show_spinner="Loading ensemble models... (this may take 2-3 minutes on first run)"
+)
 def load_analyzer() -> EnsembleAnalyzer:
     """Load and cache the Ensemble analyzer."""
     analyzer = EnsembleAnalyzer()
-    # Force model loading
-    _ = analyzer.roberta_analyzer
+    # Warm the analyzers that actually contribute to the blend. RoBERTa is
+    # intentionally NOT loaded here: it is disabled (weight 0) and warming it
+    # would trigger a large download and memory use for no contribution.
+    if analyzer.weights.get("roberta", 0.0) > 0:
+        _ = analyzer.roberta_analyzer
     _ = analyzer.gpt2_analyzer
     _ = analyzer.nltk_analyzer
     return analyzer
@@ -236,30 +145,28 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("### ℹ️ About")
-    st.markdown(
-        """
-        **Ensemble Analyzer** combines two powerful detection methods:
-        
-        🧠 **GPT-2** (65% weight)
-        - Deep perplexity analysis
-        - Transformer-based patterns
-        
-        📊 **NLTK** (35% weight)
-        - Statistical n-gram models
-        - Linguistic features
-        
-        ⚠️ **Note**: RoBERTa is disabled (requires fine-tuning).
-        See README for fine-tuning guide.
-        
-        **Benchmarks:** pending validation
-        
-        **Processing:** 5-10 seconds
-        
-        **Memory:** 2-3 GB RAM
-        
-        **Version:** 2.0.0
-        """
-    )
+    st.markdown("""
+**Ensemble Analyzer** combines two calibrated detection signals:
+
+🧠 **GPT-2** (75% weight)
+- Deep perplexity analysis
+- Transformer-based patterns
+
+📊 **NLTK** (25% weight)
+- Statistical n-gram models
+- Linguistic features
+
+⚠️ **Note**: RoBERTa is disabled (weight 0, not loaded) until a fine-tuned
+checkpoint is wired in. See README.
+
+**Benchmarks:** see `docs/benchmarks/`
+
+**Processing:** 5-10 seconds
+
+**Memory:** 2-3 GB RAM
+
+**Version:** 2.0.0
+""")
 
     st.markdown("---")
     st.markdown(
@@ -273,18 +180,18 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("### ?? Why Ensemble?")
-    
+
     st.markdown("""
-    Combining multiple models provides:
-    
-    ✅ **Multi-signal** - Combines GPT-2 perplexity with NLTK statistics
-    
-    ✅ **Consensus** - Aggregates analyzer outputs into a single verdict
-    
-    ✅ **Transparent** - See how each analyzer votes
-    
-    ✅ **Weighted fusion** - GPT-2 65% / NLTK 35% (configurable)
-    """)
+Combining multiple models provides:
+
+✅ **Multi-signal** - Combines GPT-2 perplexity with NLTK statistics
+
+✅ **Consensus** - Aggregates analyzer outputs into a single verdict
+
+✅ **Transparent** - See how each analyzer votes
+
+✅ **Weighted fusion** - GPT-2 75% / NLTK 25% (configurable)
+""")
 
     st.markdown("---")
     st.markdown(build_limitations_markdown())
@@ -292,7 +199,8 @@ with st.sidebar:
 # ─── Main Content ────────────────────────────────────────────────────────────
 
 # Header
-st.markdown("""
+st.markdown(
+    """
 <div class="main-header-ensemble">
     <h1>🎯 AI Text Detector — Ensemble</h1>
     <p>
@@ -301,15 +209,21 @@ st.markdown("""
         • Multi-Signal Detection • Multi-Model Consensus • Experimental
     </p>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # Model loading notice
-st.markdown("""
+st.markdown(
+    """
 <div class="loading-info">
-    💡 <strong>First-time setup:</strong> The ensemble will download RoBERTa (~500MB), 
-    GPT-2 (~500MB), and NLTK data (~50MB). Subsequent runs will be much faster.
+    💡 <strong>First-time setup:</strong> The ensemble will download
+    GPT-2 (~500MB) and NLTK data (~50MB). Subsequent runs will be much faster.
+    (RoBERTa is disabled and not downloaded.)
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 st.markdown("")
 
@@ -382,46 +296,17 @@ if analyze_clicked and text_input:
         st.markdown("---")
         st.markdown("### 🎯 Detection Result")
 
-        verdict_class = {
-            Verdict.AI_GENERATED: "verdict-ai",
-            Verdict.LIKELY_AI: "verdict-likely-ai",
-            Verdict.UNCERTAIN: "verdict-uncertain",
-            Verdict.LIKELY_HUMAN: "verdict-likely-human",
-            Verdict.HUMAN_WRITTEN: "verdict-human",
-        }
-
-        verdict_emoji = {
-            Verdict.AI_GENERATED: "🤖",
-            Verdict.LIKELY_AI: "🤖",
-            Verdict.UNCERTAIN: "❓",
-            Verdict.LIKELY_HUMAN: "👤",
-            Verdict.HUMAN_WRITTEN: "👤",
-        }
-
-        css_class = verdict_class.get(result.verdict, "verdict-uncertain")
-        emoji = verdict_emoji.get(result.verdict, "❓")
-
-        st.markdown(f"""
-        <div class="verdict-card {css_class}">
-            <h2>{emoji} {result.verdict.value}</h2>
-            <p>Confidence: {result.confidence:.1f}% ({result.confidence_level.value})
-            • Analysis Time: {result.analysis_time:.2f}s</p>
-        </div>
-        """, unsafe_allow_html=True)
+        render_verdict_card(result)
 
         st.caption(build_result_reminder_markdown())
 
-        # -- Confidence Gauge -- ──
+        # -- Confidence Gauge --
         if show_gauge:
             fig_gauge = charts.create_metrics_gauge(result)
             st.plotly_chart(fig_gauge, use_container_width=True)
 
         # ── Warnings ──
-        if result.warnings:
-            for warning in result.warnings:
-                st.markdown(f"""
-                <div class="warning-box">⚠️ {warning}</div>
-                """, unsafe_allow_html=True)
+        render_warnings(result)
 
         # ── Explanation ──
         st.markdown("### 💡 Analysis Explanation")
@@ -432,12 +317,15 @@ if analyze_clicked and text_input:
 
         for score in result.scores:
             indicator = "🔴" if score.indicates_ai else "🟢"
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div class="score-row">
                 {indicator} <strong>{score.name}</strong>: {score.value:.4f}
                 (Weight: {score.weight:.0%}) — <em>{score.interpretation}</em>
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         # ── Visualizations ──
         st.markdown("### 📈 Visualizations")
@@ -471,19 +359,24 @@ if analyze_clicked and text_input:
         if show_comparison:
             with tab_objects[tab_idx]:
                 st.markdown("#### Individual Analyzer Results")
-                
+
                 # Extract individual scores
                 scores_data = []
                 for score in result.scores[1:]:  # Skip ensemble score
-                    scores_data.append({
-                        "Analyzer": score.name.replace(" Score", "").replace(" Perplexity Score", "").replace(" Statistical Score", ""),
-                        "Value": f"{score.value:.2%}",
-                        "Weight": f"{score.weight:.0%}",
-                        "Verdict": score.interpretation
-                    })
-                
+                    scores_data.append(
+                        {
+                            "Analyzer": score.name.replace(" Score", "")
+                            .replace(" Perplexity Score", "")
+                            .replace(" Statistical Score", ""),
+                            "Value": f"{score.value:.2%}",
+                            "Weight": f"{score.weight:.0%}",
+                            "Verdict": score.interpretation,
+                        }
+                    )
+
                 if scores_data:
                     import pandas as pd
+
                     df = pd.DataFrame(scores_data)
                     st.dataframe(df, hide_index=True, use_container_width=True)
 
@@ -512,13 +405,13 @@ if analyze_clicked and text_input:
 
     except Exception as e:
         progress_bar.empty()
-        logger.error(f"Application error: {e}", exc_info=True)
-        st.error(f"❌ An error occurred: {str(e)}")
+        render_error(e)
         st.info(
             "💡 This might be due to:\n"
-            "- Insufficient memory (ensemble requires 4-6GB RAM)\n"
+            "- Insufficient memory (ensemble requires 2-3GB RAM)\n"
             "- Network issues during model download\n"
-            "- Try individual analyzers (`streamlit run app.py` or `streamlit run test.py`) as alternatives"
+            "- Try individual analyzers (`streamlit run app.py` or "
+            "`streamlit run gpt2_app.py`) as alternatives"
         )
 
 # ─── Empty State ─────────────────────────────────────────────────────────────
@@ -564,11 +457,14 @@ elif not text_input:
             st.session_state["text_example"] = example_human
             st.rerun()
 
-    st.markdown("""
+    st.markdown(
+        """
     <div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.4);">
         👆 Paste text above or use an example, then click <strong>Analyze with Ensemble</strong>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 # Handle example text injection
 if "text_example" in st.session_state:
@@ -576,18 +472,8 @@ if "text_example" in st.session_state:
 
 # ─── Footer ──────────────────────────────────────────────────────────────────
 
-st.markdown("""
-<div class="footer">
-    <p>🎯 AI Text Detector v2.0.0 • Ensemble Analysis Engine (GPT-2 + NLTK)<br>
-    <small>⚠️ RoBERTa disabled (requires fine-tuning)</small></p>
-    <p>⚠️ Results are probabilistic estimates, not definitive classifications.</p>
-    <p>No text is stored or transmitted. All processing happens locally.</p>
-</div>
-""", unsafe_allow_html=True)
-
-
-
-
-
-
-
+render_footer(
+    "Ensemble Analysis Engine (GPT-2 + NLTK)",
+    icon="🎯",
+    note="RoBERTa disabled (requires fine-tuning)",
+)

@@ -9,15 +9,9 @@ from __future__ import annotations
 
 import time
 from abc import ABC, abstractmethod
-from typing import Optional
 
-from src.config.settings import (
-    ConfidenceLevel,
-    ThresholdConfig,
-    Verdict,
-    get_settings,
-)
-from src.models.result import AnalysisResult, DetectionScore
+from src.config.settings import ConfidenceLevel, Verdict, get_settings
+from src.models.result import AnalysisResult
 from src.utils.logging_config import get_logger
 from src.utils.text_processing import TextProcessor
 
@@ -47,6 +41,7 @@ class BaseAnalyzer(ABC):
 
         # Validate input
         cleaned_text = TextProcessor.clean_text(text)
+        cleaned_text = self._apply_input_cap(cleaned_text, result)
         result.text_length = len(cleaned_text)
 
         if not cleaned_text:
@@ -89,7 +84,8 @@ class BaseAnalyzer(ABC):
             result.verdict = Verdict.UNCERTAIN
             result.confidence = 0.0
             result.confidence_level = ConfidenceLevel.VERY_LOW
-            result.add_warning(f"Analysis error: {str(e)}")
+            # Generic, non-leaking message; the full traceback is logged above.
+            result.add_warning("An error occurred during analysis (details logged server-side).")
             result.explanation = "An error occurred during analysis."
 
         result.analysis_time = round(time.time() - start_time, 3)
@@ -102,6 +98,21 @@ class BaseAnalyzer(ABC):
         )
 
         return result
+
+    def _apply_input_cap(self, cleaned_text: str, result: AnalysisResult) -> str:
+        """Truncate over-long input to the configured cap, adding a warning.
+
+        Bounds worst-case compute (notably the GPT-2 sliding window) on very
+        long input. Returns the possibly-truncated text.
+        """
+        max_chars = self.thresholds.max_input_chars
+        if len(cleaned_text) > max_chars:
+            result.add_warning(
+                f"Input was truncated to {max_chars} characters for analysis "
+                f"(received {len(cleaned_text)})."
+            )
+            return cleaned_text[:max_chars]
+        return cleaned_text
 
     @abstractmethod
     def _perform_analysis(self, text: str, result: AnalysisResult) -> AnalysisResult:
@@ -181,12 +192,14 @@ class BaseAnalyzer(ABC):
             scores.append(("sentence_variance", 0.0, False))
 
         # Weighted average
-        weights = {"perplexity": 0.40, "burstiness": 0.25,
-                    "lexical_diversity": 0.15, "sentence_variance": 0.20}
+        weights = {
+            "perplexity": 0.40,
+            "burstiness": 0.25,
+            "lexical_diversity": 0.15,
+            "sentence_variance": 0.20,
+        }
 
-        weighted_sum = sum(
-            score * weights.get(name, 0.25) for name, score, _ in scores
-        )
+        weighted_sum = sum(score * weights.get(name, 0.25) for name, score, _ in scores)
         total_weight = sum(weights.get(name, 0.25) for name, _, _ in scores)
         ai_probability = weighted_sum / total_weight if total_weight > 0 else 0.5
 
@@ -282,13 +295,9 @@ class BaseAnalyzer(ABC):
 
         # Sentence variance
         if result.sentence_variance < 0.15:
-            parts.append(
-                "Sentence lengths are very uniform, a common AI characteristic."
-            )
+            parts.append("Sentence lengths are very uniform, a common AI characteristic.")
         elif result.sentence_variance > 0.50:
-            parts.append(
-                "Sentence lengths show high variation, typical of natural writing."
-            )
+            parts.append("Sentence lengths show high variation, typical of natural writing.")
 
         # Warnings
         if result.warnings:

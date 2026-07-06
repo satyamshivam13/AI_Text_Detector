@@ -2,7 +2,6 @@
 Tests for text processing utilities.
 """
 
-import pytest
 from src.utils.text_processing import TextProcessor
 
 
@@ -112,7 +111,7 @@ class TestMetrics:
     def test_sentence_lengths(self, sample_ai_text):
         metrics = TextProcessor.compute_metrics(sample_ai_text)
         assert isinstance(metrics.sentence_lengths, list)
-        assert all(isinstance(l, int) and l >= 0 for l in metrics.sentence_lengths)
+        assert all(isinstance(n, int) and n >= 0 for n in metrics.sentence_lengths)
 
 
 class TestBurstiness:
@@ -157,7 +156,8 @@ class TestSentenceVariance:
             "Short. "
             "This is a much longer sentence with many more words in it that goes on and on. "
             "Medium length here. "
-            "Another very very very long sentence that contains a large number of different words and phrases."
+            "Another very very very long sentence that contains a large "
+            "number of different words and phrases."
         )
         variance = TextProcessor.compute_sentence_variance(text)
         assert variance > 0.3  # Should be higher for mixed lengths

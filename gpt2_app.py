@@ -6,11 +6,11 @@ Streamlit application using GPT-2 transformer model
 for advanced AI-generated text detection.
 
 Usage:
-    streamlit run test.py
+    streamlit run gpt2_app.py
 """
 
-import sys
 import os
+import sys
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
@@ -18,7 +18,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 import streamlit as st
 
 from src.analyzers.gpt2_analyzer import GPT2Analyzer
-from src.config.settings import Verdict, get_settings
+from src.config.settings import get_settings
+from src.ui import (
+    inject_css,
+    render_error,
+    render_footer,
+    render_verdict_card,
+    render_warnings,
+)
 from src.utils.logging_config import get_logger, setup_logging
 from src.utils.ui_contract import (
     build_limitations_markdown,
@@ -44,14 +51,9 @@ st.set_page_config(
 
 # ─── Custom CSS ──────────────────────────────────────────────────────────────
 
-st.markdown("""
-<style>
-    .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        max-width: 1200px;
-    }
-
+# Shared styling lives in src.ui.styles; only the GPT-2-specific header and
+# pink accents are local.
+inject_css("""
     .main-header-gpt2 {
         background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         padding: 2rem 2.5rem;
@@ -70,115 +72,22 @@ st.markdown("""
         margin: 0.5rem 0 0 0;
         font-size: 1.05rem;
     }
-
-    .verdict-card {
-        padding: 1.5rem 2rem;
-        border-radius: 12px;
-        text-align: center;
-        margin: 1rem 0;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    .verdict-ai {
-        background: linear-gradient(135deg, #ff416c, #ff4b2b);
-        border: 2px solid #ff416c;
-    }
-    .verdict-likely-ai {
-        background: linear-gradient(135deg, #f7971e, #ffd200);
-        border: 2px solid #f7971e;
-    }
-    .verdict-uncertain {
-        background: linear-gradient(135deg, #a8a8a8, #6c6c6c);
-        border: 2px solid #a8a8a8;
-    }
-    .verdict-likely-human {
-        background: linear-gradient(135deg, #56ab2f, #a8e063);
-        border: 2px solid #56ab2f;
-    }
-    .verdict-human {
-        background: linear-gradient(135deg, #11998e, #38ef7d);
-        border: 2px solid #11998e;
-    }
-    .verdict-card h2 {
-        color: white;
-        margin: 0;
-        font-size: 1.6rem;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-    .verdict-card p {
-        color: rgba(255, 255, 255, 0.9);
-        margin: 0.5rem 0 0 0;
-    }
-
-    .metric-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 1.2rem;
-        border-radius: 10px;
-        text-align: center;
-        transition: transform 0.2s ease;
-    }
+    /* GPT-2 pink accents override the shared blue */
     .metric-card:hover {
-        transform: translateY(-2px);
         border-color: rgba(240, 147, 251, 0.5);
     }
     .metric-value {
-        font-size: 1.8rem;
-        font-weight: 700;
         color: #f093fb;
     }
-    .metric-label {
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.6);
-        margin-top: 0.3rem;
-    }
-    .metric-interpretation {
-        font-size: 0.75rem;
-        color: rgba(255, 255, 255, 0.45);
-        margin-top: 0.2rem;
-        font-style: italic;
-    }
-
-    .score-row {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        padding: 0.8rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-    }
-
     .loading-info {
         background: rgba(240, 147, 251, 0.1);
         border: 1px solid rgba(240, 147, 251, 0.3);
-        border-radius: 10px;
-        padding: 1rem;
-        text-align: center;
     }
-
-    .warning-box {
-        background: rgba(255, 170, 0, 0.1);
-        border: 1px solid rgba(255, 170, 0, 0.3);
-        border-radius: 8px;
-        padding: 0.8rem 1rem;
-        margin: 0.5rem 0;
-    }
-
-    .footer {
-        text-align: center;
-        padding: 2rem 0 1rem 0;
-        color: rgba(255, 255, 255, 0.3);
-        font-size: 0.8rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        margin-top: 3rem;
-    }
-
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
+""")
 
 
 # ─── Cached Resources ───────────────────────────────────────────────────────
+
 
 @st.cache_resource(show_spinner="Loading GPT-2 model... (this may take a minute on first run)")
 def load_analyzer() -> GPT2Analyzer:
@@ -218,8 +127,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("### ℹ️ About")
-    st.markdown(
-        """
+    st.markdown("""
         **GPT-2 Deep Analyzer** uses the GPT-2 transformer model
         (124M parameters) for advanced perplexity-based detection.
 
@@ -231,14 +139,13 @@ with st.sidebar:
         **Note:** First run downloads the GPT-2 model (~500MB).
 
         **Version:** 2.0.0
-        """
-    )
+        """)
 
     st.markdown("---")
     st.markdown(
         build_mode_guidance_markdown(
             mode_label="GPT-2",
-            launch_command="streamlit run test.py",
+            launch_command="streamlit run gpt2_app.py",
             speed_hint="2-5s",
             memory_hint="2-3 GB",
         )
@@ -276,20 +183,26 @@ with st.sidebar:
 # ─── Main Content ────────────────────────────────────────────────────────────
 
 # Header
-st.markdown("""
+st.markdown(
+    """
 <div class="main-header-gpt2">
     <h1>🧠 AI Text Detector</h1>
     <p>GPT-2 Deep Analysis • Transformer-Based Detection • Advanced Pattern Recognition</p>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # Model loading notice
-st.markdown("""
+st.markdown(
+    """
 <div class="loading-info">
     💡 <strong>First-time setup:</strong> The GPT-2 model (~500MB) will be downloaded
     and cached automatically. Subsequent runs will be much faster.
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 st.markdown("")
 
@@ -362,46 +275,17 @@ if analyze_clicked and text_input:
         st.markdown("---")
         st.markdown("### 🎯 Detection Result")
 
-        verdict_class = {
-            Verdict.AI_GENERATED: "verdict-ai",
-            Verdict.LIKELY_AI: "verdict-likely-ai",
-            Verdict.UNCERTAIN: "verdict-uncertain",
-            Verdict.LIKELY_HUMAN: "verdict-likely-human",
-            Verdict.HUMAN_WRITTEN: "verdict-human",
-        }
-
-        verdict_emoji = {
-            Verdict.AI_GENERATED: "🤖",
-            Verdict.LIKELY_AI: "🤖",
-            Verdict.UNCERTAIN: "❓",
-            Verdict.LIKELY_HUMAN: "👤",
-            Verdict.HUMAN_WRITTEN: "👤",
-        }
-
-        css_class = verdict_class.get(result.verdict, "verdict-uncertain")
-        emoji = verdict_emoji.get(result.verdict, "❓")
-
-        st.markdown(f"""
-        <div class="verdict-card {css_class}">
-            <h2>{emoji} {result.verdict.value}</h2>
-            <p>Confidence: {result.confidence:.1f}% ({result.confidence_level.value})
-            • Analysis Time: {result.analysis_time:.2f}s</p>
-        </div>
-        """, unsafe_allow_html=True)
+        render_verdict_card(result)
 
         st.caption(build_result_reminder_markdown())
 
-        # -- Confidence Gauge -- ──
+        # -- Confidence Gauge --
         if show_gauge:
             fig_gauge = charts.create_metrics_gauge(result)
             st.plotly_chart(fig_gauge, use_container_width=True)
 
         # ── Warnings ──
-        if result.warnings:
-            for warning in result.warnings:
-                st.markdown(f"""
-                <div class="warning-box">⚠️ {warning}</div>
-                """, unsafe_allow_html=True)
+        render_warnings(result)
 
         # ── Key Metrics ──
         st.markdown("### 📊 Key Metrics")
@@ -409,7 +293,8 @@ if analyze_clicked and text_input:
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div class="metric-card">
                 <div class="metric-value">{result.perplexity:.1f}</div>
                 <div class="metric-label">GPT-2 Perplexity</div>
@@ -417,10 +302,13 @@ if analyze_clicked and text_input:
                     {"Low = AI-like" if result.perplexity < 200 else "High = Human-like"}
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         with col2:
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div class="metric-card">
                 <div class="metric-value">{result.burstiness:.3f}</div>
                 <div class="metric-label">Burstiness</div>
@@ -428,10 +316,13 @@ if analyze_clicked and text_input:
                     {"Uniform" if result.burstiness < 0.25 else "Natural variation"}
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         with col3:
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div class="metric-card">
                 <div class="metric-value">{result.lexical_diversity:.1%}</div>
                 <div class="metric-label">Lexical Diversity</div>
@@ -439,10 +330,13 @@ if analyze_clicked and text_input:
                     {"Low" if result.lexical_diversity < 0.5 else "Good"} vocabulary variety
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         with col4:
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div class="metric-card">
                 <div class="metric-value">{result.sentence_variance:.3f}</div>
                 <div class="metric-label">Sentence Variance</div>
@@ -450,7 +344,9 @@ if analyze_clicked and text_input:
                     {"Uniform" if result.sentence_variance < 0.25 else "Varied"} structure
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         # ── Explanation ──
         st.markdown("### 💡 Analysis Explanation")
@@ -461,12 +357,15 @@ if analyze_clicked and text_input:
 
         for score in result.scores:
             indicator = "🔴" if score.indicates_ai else "🟢"
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div class="score-row">
                 {indicator} <strong>{score.name}</strong>: {score.value:.4f}
                 (Weight: {score.weight:.0%}) — <em>{score.interpretation}</em>
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
         # ── Visualizations ──
         st.markdown("### 📈 Visualizations")
@@ -500,9 +399,7 @@ if analyze_clicked and text_input:
         if show_sentence_chart:
             with tab_objects[tab_idx]:
                 if result.metrics.sentence_lengths:
-                    fig_sent = charts.create_sentence_length_chart(
-                        result.metrics.sentence_lengths
-                    )
+                    fig_sent = charts.create_sentence_length_chart(result.metrics.sentence_lengths)
                     st.plotly_chart(fig_sent, use_container_width=True)
                 else:
                     st.info("Not enough sentences for length analysis.")
@@ -532,8 +429,7 @@ if analyze_clicked and text_input:
 
     except Exception as e:
         progress_bar.empty()
-        logger.error(f"Application error: {e}", exc_info=True)
-        st.error(f"❌ An error occurred: {str(e)}")
+        render_error(e)
         st.info(
             "💡 This might be due to:\n"
             "- Insufficient memory for GPT-2 model\n"
@@ -584,11 +480,14 @@ elif not text_input:
             st.session_state["text_example"] = example_human
             st.rerun()
 
-    st.markdown("""
+    st.markdown(
+        """
     <div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.4);">
         👆 Paste text above or use an example, then click <strong>Deep Analyze with GPT-2</strong>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 # Handle example text injection
 if "text_example" in st.session_state:
@@ -596,17 +495,4 @@ if "text_example" in st.session_state:
 
 # ─── Footer ──────────────────────────────────────────────────────────────────
 
-st.markdown("""
-<div class="footer">
-    <p>🧠 AI Text Detector v2.0.0 • GPT-2 Deep Analysis Engine</p>
-    <p>⚠️ Results are probabilistic estimates, not definitive classifications.</p>
-    <p>No text is stored or transmitted. All processing happens locally.</p>
-</div>
-""", unsafe_allow_html=True)
-
-
-
-
-
-
-
+render_footer("GPT-2 Deep Analysis Engine", icon="🧠")

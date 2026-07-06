@@ -54,3 +54,6 @@ Thumbs.db
 # Distribution
 *.tar.gz
 *.whl
+# Local tooling artifacts (not part of the repo)
+.obsidian/
+graphify-out/

@@ -2,9 +2,10 @@
 Shared test fixtures and configuration.
 """
 
-import pytest
-import sys
 import os
+import sys
+
+import pytest
 
 # Ensure src is on path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -73,6 +74,7 @@ def repetitive_text():
 def nltk_analyzer():
     """Create an NLTK analyzer instance."""
     from src.analyzers.nltk_analyzer import NLTKAnalyzer
+
     return NLTKAnalyzer(ngram_size=3)
 
 
@@ -80,4 +82,5 @@ def nltk_analyzer():
 def text_processor():
     """Create a TextProcessor instance."""
     from src.utils.text_processing import TextProcessor
+
     return TextProcessor()

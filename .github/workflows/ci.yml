@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install lint tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install black flake8 isort
+      - name: flake8
+        run: flake8 src/ tests/ app.py gpt2_app.py ensemble.py --max-line-length=100
+      - name: black --check
+        run: black --check --line-length=100 src/ tests/ app.py gpt2_app.py ensemble.py
+      - name: isort --check
+        run: isort --check-only --profile=black src/ tests/ app.py gpt2_app.py ensemble.py
+
+  test:
+    name: Tests (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+      - name: Download NLTK data
+        run: python -c "import nltk; nltk.download(['punkt','punkt_tab','stopwords','brown','averaged_perceptron_tagger'])"
+      - name: Run tests (excluding slow model tests)
+        run: python -m pytest tests/ -m "not slow" -q --cov=src --cov-report=term-missing

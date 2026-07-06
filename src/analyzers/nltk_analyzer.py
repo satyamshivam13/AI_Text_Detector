@@ -8,17 +8,20 @@ Text analysis using NLTK n-gram language models and statistical methods.
 from __future__ import annotations
 
 import math
-from collections import Counter
-from typing import List, Optional, Tuple
+from typing import Optional
 
-import nltk
 from nltk.corpus import brown
-from nltk.lm import MLE
+from nltk.lm import (
+    KneserNeyInterpolated,
+    Lidstone,
+    Vocabulary,
+    WittenBellInterpolated,
+)
+from nltk.lm.api import LanguageModel
 from nltk.lm.preprocessing import padded_everygram_pipeline
 from nltk.util import ngrams
 
 from src.analyzers.base_analyzer import BaseAnalyzer
-from src.config.settings import get_settings
 from src.models.result import AnalysisResult, DetectionScore
 from src.utils.logging_config import get_logger
 from src.utils.text_processing import TextProcessor
@@ -29,32 +32,90 @@ logger = get_logger(__name__)
 class NLTKAnalyzer(BaseAnalyzer):
     """Analyzer using NLTK n-gram language models."""
 
+    # Process-wide cache of trained models keyed by (smoothing config, n).
+    # Building a model from the Brown corpus takes ~20s, so sharing it across
+    # analyzer instances turns N rebuilds into one (critical for tests and for
+    # Streamlit reruns that construct fresh analyzers).
+    _MODEL_CACHE: dict = {}
+
     def __init__(self, ngram_size: int = 3):
         super().__init__()
         self.ngram_size = ngram_size
-        self._model: Optional[MLE] = None
+        self._model: Optional[LanguageModel] = None
         self._model_ngram_size: Optional[int] = None
         self.method_name = "NLTK N-gram"
 
+    def _model_cache_key(self, n: int) -> tuple:
+        """Identity of a trained model: smoothing settings + n-gram order."""
+        cfg = self.settings.nltk
+        return (
+            cfg.smoothing_method,
+            cfg.smoothing_discount,
+            cfg.smoothing_gamma,
+            cfg.unk_cutoff,
+            n,
+        )
+
     @property
-    def model(self) -> MLE:
-        """Lazy-load the language model."""
+    def model(self) -> LanguageModel:
+        """Lazy-load the language model, reusing any process-cached instance."""
         if self._model is None or self._model_ngram_size != self.ngram_size:
-            self._model = self._build_model(self.ngram_size)
+            key = self._model_cache_key(self.ngram_size)
+            cached = NLTKAnalyzer._MODEL_CACHE.get(key)
+            if cached is None:
+                cached = self._build_model(self.ngram_size)
+                NLTKAnalyzer._MODEL_CACHE[key] = cached
+            self._model = cached
             self._model_ngram_size = self.ngram_size
         return self._model
 
-    def _build_model(self, n: int) -> MLE:
+    def _make_smoothed_model(self, n: int) -> LanguageModel:
+        """Construct an (untrained) smoothed language model from settings.
+
+        The smoothing method is selected via ``NLTKConfig.smoothing_method`` so
+        the configured smoothing parameters are actually honoured:
+
+        * ``wittenbell`` — Witten-Bell interpolation (default; fast + accurate).
+        * ``kneserney``  — Kneser-Ney interpolation using ``smoothing_discount``.
+        * ``lidstone``   — additive add-k smoothing using ``smoothing_gamma``.
         """
-        Build an n-gram language model from the Brown corpus.
+        cfg = self.settings.nltk
+        vocab = Vocabulary(unk_cutoff=cfg.unk_cutoff)
+        method = cfg.smoothing_method.lower()
+
+        if method == "kneserney":
+            return KneserNeyInterpolated(order=n, discount=cfg.smoothing_discount, vocabulary=vocab)
+        if method == "lidstone":
+            return Lidstone(cfg.smoothing_gamma, order=n, vocabulary=vocab)
+        if method != "wittenbell":
+            logger.warning(
+                "Unknown smoothing_method %r; falling back to 'wittenbell'.",
+                cfg.smoothing_method,
+            )
+        return WittenBellInterpolated(order=n, vocabulary=vocab)
+
+    def _build_model(self, n: int) -> LanguageModel:
+        """
+        Build a smoothed n-gram language model from the Brown corpus.
+
+        Uses a **smoothed, interpolated** language model rather than a bare
+        maximum-likelihood estimate (``MLE``). An unsmoothed ``MLE`` assigns
+        probability 0 to every n-gram unseen in the training corpus, so almost any
+        real input collapsed to the perplexity ceiling and the "statistical"
+        signal carried no discriminating information. Interpolated smoothing
+        redistributes probability mass to unseen n-grams via lower-order back-off,
+        yielding perplexities that actually separate predictable text from varied
+        text. The concrete smoothing method and its parameters come from
+        ``NLTKConfig`` (see :meth:`_make_smoothed_model`).
 
         Args:
             n: N-gram size.
 
         Returns:
-            Trained MLE model.
+            Trained smoothed language model.
         """
-        logger.info(f"Building {n}-gram language model from Brown corpus...")
+        cfg = self.settings.nltk
+        logger.info(f"Building {n}-gram {cfg.smoothing_method} model from Brown corpus...")
 
         TextProcessor.ensure_nltk_data()
 
@@ -65,21 +126,18 @@ class NLTKAnalyzer(BaseAnalyzer):
             raise RuntimeError("Could not load Brown corpus. Run: nltk.download('brown')") from e
 
         # Preprocess corpus sentences
-        processed_sents = [
-            [word.lower() for word in sent]
-            for sent in corpus_sents
-        ]
+        processed_sents = [[word.lower() for word in sent] for sent in corpus_sents]
 
         # Build padded n-gram pipeline
         train_data, padded_vocab = padded_everygram_pipeline(n, processed_sents)
 
-        # Train model
-        model = MLE(n)
+        # Train a smoothed model. ``unk_cutoff`` folds rare tokens into the
+        # ``<UNK>`` class so out-of-vocabulary input tokens receive a real,
+        # non-zero probability instead of underflowing to the epsilon floor.
+        model = self._make_smoothed_model(n)
         model.fit(train_data, padded_vocab)
 
-        logger.info(
-            f"Model built successfully. Vocabulary size: {len(model.vocab)}"
-        )
+        logger.info(f"Model built successfully. Vocabulary size: {len(model.vocab)}")
 
         return model
 
@@ -104,9 +162,7 @@ class NLTKAnalyzer(BaseAnalyzer):
         Returns:
             Perplexity score.
         """
-        words = TextProcessor.tokenize_words(
-            text, remove_punctuation=True, lowercase=True
-        )
+        words = TextProcessor.tokenize_words(text, remove_punctuation=True, lowercase=True)
 
         if len(words) < self.ngram_size:
             return 100.0  # Default for very short texts
@@ -115,14 +171,16 @@ class NLTKAnalyzer(BaseAnalyzer):
         n = self.ngram_size
 
         # Generate n-grams from input text
-        text_ngrams = list(ngrams(
-            words,
-            n,
-            pad_left=True,
-            pad_right=True,
-            left_pad_symbol="<s>",
-            right_pad_symbol="</s>",
-        ))
+        text_ngrams = list(
+            ngrams(
+                words,
+                n,
+                pad_left=True,
+                pad_right=True,
+                left_pad_symbol="<s>",
+                right_pad_symbol="</s>",
+            )
+        )
 
         if not text_ngrams:
             return 100.0
@@ -180,50 +238,58 @@ class NLTKAnalyzer(BaseAnalyzer):
         logger.info("Computing perplexity...")
         result.perplexity = self._compute_perplexity(text)
 
-        result.add_score(DetectionScore(
-            name="Perplexity",
-            value=result.perplexity,
-            weight=0.40,
-            interpretation=self._interpret_perplexity(result.perplexity),
-            indicates_ai=result.perplexity < self.thresholds.perplexity_medium,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="Perplexity",
+                value=result.perplexity,
+                weight=0.40,
+                interpretation=self._interpret_perplexity(result.perplexity),
+                indicates_ai=result.perplexity < self.thresholds.perplexity_medium,
+            )
+        )
 
         # 2. Compute burstiness
         logger.info("Computing burstiness...")
         burstiness, word_burstiness = TextProcessor.compute_burstiness(text)
         result.burstiness = burstiness
 
-        result.add_score(DetectionScore(
-            name="Burstiness",
-            value=result.burstiness,
-            weight=0.25,
-            interpretation=self._interpret_burstiness(result.burstiness),
-            indicates_ai=result.burstiness < self.thresholds.burstiness_medium,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="Burstiness",
+                value=result.burstiness,
+                weight=0.25,
+                interpretation=self._interpret_burstiness(result.burstiness),
+                indicates_ai=result.burstiness < self.thresholds.burstiness_medium,
+            )
+        )
 
         # 3. Compute lexical diversity
         logger.info("Computing lexical diversity...")
         result.lexical_diversity = result.metrics.lexical_diversity
 
-        result.add_score(DetectionScore(
-            name="Lexical Diversity",
-            value=result.lexical_diversity,
-            weight=0.15,
-            interpretation=self._interpret_lexical_diversity(result.lexical_diversity),
-            indicates_ai=result.lexical_diversity < self.thresholds.lexical_diversity_medium,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="Lexical Diversity",
+                value=result.lexical_diversity,
+                weight=0.15,
+                interpretation=self._interpret_lexical_diversity(result.lexical_diversity),
+                indicates_ai=result.lexical_diversity < self.thresholds.lexical_diversity_medium,
+            )
+        )
 
         # 4. Compute sentence variance
         logger.info("Computing sentence variance...")
         result.sentence_variance = TextProcessor.compute_sentence_variance(text)
 
-        result.add_score(DetectionScore(
-            name="Sentence Variance",
-            value=result.sentence_variance,
-            weight=0.20,
-            interpretation=self._interpret_sentence_variance(result.sentence_variance),
-            indicates_ai=result.sentence_variance < 0.25,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="Sentence Variance",
+                value=result.sentence_variance,
+                weight=0.20,
+                interpretation=self._interpret_sentence_variance(result.sentence_variance),
+                indicates_ai=result.sentence_variance < 0.25,
+            )
+        )
 
         return result
 

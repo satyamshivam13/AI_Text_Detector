@@ -3,9 +3,9 @@ Tests for result data models.
 """
 
 import json
-import pytest
-from src.models.result import AnalysisResult, TextMetrics, DetectionScore
-from src.config.settings import Verdict, ConfidenceLevel
+
+from src.config.settings import ConfidenceLevel, Verdict
+from src.models.result import AnalysisResult, DetectionScore, TextMetrics
 
 
 class TestTextMetrics:
