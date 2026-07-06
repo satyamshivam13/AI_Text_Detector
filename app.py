@@ -19,7 +19,13 @@ import streamlit as st
 
 from src.analyzers.nltk_analyzer import NLTKAnalyzer
 from src.config.settings import get_settings
-from src.ui import inject_css, render_footer, render_verdict_card, render_warnings
+from src.ui import (
+    inject_css,
+    render_error,
+    render_footer,
+    render_verdict_card,
+    render_warnings,
+)
 from src.utils.logging_config import get_logger, setup_logging
 from src.utils.ui_contract import (
     build_limitations_markdown,
@@ -391,8 +397,7 @@ if analyze_clicked and text_input:
             logger.info(f"Analysis displayed: {result.verdict.value}")
 
         except Exception as e:
-            logger.error(f"Application error: {e}", exc_info=True)
-            st.error(f"❌ An error occurred during analysis: {str(e)}")
+            render_error(e)
             st.info("💡 Try refreshing the page or using a different text.")
 
 # ─── Empty State ─────────────────────────────────────────────────────────────

@@ -99,6 +99,7 @@ class EnsembleAnalyzer(BaseAnalyzer):
 
         # Validate input
         cleaned_text = TextProcessor.clean_text(text)
+        cleaned_text = self._apply_input_cap(cleaned_text, result)
         result.text_length = len(cleaned_text)
 
         if not cleaned_text:

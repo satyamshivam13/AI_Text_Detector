@@ -1,7 +1,7 @@
 """Tests for the shared UI component helpers (pure mapping functions)."""
 
 from src.config.settings import Verdict
-from src.ui.components import verdict_css_class, verdict_emoji
+from src.ui.components import render_error, verdict_css_class, verdict_emoji
 from src.ui.styles import BASE_CSS
 
 
@@ -27,3 +27,12 @@ class TestBaseCss:
     def test_base_css_defines_shared_classes(self):
         for cls in (".verdict-card", ".metric-card", ".warning-box", ".footer"):
             assert cls in BASE_CSS
+
+
+class TestRenderError:
+    def test_render_error_does_not_raise_or_leak(self, caplog):
+        # Should log the exception (server-side) and not propagate it.
+        with caplog.at_level("ERROR"):
+            render_error(ValueError("secret internal detail"))
+        # The exception text is logged, not returned/raised.
+        assert any("secret internal detail" in r.message or r.exc_info for r in caplog.records)

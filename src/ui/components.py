@@ -16,6 +16,9 @@ import streamlit as st
 
 from src.config.settings import Verdict
 from src.models.result import AnalysisResult
+from src.utils.logging_config import get_logger
+
+_logger = get_logger(__name__)
 
 _VERDICT_CSS = {
     Verdict.AI_GENERATED: "verdict-ai",
@@ -58,6 +61,22 @@ def render_verdict_card(result: AnalysisResult) -> None:
 """,
         unsafe_allow_html=True,
     )
+
+
+def render_error(
+    exc: Exception,
+    user_message: str = (
+        "Something went wrong during analysis. Please try again, "
+        "possibly with shorter or different text."
+    ),
+) -> None:
+    """Show a generic error to the user and log the full exception server-side.
+
+    Exception strings are never rendered to the UI (they can leak internal
+    detail); the traceback goes to the server log instead.
+    """
+    _logger.error("Unhandled UI error: %s", exc, exc_info=True)
+    st.error(f"❌ {html.escape(user_message)}")
 
 
 def render_warnings(result: AnalysisResult) -> None:

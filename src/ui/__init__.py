@@ -10,6 +10,7 @@ consistent across apps.
 """
 
 from src.ui.components import (
+    render_error,
     render_footer,
     render_verdict_card,
     render_warnings,
@@ -21,6 +22,7 @@ from src.ui.styles import BASE_CSS, inject_css
 __all__ = [
     "BASE_CSS",
     "inject_css",
+    "render_error",
     "render_footer",
     "render_verdict_card",
     "render_warnings",

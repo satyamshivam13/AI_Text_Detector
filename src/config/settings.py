@@ -68,6 +68,11 @@ class ThresholdConfig:
     recommended_text_length: int = 200
     optimal_text_length: int = 500
 
+    # Hard cap on analyzed input length. Very long input inflates GPT-2
+    # sliding-window compute (a DoS vector if exposed beyond localhost), so
+    # input above this is truncated with a warning rather than processed whole.
+    max_input_chars: int = 50000
+
 
 @dataclass(frozen=True)
 class NLTKConfig:

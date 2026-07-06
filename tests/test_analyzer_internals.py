@@ -88,6 +88,21 @@ class TestExplanationBranches:
 # --------------------------------------------------------------------------- #
 # analyze() error path
 # --------------------------------------------------------------------------- #
+class TestInputCap:
+    def test_long_input_truncated_with_warning(self, nltk):
+        result = AnalysisResult()
+        long_text = "x" * (nltk.thresholds.max_input_chars + 500)
+        capped = nltk._apply_input_cap(long_text, result)
+        assert len(capped) == nltk.thresholds.max_input_chars
+        assert any("truncated" in w.lower() for w in result.warnings)
+
+    def test_short_input_untouched(self, nltk):
+        result = AnalysisResult()
+        text = "a normal sentence"
+        assert nltk._apply_input_cap(text, result) == text
+        assert result.warnings == []
+
+
 class TestAnalyzeErrorPath:
     def test_perform_analysis_failure_is_contained(self, nltk):
         def boom(text, result):

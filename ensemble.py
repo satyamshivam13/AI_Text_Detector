@@ -21,7 +21,13 @@ import streamlit as st
 
 from src.analyzers.ensemble_analyzer import EnsembleAnalyzer
 from src.config.settings import get_settings
-from src.ui import inject_css, render_footer, render_verdict_card, render_warnings
+from src.ui import (
+    inject_css,
+    render_error,
+    render_footer,
+    render_verdict_card,
+    render_warnings,
+)
 from src.utils.logging_config import get_logger, setup_logging
 from src.utils.ui_contract import (
     build_limitations_markdown,
@@ -399,8 +405,7 @@ if analyze_clicked and text_input:
 
     except Exception as e:
         progress_bar.empty()
-        logger.error(f"Application error: {e}", exc_info=True)
-        st.error(f"❌ An error occurred: {str(e)}")
+        render_error(e)
         st.info(
             "💡 This might be due to:\n"
             "- Insufficient memory (ensemble requires 2-3GB RAM)\n"

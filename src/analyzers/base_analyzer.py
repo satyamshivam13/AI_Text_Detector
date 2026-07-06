@@ -41,6 +41,7 @@ class BaseAnalyzer(ABC):
 
         # Validate input
         cleaned_text = TextProcessor.clean_text(text)
+        cleaned_text = self._apply_input_cap(cleaned_text, result)
         result.text_length = len(cleaned_text)
 
         if not cleaned_text:
@@ -96,6 +97,21 @@ class BaseAnalyzer(ABC):
         )
 
         return result
+
+    def _apply_input_cap(self, cleaned_text: str, result: AnalysisResult) -> str:
+        """Truncate over-long input to the configured cap, adding a warning.
+
+        Bounds worst-case compute (notably the GPT-2 sliding window) on very
+        long input. Returns the possibly-truncated text.
+        """
+        max_chars = self.thresholds.max_input_chars
+        if len(cleaned_text) > max_chars:
+            result.add_warning(
+                f"Input was truncated to {max_chars} characters for analysis "
+                f"(received {len(cleaned_text)})."
+            )
+            return cleaned_text[:max_chars]
+        return cleaned_text
 
     @abstractmethod
     def _perform_analysis(self, text: str, result: AnalysisResult) -> AnalysisResult:
