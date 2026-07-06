@@ -42,17 +42,28 @@ class TextProcessor:
             "averaged_perceptron_tagger",
         ]
 
+        all_available = True
         for package in required_packages:
+            resource = f"tokenizers/{package}" if "punkt" in package else package
             try:
-                nltk.data.find(f"tokenizers/{package}" if "punkt" in package else package)
+                nltk.data.find(resource)
+                continue
             except LookupError:
-                try:
-                    logger.info(f"Downloading NLTK package: {package}")
-                    nltk.download(package, quiet=True)
-                except Exception as e:
-                    logger.warning(f"Failed to download {package}: {e}")
+                pass
 
-        cls._nltk_initialized = True
+            try:
+                logger.info(f"Downloading NLTK package: {package}")
+                nltk.download(package, quiet=True)
+                # Verify the resource is actually present after download.
+                nltk.data.find(resource)
+            except Exception as e:
+                logger.warning(f"Failed to obtain NLTK package {package}: {e}")
+                all_available = False
+
+        # Only mark initialized when every required resource is present, so a
+        # failed/blocked download is retried on the next call instead of being
+        # silently treated as success.
+        cls._nltk_initialized = all_available
 
     @classmethod
     def get_stop_words(cls) -> set:
