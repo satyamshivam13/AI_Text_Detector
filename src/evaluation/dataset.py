@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 
 # data/benchmark/samples.jsonl relative to the repository root.
 DEFAULT_DATASET_PATH = Path(__file__).resolve().parents[2] / "data" / "benchmark" / "samples.jsonl"
@@ -38,7 +38,7 @@ class Sample:
         return self.label == 1
 
 
-def load_dataset(path: Optional[Path | str] = None) -> List[Sample]:
+def load_dataset(path: Optional[Union[Path, str]] = None) -> List[Sample]:
     """Load labelled samples from a JSONL file.
 
     Args:

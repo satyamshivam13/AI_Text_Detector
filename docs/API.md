@@ -147,7 +147,7 @@ ece = metrics.expected_calibration_error(labels, scores)
 CLI:
 
 ```bash
-python -m src.evaluation.benchmark --analyzer {nltk,gpt2,ensemble} \
+python -m src.evaluation.benchmark --analyzer {nltk,gpt2,binoculars,ensemble} \
     --dataset path/to/data.jsonl --output report.json --plots out/
 ```
 

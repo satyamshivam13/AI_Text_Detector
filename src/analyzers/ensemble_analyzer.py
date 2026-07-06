@@ -184,7 +184,8 @@ class EnsembleAnalyzer(BaseAnalyzer):
             result.verdict = Verdict.UNCERTAIN
             result.confidence = 0.0
             result.confidence_level = ConfidenceLevel.VERY_LOW
-            result.add_warning(f"Analysis error: {str(e)}")
+            # Generic, non-leaking message; the full traceback is logged above.
+            result.add_warning("An error occurred during analysis (details logged server-side).")
             result.explanation = "An error occurred during ensemble analysis."
 
         result.analysis_time = round(time.time() - start_time, 3)
@@ -256,6 +257,9 @@ class EnsembleAnalyzer(BaseAnalyzer):
         # Optional Binoculars term (only present when its weight > 0).
         if binoculars_ai is not None:
             ensemble_ai_score += self.weights.get("binoculars", 0.0) * binoculars_ai
+        # Guard against misconfigured weights (e.g. enabling Binoculars without
+        # rebalancing) pushing the "probability" outside [0, 1].
+        ensemble_ai_score = max(0.0, min(1.0, ensemble_ai_score))
 
         logger.info(
             f"Ensemble scores - RoBERTa: {roberta_ai_score:.3f}, "
@@ -324,9 +328,11 @@ class EnsembleAnalyzer(BaseAnalyzer):
                 )
             )
 
-        # Aggregate reported metrics from the analyzers that actually run
-        # (GPT-2 + NLTK), so a disabled RoBERTa placeholder cannot skew them.
-        result.perplexity = (gpt2_perplexity + nltk_perplexity) / 2
+        # Aggregate reported metrics from the analyzers that actually run.
+        # Report GPT-2 perplexity only: GPT-2 (~10-100) and Brown-corpus NLTK
+        # (~1000-3000) perplexities are on incommensurable scales, so averaging
+        # them would produce a misleading "Average Perplexity" in the UI.
+        result.perplexity = gpt2_perplexity
         result.burstiness = (gpt2_result.burstiness + nltk_result.burstiness) / 2
         result.lexical_diversity = result.metrics.lexical_diversity
         result.sentence_variance = (
@@ -442,7 +448,7 @@ class EnsembleAnalyzer(BaseAnalyzer):
         # Key metrics
         parts.append(
             f"\n📈 **Key Metrics**:\n"
-            f"• Average Perplexity: {result.perplexity:.1f}\n"
+            f"• GPT-2 Perplexity: {result.perplexity:.1f}\n"
             f"• Burstiness: {result.burstiness:.3f}\n"
             f"• Lexical Diversity: {result.lexical_diversity:.1%}"
         )

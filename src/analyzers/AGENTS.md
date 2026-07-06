@@ -10,15 +10,17 @@ Does **not** own UI rendering, chart generation, or settings — those live in `
 - `nltk_analyzer.py` — Brown-corpus n-gram perplexity; fast, no GPU needed
 - `gpt2_analyzer.py` — GPT-2 token-loss perplexity; requires `torch` + `transformers`
 - `roberta_analyzer.py` — RoBERTa sequence classifier; currently disabled (needs fine-tuning)
-- `ensemble_analyzer.py` — Fuses GPT-2 (65%) + NLTK (35%), with optional RoBERTa slot
-- `__init__.py` — Eagerly exports `BaseAnalyzer`, `NLTKAnalyzer`; lazily exports the torch-backed three
+- `binoculars_analyzer.py` — Cross-perplexity (observer+performer) detector; optional, off by default
+- `calibration.py` — `logistic_ai_probability`: maps perplexity → calibrated AI-probability
+- `ensemble_analyzer.py` — Fuses GPT-2 (75%) + NLTK (25%), with optional RoBERTa and Binoculars slots
+- `__init__.py` — Eagerly exports `BaseAnalyzer`, `NLTKAnalyzer`; lazily exports the torch-backed analyzers
 
 ## Contracts & Invariants
 - **Only** call `analyzer.analyze(text: str) → AnalysisResult`. Never call `_perform_analysis` directly from outside this package.
 - `_perform_analysis(text, result)` is the single hook subclasses implement — it receives cleaned text and a partially-populated result, and must return the same result object with `perplexity`, `burstiness`, `lexical_diversity`, `sentence_variance`, and `scores` populated.
 - `BaseAnalyzer._determine_verdict` is the shared scoring engine. Do not duplicate its logic in subclasses — call `super()` or override with care.
 - `EnsembleAnalyzer` **overrides** `analyze()` entirely (not just `_perform_analysis`) to run sub-analyzers in sequence and fuse. The weights are in `EnsembleAnalyzer` itself — change them there, not in individual analyzers.
-- Lazy import contract in `__init__.py`: `GPT2Analyzer`, `RoBERTaAnalyzer`, `EnsembleAnalyzer` are loaded via `__getattr__` using `_LAZY_MODULES`. Do not add them to the eager import block — `app.py` must stay torch-free.
+- Lazy import contract in `__init__.py`: `GPT2Analyzer`, `RoBERTaAnalyzer`, `BinocularsAnalyzer`, `EnsembleAnalyzer` are loaded via `__getattr__` using `_LAZY_MODULES`. Do not add them to the eager import block — `app.py` must stay torch-free.
 - Error contract: all analysis exceptions must be caught inside `BaseAnalyzer.analyze()`. Subclasses should let exceptions bubble up from `_perform_analysis` — the base catches them and sets `Verdict.UNCERTAIN`.
 
 ## Patterns
@@ -33,7 +35,7 @@ To add a new analyzer backend:
 To extend the ensemble:
 1. Add sub-analyzer instance in `EnsembleAnalyzer.__init__`
 2. Run it in `analyze()` alongside existing sub-analyzers
-3. Adjust weights in the fusion section (currently GPT-2: 0.65, NLTK: 0.35)
+3. Adjust weights in `EnsembleConfig` (currently GPT-2: 0.75, NLTK: 0.25; RoBERTa/Binoculars 0.0)
 
 ## Anti-patterns
 - Never hardcode threshold values (like `0.30`, `150.0`) in analyzer logic — always use `self.thresholds.*` from `ThresholdConfig`

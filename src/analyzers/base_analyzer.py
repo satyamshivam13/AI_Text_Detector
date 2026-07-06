@@ -84,7 +84,8 @@ class BaseAnalyzer(ABC):
             result.verdict = Verdict.UNCERTAIN
             result.confidence = 0.0
             result.confidence_level = ConfidenceLevel.VERY_LOW
-            result.add_warning(f"Analysis error: {str(e)}")
+            # Generic, non-leaking message; the full traceback is logged above.
+            result.add_warning("An error occurred during analysis (details logged server-side).")
             result.explanation = "An error occurred during analysis."
 
         result.analysis_time = round(time.time() - start_time, 3)
