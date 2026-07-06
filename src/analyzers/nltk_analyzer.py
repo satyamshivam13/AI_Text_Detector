@@ -32,6 +32,12 @@ logger = get_logger(__name__)
 class NLTKAnalyzer(BaseAnalyzer):
     """Analyzer using NLTK n-gram language models."""
 
+    # Process-wide cache of trained models keyed by (smoothing config, n).
+    # Building a model from the Brown corpus takes ~20s, so sharing it across
+    # analyzer instances turns N rebuilds into one (critical for tests and for
+    # Streamlit reruns that construct fresh analyzers).
+    _MODEL_CACHE: dict = {}
+
     def __init__(self, ngram_size: int = 3):
         super().__init__()
         self.ngram_size = ngram_size
@@ -39,11 +45,27 @@ class NLTKAnalyzer(BaseAnalyzer):
         self._model_ngram_size: Optional[int] = None
         self.method_name = "NLTK N-gram"
 
+    def _model_cache_key(self, n: int) -> tuple:
+        """Identity of a trained model: smoothing settings + n-gram order."""
+        cfg = self.settings.nltk
+        return (
+            cfg.smoothing_method,
+            cfg.smoothing_discount,
+            cfg.smoothing_gamma,
+            cfg.unk_cutoff,
+            n,
+        )
+
     @property
     def model(self) -> LanguageModel:
-        """Lazy-load the language model."""
+        """Lazy-load the language model, reusing any process-cached instance."""
         if self._model is None or self._model_ngram_size != self.ngram_size:
-            self._model = self._build_model(self.ngram_size)
+            key = self._model_cache_key(self.ngram_size)
+            cached = NLTKAnalyzer._MODEL_CACHE.get(key)
+            if cached is None:
+                cached = self._build_model(self.ngram_size)
+                NLTKAnalyzer._MODEL_CACHE[key] = cached
+            self._model = cached
             self._model_ngram_size = self.ngram_size
         return self._model
 
