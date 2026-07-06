@@ -152,11 +152,15 @@ def _build_analyzer(name: str) -> _Analyzer:
         from src.analyzers.gpt2_analyzer import GPT2Analyzer
 
         return GPT2Analyzer()
+    if name == "binoculars":
+        from src.analyzers.binoculars_analyzer import BinocularsAnalyzer
+
+        return BinocularsAnalyzer()
     if name == "ensemble":
         from src.analyzers.ensemble_analyzer import EnsembleAnalyzer
 
         return EnsembleAnalyzer()
-    raise ValueError(f"Unknown analyzer {name!r}; expected nltk, gpt2, or ensemble")
+    raise ValueError(f"Unknown analyzer {name!r}; expected nltk, gpt2, binoculars, or ensemble")
 
 
 def save_plots(result: BenchmarkResult, output_dir: Path) -> List[Path]:
@@ -235,7 +239,9 @@ def _format_summary(result: BenchmarkResult) -> str:
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Benchmark an AI-text detector.")
-    parser.add_argument("--analyzer", default="nltk", choices=["nltk", "gpt2", "ensemble"])
+    parser.add_argument(
+        "--analyzer", default="nltk", choices=["nltk", "gpt2", "binoculars", "ensemble"]
+    )
     parser.add_argument("--dataset", default=None, help="Path to a JSONL dataset")
     parser.add_argument("--threshold", type=float, default=0.5)
     parser.add_argument("--output", default=None, help="Write full report JSON here")

@@ -40,6 +40,30 @@ The calibrated logistic (per-analyzer midpoint = decision boundary; see
 On the benchmark, human text now sits well below the 0.5 boundary and the
 false-positive rate is **0.000**.
 
+## Binoculars (cross-perplexity, modern)
+
+A two-model detector (observer `gpt2` + performer `distilgpt2`) after Hans et
+al., 2024 — the SOTA-aligned modernization from the competitive audit. It scores
+text by the ratio of the observer's log-perplexity to the observer/performer
+cross-perplexity, which cancels the prompt/topic bias that makes single-model
+GPT-2 perplexity brittle.
+
+| Metric | Value |
+|--------|------:|
+| Accuracy | 1.000 |
+| F1 | 1.000 |
+| AUROC | 1.000 |
+| **False-positive rate** | **0.000** |
+| Expected calibration error | 0.066 |
+
+![ROC](roc_binoculars.png) ![Calibration](calibration_binoculars.png)
+
+On the benchmark, human scores cluster ~0.88–1.05 and AI ~0.72–0.84 with a clean
+gap; the decision midpoint (0.863) sits between the clusters. Reproduce with
+`python -m src.evaluation.benchmark --analyzer binoculars`. It is available as a
+standalone analyzer and is not enabled in the default ensemble (to keep the
+default lightweight — it needs a second model).
+
 ## Single-analyzer baselines
 
 | Analyzer | AUROC | Notes |

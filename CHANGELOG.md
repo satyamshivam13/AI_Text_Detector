@@ -11,6 +11,11 @@ ordinary human text as AI, the statistical model is now smoothed and
 discriminating, and there is a real evaluation layer.
 
 ### Added
+- **Binoculars analyzer** (`src/analyzers/binoculars_analyzer.py`): zero-shot
+  cross-perplexity detection (observer `gpt2` + performer `distilgpt2`) after
+  Hans et al., 2024 — the modern, prompt-robust signal recommended by the audit.
+  Available standalone and via the benchmark (`--analyzer binoculars`);
+  benchmark AUROC 1.000, FPR 0.000, ECE 0.066.
 - **Evaluation layer** (`src/evaluation/`): metrics (accuracy, precision,
   recall, F1, ROC/AUROC, false-positive/negative rates, expected calibration
   error), a labelled benchmark dataset + loader, and a benchmark runner with a

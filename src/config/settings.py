@@ -120,6 +120,27 @@ class RoBERTaConfig:
 
 
 @dataclass(frozen=True)
+class BinocularsConfig:
+    """Configuration for the Binoculars-style cross-perplexity analyzer.
+
+    Binoculars (Hans et al., 2024) scores text by the ratio of an observer
+    model's log-perplexity to the cross-perplexity between the observer and a
+    second "performer" model. Machine-generated text yields a *lower* ratio.
+    A small observer/performer pair sharing one tokenizer keeps it local and
+    CPU-friendly; the decision midpoint is calibrated on the bundled benchmark.
+    """
+
+    observer_model: str = "gpt2"
+    performer_model: str = "distilgpt2"
+    max_token_length: int = 512
+    revision: Optional[str] = None
+    # Lower ratio => more AI. Midpoint calibrated from the benchmark separation
+    # (human scores ~0.88-1.05, AI ~0.72-0.84; boundary between the clusters).
+    score_midpoint: float = 0.863
+    score_slope: float = 20.0
+
+
+@dataclass(frozen=True)
 class VisualizationConfig:
     """Configuration for visualization settings."""
 
@@ -183,6 +204,7 @@ class Settings:
     nltk: NLTKConfig = field(default_factory=NLTKConfig)
     gpt2: GPT2Config = field(default_factory=GPT2Config)
     roberta: RoBERTaConfig = field(default_factory=RoBERTaConfig)
+    binoculars: BinocularsConfig = field(default_factory=BinocularsConfig)
     ensemble: EnsembleConfig = field(default_factory=EnsembleConfig)
     visualization: VisualizationConfig = field(default_factory=VisualizationConfig)
 

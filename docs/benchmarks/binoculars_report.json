@@ -1,0 +1,309 @@
+{
+  "analyzer": "binoculars",
+  "n_samples": 24,
+  "metrics_at_0.5": {
+    "threshold": 0.5,
+    "n_samples": 24,
+    "n_positive": 12,
+    "n_negative": 12,
+    "true_positives": 12,
+    "false_positives": 0,
+    "true_negatives": 12,
+    "false_negatives": 0,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "specificity": 1.0,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0,
+    "roc_auc": 1.0,
+    "expected_calibration_error": 0.06614583333333336
+  },
+  "best_f1_threshold": 0.8435,
+  "metrics_at_best_f1": {
+    "threshold": 0.8435,
+    "n_samples": 24,
+    "n_positive": 12,
+    "n_negative": 12,
+    "true_positives": 12,
+    "false_positives": 0,
+    "true_negatives": 12,
+    "false_negatives": 0,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "specificity": 1.0,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0,
+    "roc_auc": 1.0,
+    "expected_calibration_error": 0.06614583333333336
+  },
+  "calibration_bins": [
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 12,
+      "mean_predicted": 0.041666666666666685,
+      "observed_fraction": 0.0
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 0,
+      "mean_predicted": NaN,
+      "observed_fraction": NaN
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.30000000000000004,
+      "count": 0,
+      "mean_predicted": NaN,
+      "observed_fraction": NaN
+    },
+    {
+      "bin_lower": 0.30000000000000004,
+      "bin_upper": 0.4,
+      "count": 0,
+      "mean_predicted": NaN,
+      "observed_fraction": NaN
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_predicted": NaN,
+      "observed_fraction": NaN
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6000000000000001,
+      "count": 0,
+      "mean_predicted": NaN,
+      "observed_fraction": NaN
+    },
+    {
+      "bin_lower": 0.6000000000000001,
+      "bin_upper": 0.7000000000000001,
+      "count": 0,
+      "mean_predicted": NaN,
+      "observed_fraction": NaN
+    },
+    {
+      "bin_lower": 0.7000000000000001,
+      "bin_upper": 0.8,
+      "count": 0,
+      "mean_predicted": NaN,
+      "observed_fraction": NaN
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 5,
+      "mean_predicted": 0.8554,
+      "observed_fraction": 1.0
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 7,
+      "mean_predicted": 0.9479285714285713,
+      "observed_fraction": 1.0
+    }
+  ],
+  "predictions": [
+    {
+      "id": "human-01",
+      "label": 0,
+      "source": "handwritten-casual",
+      "ai_probability": 0.025,
+      "verdict": "Human-Written",
+      "confidence": 95.0
+    },
+    {
+      "id": "human-02",
+      "label": 0,
+      "source": "handwritten-casual",
+      "ai_probability": 0.025,
+      "verdict": "Human-Written",
+      "confidence": 95.0
+    },
+    {
+      "id": "human-03",
+      "label": 0,
+      "source": "handwritten-opinion",
+      "ai_probability": 0.025,
+      "verdict": "Human-Written",
+      "confidence": 95.0
+    },
+    {
+      "id": "human-04",
+      "label": 0,
+      "source": "handwritten-forum",
+      "ai_probability": 0.025,
+      "verdict": "Human-Written",
+      "confidence": 95.0
+    },
+    {
+      "id": "human-05",
+      "label": 0,
+      "source": "handwritten-travel",
+      "ai_probability": 0.025,
+      "verdict": "Human-Written",
+      "confidence": 95.0
+    },
+    {
+      "id": "human-06",
+      "label": 0,
+      "source": "handwritten-review",
+      "ai_probability": 0.075,
+      "verdict": "Likely Human-Written",
+      "confidence": 85.0
+    },
+    {
+      "id": "human-07",
+      "label": 0,
+      "source": "handwritten-journal",
+      "ai_probability": 0.075,
+      "verdict": "Likely Human-Written",
+      "confidence": 85.0
+    },
+    {
+      "id": "human-08",
+      "label": 0,
+      "source": "handwritten-recipe-note",
+      "ai_probability": 0.075,
+      "verdict": "Likely Human-Written",
+      "confidence": 85.0
+    },
+    {
+      "id": "human-09",
+      "label": 0,
+      "source": "handwritten-rant",
+      "ai_probability": 0.025,
+      "verdict": "Human-Written",
+      "confidence": 95.0
+    },
+    {
+      "id": "human-10",
+      "label": 0,
+      "source": "handwritten-sports",
+      "ai_probability": 0.025,
+      "verdict": "Human-Written",
+      "confidence": 95.0
+    },
+    {
+      "id": "human-11",
+      "label": 0,
+      "source": "handwritten-work",
+      "ai_probability": 0.075,
+      "verdict": "Likely Human-Written",
+      "confidence": 85.0
+    },
+    {
+      "id": "human-12",
+      "label": 0,
+      "source": "handwritten-hobby",
+      "ai_probability": 0.025,
+      "verdict": "Human-Written",
+      "confidence": 95.0
+    },
+    {
+      "id": "ai-01",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.9405,
+      "verdict": "AI-Generated",
+      "confidence": 88.1
+    },
+    {
+      "id": "ai-02",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.9425,
+      "verdict": "AI-Generated",
+      "confidence": 88.5
+    },
+    {
+      "id": "ai-03",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.9665,
+      "verdict": "AI-Generated",
+      "confidence": 93.3
+    },
+    {
+      "id": "ai-04",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.856,
+      "verdict": "Likely AI-Generated",
+      "confidence": 71.2
+    },
+    {
+      "id": "ai-05",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.8465,
+      "verdict": "Likely AI-Generated",
+      "confidence": 69.3
+    },
+    {
+      "id": "ai-06",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.947,
+      "verdict": "AI-Generated",
+      "confidence": 89.4
+    },
+    {
+      "id": "ai-07",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.9475,
+      "verdict": "AI-Generated",
+      "confidence": 89.5
+    },
+    {
+      "id": "ai-08",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.9445,
+      "verdict": "AI-Generated",
+      "confidence": 88.9
+    },
+    {
+      "id": "ai-09",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.864,
+      "verdict": "Likely AI-Generated",
+      "confidence": 72.8
+    },
+    {
+      "id": "ai-10",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.947,
+      "verdict": "AI-Generated",
+      "confidence": 89.4
+    },
+    {
+      "id": "ai-11",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.867,
+      "verdict": "Likely AI-Generated",
+      "confidence": 73.4
+    },
+    {
+      "id": "ai-12",
+      "label": 1,
+      "source": "llm-formal",
+      "ai_probability": 0.8435,
+      "verdict": "Likely AI-Generated",
+      "confidence": 68.7
+    }
+  ]
+}

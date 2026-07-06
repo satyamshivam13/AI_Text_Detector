@@ -55,6 +55,18 @@ This project ships **three independent Streamlit apps** — one per detection en
 
 **Not sure which to use?** Start with `app.py` (NLTK) — it is the lightest and needs no model download.
 
+### Experimental: Binoculars (cross-perplexity)
+
+A modern two-model detector (`gpt2` + `distilgpt2`) after Hans et al., 2024 — far
+more robust than single-model perplexity. Available as a standalone analyzer and
+via the benchmark CLI (`--analyzer binoculars`); on the bundled set it scores
+AUROC 1.000 / FPR 0.000. See [docs/benchmarks/](docs/benchmarks/).
+
+```python
+from src.analyzers.binoculars_analyzer import BinocularsAnalyzer
+result = BinocularsAnalyzer().analyze("Your text here")
+```
+
 ## Testing and Quality Gate
 
 These commands are portable and behave identically on Windows (PowerShell or cmd), Linux, and macOS. `tests/conftest.py` adds `src/` to the path, so no `PYTHONPATH` setup is required.
