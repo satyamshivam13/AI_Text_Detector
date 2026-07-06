@@ -17,12 +17,14 @@ from typing import Optional
 
 class DetectionMethod(str, Enum):
     """Available detection methods."""
+
     NLTK = "nltk"
     GPT2 = "gpt2"
 
 
 class ConfidenceLevel(str, Enum):
     """Confidence level categories."""
+
     HIGH = "High"
     MEDIUM = "Medium"
     LOW = "Low"
@@ -31,6 +33,7 @@ class ConfidenceLevel(str, Enum):
 
 class Verdict(str, Enum):
     """Detection verdict categories."""
+
     AI_GENERATED = "AI-Generated"
     LIKELY_AI = "Likely AI-Generated"
     UNCERTAIN = "Uncertain"
@@ -72,7 +75,14 @@ class NLTKConfig:
     corpus_name: str = "brown"
     default_ngram_size: int = 3
     max_ngram_size: int = 5
-    smoothing_discount: float = 0.75
+    # Smoothing for the n-gram language model. ``wittenbell`` (interpolated
+    # back-off) is the default: it discriminates well and scores in
+    # milliseconds. ``kneserney`` gives slightly better modelling but is far
+    # slower in NLTK; ``lidstone`` is additive add-k smoothing.
+    smoothing_method: str = "wittenbell"  # one of: wittenbell, kneserney, lidstone
+    smoothing_discount: float = 0.75  # used when smoothing_method == "kneserney"
+    smoothing_gamma: float = 0.1  # used when smoothing_method == "lidstone"
+    unk_cutoff: int = 2  # tokens seen fewer times fold into the <UNK> class
     vocabulary_size: int = 50000
     required_data: tuple = (
         "punkt",
