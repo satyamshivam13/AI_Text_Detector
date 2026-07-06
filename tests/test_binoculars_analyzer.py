@@ -64,3 +64,27 @@ class TestBinocularsContract:
         payload = result.to_dict()
         assert payload["method"] == analyzer.method_name
         assert "scores" in payload
+
+
+@pytest.mark.slow
+class TestBinocularsRealModels:
+    """Exercises the real two-model computation (downloads gpt2 + distilgpt2)."""
+
+    def test_compute_binoculars_returns_ratio(self, analyzer):
+        score, observer_ppl = analyzer._compute_binoculars(
+            "The mitochondria is the powerhouse of the cell, and cellular "
+            "respiration produces the energy currency of the organism."
+        )
+        assert score > 0
+        assert observer_ppl > 0
+
+    def test_end_to_end_analyze(self, analyzer):
+        from src.config.settings import Verdict
+
+        result = analyzer.analyze(
+            "So anyway I went to the store and forgot my wallet, classic me, "
+            "had to walk all the way back home in the rain. Great day."
+        )
+        assert result.verdict in list(Verdict)
+        assert result.scores[0].name == "Binoculars AI Score"
+        assert 0.0 <= result.scores[0].value <= 1.0
