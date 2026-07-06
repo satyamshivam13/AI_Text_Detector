@@ -411,7 +411,7 @@ if analyze_clicked and text_input:
             "- Insufficient memory (ensemble requires 2-3GB RAM)\n"
             "- Network issues during model download\n"
             "- Try individual analyzers (`streamlit run app.py` or "
-            "`streamlit run test.py`) as alternatives"
+            "`streamlit run gpt2_app.py`) as alternatives"
         )
 
 # ─── Empty State ─────────────────────────────────────────────────────────────

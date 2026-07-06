@@ -6,7 +6,7 @@ Streamlit application using GPT-2 transformer model
 for advanced AI-generated text detection.
 
 Usage:
-    streamlit run test.py
+    streamlit run gpt2_app.py
 """
 
 import os
@@ -145,7 +145,7 @@ with st.sidebar:
     st.markdown(
         build_mode_guidance_markdown(
             mode_label="GPT-2",
-            launch_command="streamlit run test.py",
+            launch_command="streamlit run gpt2_app.py",
             speed_hint="2-5s",
             memory_hint="2-3 GB",
         )

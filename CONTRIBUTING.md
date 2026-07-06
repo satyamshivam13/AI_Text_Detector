@@ -23,9 +23,9 @@ These mirror the CI checks in `.github/workflows/ci.yml`:
 
 ```bash
 python -m pytest tests/ -m "not slow" -q          # tests
-python -m flake8 src/ tests/ app.py test.py ensemble.py --max-line-length=100
-python -m black --check --line-length=100 src/ tests/ app.py test.py ensemble.py
-python -m isort --check-only --profile=black src/ tests/ app.py test.py ensemble.py
+python -m flake8 src/ tests/ app.py gpt2_app.py ensemble.py --max-line-length=100
+python -m black --check --line-length=100 src/ tests/ app.py gpt2_app.py ensemble.py
+python -m isort --check-only --profile=black src/ tests/ app.py gpt2_app.py ensemble.py
 ```
 
 Auto-format with `python -m black ... --line-length=100` and

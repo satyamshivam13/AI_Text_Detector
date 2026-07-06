@@ -1,6 +1,6 @@
 """Shared Streamlit UI helpers.
 
-The three entry-point apps (``app.py``, ``test.py``, ``ensemble.py``) previously
+The three entry-point apps (``app.py``, ``gpt2_app.py``, ``ensemble.py``) previously
 duplicated their CSS, verdict/emoji mappings, verdict-card, warning, and footer
 rendering. Those shared pieces live here so a change is made once and stays
 consistent across apps.

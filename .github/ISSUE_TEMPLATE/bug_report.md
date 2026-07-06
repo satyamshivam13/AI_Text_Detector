@@ -23,7 +23,7 @@ result = NLTKAnalyzer().analyze("...")
 ## Environment
 - OS:
 - Python version:
-- Analyzer/app (`app.py` / `test.py` / `ensemble.py` / library):
+- Analyzer/app (`app.py` / `gpt2_app.py` / `ensemble.py` / library):
 - Relevant package versions (`pip show torch transformers nltk streamlit`):
 
 ## Additional context

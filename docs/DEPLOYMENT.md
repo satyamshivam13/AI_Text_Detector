@@ -36,7 +36,7 @@ Run one Streamlit entrypoint:
 
 ```bash
 streamlit run app.py
-streamlit run test.py
+streamlit run gpt2_app.py
 streamlit run ensemble.py
 ```
 
@@ -59,7 +59,7 @@ docker run -p 8501:8501 ai-text-detector:latest
 To run a non-default entrypoint script:
 
 ```bash
-docker run -p 8501:8501 ai-text-detector:latest test.py
+docker run -p 8501:8501 ai-text-detector:latest gpt2_app.py
 docker run -p 8501:8501 ai-text-detector:latest ensemble.py
 ```
 
@@ -68,7 +68,7 @@ docker run -p 8501:8501 ai-text-detector:latest ensemble.py
 Current compose services in docker-compose.yml:
 
 - nltk-detector (port 8501 -> app.py)
-- gpt2-detector (port 8502 -> test.py)
+- gpt2-detector (port 8502 -> gpt2_app.py)
 - ensemble-detector (port 8503 -> ensemble.py)
 
 ### Commands

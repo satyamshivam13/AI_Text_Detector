@@ -24,7 +24,7 @@ run-nltk: ## Run NLTK-based detector
 	PYTHONPATH=src $(STREAMLIT) run app.py
 
 run-gpt2: ## Run GPT-2-based detector
-	PYTHONPATH=src $(STREAMLIT) run test.py
+	PYTHONPATH=src $(STREAMLIT) run gpt2_app.py
 
 run-ensemble: ## Run Ensemble detector (RoBERTa+GPT2+NLTK)
 	PYTHONPATH=src $(STREAMLIT) run ensemble.py
@@ -33,13 +33,13 @@ test: ## Run tests with coverage
 	PYTHONPATH=src $(PYTHON) -m pytest tests/ -v --cov=src --cov-report=html --cov-report=term-missing
 
 lint: ## Run linters
-	flake8 src/ tests/ app.py test.py ensemble.py --max-line-length=100
+	flake8 src/ tests/ app.py gpt2_app.py ensemble.py --max-line-length=100
 	mypy src/ --ignore-missing-imports
 	pylint src/ --disable=C0114,C0115,C0116
 
 format: ## Format code
-	black src/ tests/ app.py test.py ensemble.py --line-length=100
-	isort src/ tests/ app.py test.py ensemble.py --profile=black
+	black src/ tests/ app.py gpt2_app.py ensemble.py --line-length=100
+	isort src/ tests/ app.py gpt2_app.py ensemble.py --profile=black
 
 clean: ## Clean build artifacts
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true

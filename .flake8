@@ -16,5 +16,5 @@ per-file-ignores =
     # src.* (a project-wide invariant documented in AGENTS.md), which trips
     # E402 (module import not at top of file).
     app.py:E402
-    test.py:E402
+    gpt2_app.py:E402
     ensemble.py:E402

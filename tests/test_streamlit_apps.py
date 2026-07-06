@@ -15,7 +15,7 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 _ROOT = Path(__file__).resolve().parents[1]
-_APPS = ["app.py", "test.py", "ensemble.py"]
+_APPS = ["app.py", "gpt2_app.py", "ensemble.py"]
 
 
 @pytest.mark.parametrize("app_file", _APPS)

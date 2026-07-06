@@ -36,6 +36,9 @@ discriminating, and there is a real evaluation layer.
   `RoBERTaConfig`).
 
 ### Changed
+- **Renamed the GPT-2 Streamlit app `test.py` → `gpt2_app.py`** so it no longer
+  looks like a pytest module. Updated Docker Compose, Makefile, CI, docs, and
+  the input-size cap / generic UI error handling below.
 - **Ensemble fusion is now calibrated.** Replaced `1 - perplexity/500` (which
   scored human text ~88% AI) with a per-analyzer logistic whose midpoint is the
   decision boundary. On the bundled benchmark, false-positive rate dropped to
