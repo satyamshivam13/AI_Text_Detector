@@ -104,6 +104,19 @@ class GPT2Config:
     device: Optional[str] = None
     batch_size: int = 1
     cache_dir: Optional[str] = None
+    # Pin a specific Hugging Face Hub revision (commit hash or tag) for
+    # reproducible, supply-chain-safe loading. None tracks the default branch;
+    # set to a commit hash in production.
+    revision: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class RoBERTaConfig:
+    """Configuration for the (optional) RoBERTa analyzer."""
+
+    model_name: str = "roberta-base"
+    max_token_length: int = 512
+    revision: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -169,6 +182,7 @@ class Settings:
     thresholds: ThresholdConfig = field(default_factory=ThresholdConfig)
     nltk: NLTKConfig = field(default_factory=NLTKConfig)
     gpt2: GPT2Config = field(default_factory=GPT2Config)
+    roberta: RoBERTaConfig = field(default_factory=RoBERTaConfig)
     ensemble: EnsembleConfig = field(default_factory=EnsembleConfig)
     visualization: VisualizationConfig = field(default_factory=VisualizationConfig)
 

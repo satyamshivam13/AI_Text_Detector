@@ -52,6 +52,7 @@ class GPT2Analyzer(BaseAnalyzer):
             self._tokenizer = GPT2TokenizerFast.from_pretrained(
                 self.settings.gpt2.model_name,
                 cache_dir=self.settings.gpt2.cache_dir,
+                revision=self.settings.gpt2.revision,
             )
         return self._tokenizer
 
@@ -60,9 +61,13 @@ class GPT2Analyzer(BaseAnalyzer):
         """Lazy-load the GPT-2 model."""
         if self._model is None:
             logger.info("Loading GPT-2 model...")
+            # use_safetensors avoids loading pickled weights (a known RCE class
+            # in torch.load); revision pins a reproducible Hub commit.
             self._model = GPT2LMHeadModel.from_pretrained(
                 self.settings.gpt2.model_name,
                 cache_dir=self.settings.gpt2.cache_dir,
+                revision=self.settings.gpt2.revision,
+                use_safetensors=True,
             )
             self._model.to(self.device)
             self._model.eval()

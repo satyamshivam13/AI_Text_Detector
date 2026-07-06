@@ -44,9 +44,12 @@ class RoBERTaAnalyzer(BaseAnalyzer):
         """Lazy-load the RoBERTa tokenizer."""
         if self._tokenizer is None:
             logger.info("Loading RoBERTa tokenizer...")
-            # Using a pre-trained AI detection model
-            # Note: You can replace this with a fine-tuned model for AI detection
-            self._tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
+            # Note: replace with a fine-tuned AI-detection model to enable this
+            # analyzer in the ensemble (it is disabled by default).
+            self._tokenizer = RobertaTokenizer.from_pretrained(
+                self.settings.roberta.model_name,
+                revision=self.settings.roberta.revision,
+            )
         return self._tokenizer
 
     @property
@@ -60,11 +63,13 @@ class RoBERTaAnalyzer(BaseAnalyzer):
                 "For production use, fine-tune this model on an AI detection dataset or "
                 "use a pre-trained AI detector model."
             )
-            # Using base model - REQUIRES FINE-TUNING for accurate AI detection
-            # To use a fine-tuned model, replace 'roberta-base' with your model path
-            # Example: 'your-username/roberta-ai-detector'
+            # Using base model - REQUIRES FINE-TUNING for accurate AI detection.
+            # use_safetensors avoids pickled-weight loading (a known RCE class).
             self._model = RobertaForSequenceClassification.from_pretrained(
-                "roberta-base", num_labels=2  # Binary classification: AI vs Human
+                self.settings.roberta.model_name,
+                num_labels=2,  # Binary classification: AI vs Human
+                revision=self.settings.roberta.revision,
+                use_safetensors=True,
             )
             self._model.to(self.device)
             self._model.eval()
