@@ -8,10 +8,9 @@ Text analysis using RoBERTa transformer model for AI detection.
 from __future__ import annotations
 
 import torch
-from transformers import RobertaTokenizer, RobertaForSequenceClassification
+from transformers import RobertaForSequenceClassification, RobertaTokenizer
 
 from src.analyzers.base_analyzer import BaseAnalyzer
-from src.config.settings import get_settings
 from src.models.result import AnalysisResult, DetectionScore
 from src.utils.logging_config import get_logger
 from src.utils.text_processing import TextProcessor
@@ -47,9 +46,7 @@ class RoBERTaAnalyzer(BaseAnalyzer):
             logger.info("Loading RoBERTa tokenizer...")
             # Using a pre-trained AI detection model
             # Note: You can replace this with a fine-tuned model for AI detection
-            self._tokenizer = RobertaTokenizer.from_pretrained(
-                "roberta-base"
-            )
+            self._tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
         return self._tokenizer
 
     @property
@@ -67,8 +64,7 @@ class RoBERTaAnalyzer(BaseAnalyzer):
             # To use a fine-tuned model, replace 'roberta-base' with your model path
             # Example: 'your-username/roberta-ai-detector'
             self._model = RobertaForSequenceClassification.from_pretrained(
-                "roberta-base",
-                num_labels=2  # Binary classification: AI vs Human
+                "roberta-base", num_labels=2  # Binary classification: AI vs Human
             )
             self._model.to(self.device)
             self._model.eval()
@@ -87,13 +83,9 @@ class RoBERTaAnalyzer(BaseAnalyzer):
         """
         # Tokenize with truncation and padding
         inputs = self.tokenizer(
-            text,
-            return_tensors="pt",
-            truncation=True,
-            max_length=512,
-            padding=True
+            text, return_tensors="pt", truncation=True, max_length=512, padding=True
         )
-        
+
         # Move to device
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
@@ -101,7 +93,7 @@ class RoBERTaAnalyzer(BaseAnalyzer):
         with torch.no_grad():
             outputs = self.model(**inputs)
             logits = outputs.logits
-            
+
         # Convert to probabilities
         probs = torch.softmax(logits, dim=1)
         ai_prob = probs[0][1].item()  # Probability of AI class
@@ -126,50 +118,58 @@ class RoBERTaAnalyzer(BaseAnalyzer):
         logger.info("Computing RoBERTa classification...")
         ai_prob, confidence = self._compute_roberta_score(text)
 
-        result.add_score(DetectionScore(
-            name="RoBERTa AI Score",
-            value=ai_prob,
-            weight=0.50,
-            interpretation=self._interpret_roberta_score(ai_prob),
-            indicates_ai=ai_prob > 0.5,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="RoBERTa AI Score",
+                value=ai_prob,
+                weight=0.50,
+                interpretation=self._interpret_roberta_score(ai_prob),
+                indicates_ai=ai_prob > 0.5,
+            )
+        )
 
         # 2. Compute burstiness
         logger.info("Computing burstiness...")
         burstiness, _ = TextProcessor.compute_burstiness(text)
         result.burstiness = burstiness
 
-        result.add_score(DetectionScore(
-            name="Burstiness",
-            value=result.burstiness,
-            weight=0.20,
-            interpretation=self._interpret_burstiness(result.burstiness),
-            indicates_ai=result.burstiness < self.thresholds.burstiness_medium,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="Burstiness",
+                value=result.burstiness,
+                weight=0.20,
+                interpretation=self._interpret_burstiness(result.burstiness),
+                indicates_ai=result.burstiness < self.thresholds.burstiness_medium,
+            )
+        )
 
         # 3. Compute lexical diversity
         logger.info("Computing lexical diversity...")
         result.lexical_diversity = result.metrics.lexical_diversity
 
-        result.add_score(DetectionScore(
-            name="Lexical Diversity",
-            value=result.lexical_diversity,
-            weight=0.15,
-            interpretation=self._interpret_lexical_diversity(result.lexical_diversity),
-            indicates_ai=result.lexical_diversity < self.thresholds.lexical_diversity_medium,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="Lexical Diversity",
+                value=result.lexical_diversity,
+                weight=0.15,
+                interpretation=self._interpret_lexical_diversity(result.lexical_diversity),
+                indicates_ai=result.lexical_diversity < self.thresholds.lexical_diversity_medium,
+            )
+        )
 
         # 4. Compute sentence variance
         logger.info("Computing sentence variance...")
         result.sentence_variance = TextProcessor.compute_sentence_variance(text)
 
-        result.add_score(DetectionScore(
-            name="Sentence Variance",
-            value=result.sentence_variance,
-            weight=0.15,
-            interpretation=self._interpret_sentence_variance(result.sentence_variance),
-            indicates_ai=result.sentence_variance < 0.25,
-        ))
+        result.add_score(
+            DetectionScore(
+                name="Sentence Variance",
+                value=result.sentence_variance,
+                weight=0.15,
+                interpretation=self._interpret_sentence_variance(result.sentence_variance),
+                indicates_ai=result.sentence_variance < 0.25,
+            )
+        )
 
         # Store perplexity placeholder (not computed by RoBERTa)
         result.perplexity = 0.0

@@ -9,15 +9,9 @@ from __future__ import annotations
 
 import time
 from abc import ABC, abstractmethod
-from typing import Optional
 
-from src.config.settings import (
-    ConfidenceLevel,
-    ThresholdConfig,
-    Verdict,
-    get_settings,
-)
-from src.models.result import AnalysisResult, DetectionScore
+from src.config.settings import ConfidenceLevel, Verdict, get_settings
+from src.models.result import AnalysisResult
 from src.utils.logging_config import get_logger
 from src.utils.text_processing import TextProcessor
 
@@ -181,12 +175,14 @@ class BaseAnalyzer(ABC):
             scores.append(("sentence_variance", 0.0, False))
 
         # Weighted average
-        weights = {"perplexity": 0.40, "burstiness": 0.25,
-                    "lexical_diversity": 0.15, "sentence_variance": 0.20}
+        weights = {
+            "perplexity": 0.40,
+            "burstiness": 0.25,
+            "lexical_diversity": 0.15,
+            "sentence_variance": 0.20,
+        }
 
-        weighted_sum = sum(
-            score * weights.get(name, 0.25) for name, score, _ in scores
-        )
+        weighted_sum = sum(score * weights.get(name, 0.25) for name, score, _ in scores)
         total_weight = sum(weights.get(name, 0.25) for name, _, _ in scores)
         ai_probability = weighted_sum / total_weight if total_weight > 0 else 0.5
 
@@ -282,13 +278,9 @@ class BaseAnalyzer(ABC):
 
         # Sentence variance
         if result.sentence_variance < 0.15:
-            parts.append(
-                "Sentence lengths are very uniform, a common AI characteristic."
-            )
+            parts.append("Sentence lengths are very uniform, a common AI characteristic.")
         elif result.sentence_variance > 0.50:
-            parts.append(
-                "Sentence lengths show high variation, typical of natural writing."
-            )
+            parts.append("Sentence lengths show high variation, typical of natural writing.")
 
         # Warnings
         if result.warnings:

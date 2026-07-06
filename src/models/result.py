@@ -8,9 +8,9 @@ Structured data models for analysis results using dataclasses.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from src.config.settings import ConfidenceLevel, Verdict
 

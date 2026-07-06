@@ -3,8 +3,9 @@ Tests for NLTK-based analyzer.
 """
 
 import pytest
+
 from src.analyzers.nltk_analyzer import NLTKAnalyzer
-from src.config.settings import Verdict, ConfidenceLevel
+from src.config.settings import ConfidenceLevel, Verdict
 
 
 class TestNLTKAnalyzerInit:

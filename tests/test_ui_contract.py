@@ -30,9 +30,7 @@ def test_build_result_reminder_markdown_contract() -> None:
 
 
 def test_build_mode_guidance_markdown_includes_all_inputs() -> None:
-    content = build_mode_guidance_markdown(
-        "NLTK", "streamlit run app.py", "<1s", "<1 GB"
-    )
+    content = build_mode_guidance_markdown("NLTK", "streamlit run app.py", "<1s", "<1 GB")
     assert "### 🧭 Mode Guidance" in content
     assert "NLTK" in content
     assert "streamlit run app.py" in content

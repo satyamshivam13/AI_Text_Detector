@@ -8,9 +8,7 @@ LIMITATIONS_BULLETS = [
     "Do not use this result as sole evidence in academic or legal decisions.",
 ]
 
-RESULT_LEVEL_REMINDER = (
-    "Interpret this score alongside context, writing history, and human review."
-)
+RESULT_LEVEL_REMINDER = "Interpret this score alongside context, writing history, and human review."
 
 
 def build_limitations_markdown() -> str:

@@ -6,21 +6,19 @@ Mark tests with @pytest.mark.slow for CI/CD filtering.
 """
 
 import pytest
+
 from src.analyzers.gpt2_analyzer import GPT2Analyzer
 from src.config.settings import ConfidenceLevel, Verdict
 
-
 # Skip all tests in this module if torch is not available or in CI
 try:
-    import torch
+    import torch  # noqa: F401
+
     HAS_TORCH = True
 except ImportError:
     HAS_TORCH = False
 
-pytestmark = pytest.mark.skipif(
-    not HAS_TORCH,
-    reason="PyTorch not available"
-)
+pytestmark = pytest.mark.skipif(not HAS_TORCH, reason="PyTorch not available")
 
 
 class TestGPT2AnalyzerInit:

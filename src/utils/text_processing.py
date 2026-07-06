@@ -64,19 +64,108 @@ class TextProcessor:
             except Exception:
                 logger.warning("Could not load stopwords, using default set")
                 cls._stop_words = {
-                    "the", "a", "an", "is", "are", "was", "were", "be", "been",
-                    "being", "have", "has", "had", "do", "does", "did", "will",
-                    "would", "could", "should", "may", "might", "can", "shall",
-                    "to", "of", "in", "for", "on", "with", "at", "by", "from",
-                    "as", "into", "through", "during", "before", "after", "above",
-                    "below", "between", "and", "but", "or", "nor", "not", "so",
-                    "yet", "both", "either", "neither", "each", "every", "all",
-                    "any", "few", "more", "most", "other", "some", "such", "no",
-                    "only", "own", "same", "than", "too", "very", "just", "because",
-                    "this", "that", "these", "those", "i", "me", "my", "myself",
-                    "we", "our", "ours", "you", "your", "he", "him", "his", "she",
-                    "her", "it", "its", "they", "them", "their", "what", "which",
-                    "who", "whom", "when", "where", "why", "how",
+                    "the",
+                    "a",
+                    "an",
+                    "is",
+                    "are",
+                    "was",
+                    "were",
+                    "be",
+                    "been",
+                    "being",
+                    "have",
+                    "has",
+                    "had",
+                    "do",
+                    "does",
+                    "did",
+                    "will",
+                    "would",
+                    "could",
+                    "should",
+                    "may",
+                    "might",
+                    "can",
+                    "shall",
+                    "to",
+                    "of",
+                    "in",
+                    "for",
+                    "on",
+                    "with",
+                    "at",
+                    "by",
+                    "from",
+                    "as",
+                    "into",
+                    "through",
+                    "during",
+                    "before",
+                    "after",
+                    "above",
+                    "below",
+                    "between",
+                    "and",
+                    "but",
+                    "or",
+                    "nor",
+                    "not",
+                    "so",
+                    "yet",
+                    "both",
+                    "either",
+                    "neither",
+                    "each",
+                    "every",
+                    "all",
+                    "any",
+                    "few",
+                    "more",
+                    "most",
+                    "other",
+                    "some",
+                    "such",
+                    "no",
+                    "only",
+                    "own",
+                    "same",
+                    "than",
+                    "too",
+                    "very",
+                    "just",
+                    "because",
+                    "this",
+                    "that",
+                    "these",
+                    "those",
+                    "i",
+                    "me",
+                    "my",
+                    "myself",
+                    "we",
+                    "our",
+                    "ours",
+                    "you",
+                    "your",
+                    "he",
+                    "him",
+                    "his",
+                    "she",
+                    "her",
+                    "it",
+                    "its",
+                    "they",
+                    "them",
+                    "their",
+                    "what",
+                    "which",
+                    "who",
+                    "whom",
+                    "when",
+                    "where",
+                    "why",
+                    "how",
                 }
         return cls._stop_words
 
@@ -132,8 +221,13 @@ class TextProcessor:
             return [s.strip() for s in re.split(r"[.!?]+", text) if s.strip()]
 
     @classmethod
-    def tokenize_words(cls, text: str, remove_stopwords: bool = False,
-                       remove_punctuation: bool = True, lowercase: bool = True) -> List[str]:
+    def tokenize_words(
+        cls,
+        text: str,
+        remove_stopwords: bool = False,
+        remove_punctuation: bool = True,
+        lowercase: bool = True,
+    ) -> List[str]:
         """
         Tokenize text into words with configurable preprocessing.
 
@@ -184,9 +278,7 @@ class TextProcessor:
 
         sentences = cls.tokenize_sentences(cleaned)
         all_words = cls.tokenize_words(cleaned, remove_punctuation=True)
-        content_words = cls.tokenize_words(
-            cleaned, remove_stopwords=True, remove_punctuation=True
-        )
+        content_words = cls.tokenize_words(cleaned, remove_stopwords=True, remove_punctuation=True)
 
         total_words = len(all_words)
         unique_words = len(set(all_words))
@@ -198,9 +290,7 @@ class TextProcessor:
         sentence_lengths = [len(cls.tokenize_words(s, remove_punctuation=True)) for s in sentences]
 
         # Average word length
-        avg_word_length = (
-            sum(len(w) for w in all_words) / total_words if total_words > 0 else 0.0
-        )
+        avg_word_length = sum(len(w) for w in all_words) / total_words if total_words > 0 else 0.0
 
         # Average sentence length
         avg_sentence_length = (
@@ -287,7 +377,7 @@ class TextProcessor:
 
         # Variance of word frequencies
         variance = sum((f - mean_freq) ** 2 for f in frequencies) / len(frequencies)
-        std_dev = variance ** 0.5
+        std_dev = variance**0.5
 
         # Burstiness: (std - mean) / (std + mean)
         # Range: [-1, 1], higher = more bursty = more human-like
@@ -327,7 +417,7 @@ class TextProcessor:
             return 0.0
 
         lengths = [len(cls.tokenize_words(s, remove_punctuation=True)) for s in sentences]
-        lengths = [l for l in lengths if l > 0]
+        lengths = [ln for ln in lengths if ln > 0]
 
         if not lengths:
             return 0.0
@@ -337,8 +427,8 @@ class TextProcessor:
         if mean_length == 0:
             return 0.0
 
-        variance = sum((l - mean_length) ** 2 for l in lengths) / len(lengths)
-        std_dev = variance ** 0.5
+        variance = sum((ln - mean_length) ** 2 for ln in lengths) / len(lengths)
+        std_dev = variance**0.5
 
         # Coefficient of variation
         cv = std_dev / mean_length

@@ -9,8 +9,8 @@ Usage:
     streamlit run app.py
 """
 
-import sys
 import os
+import sys
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
@@ -44,7 +44,8 @@ st.set_page_config(
 
 # ─── Custom CSS ──────────────────────────────────────────────────────────────
 
-st.markdown("""
+st.markdown(
+    """
 <style>
     /* Main container */
     .main .block-container {
@@ -182,10 +183,13 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 
 # ─── Cached Resources ───────────────────────────────────────────────────────
+
 
 @st.cache_resource(show_spinner="Loading NLTK language model...")
 def load_analyzer(ngram_size: int) -> NLTKAnalyzer:
@@ -213,7 +217,7 @@ with st.sidebar:
         options=[2, 3, 4],
         index=1,
         help="Higher values capture longer patterns but need more data. "
-             "Trigram (3) is recommended for best balance.",
+        "Trigram (3) is recommended for best balance.",
     )
 
     st.markdown("---")
@@ -237,8 +241,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("### ℹ️ About")
-    st.markdown(
-        """
+    st.markdown("""
         **NLTK-Based Detector** uses n-gram language models
         trained on the Brown corpus to analyze text patterns.
 
@@ -248,8 +251,7 @@ with st.sidebar:
         - Lower resource usage
 
         **Version:** 2.0.0
-        """
-    )
+        """)
 
     st.markdown("---")
     st.markdown(
@@ -292,12 +294,15 @@ with st.sidebar:
 # ─── Main Content ────────────────────────────────────────────────────────────
 
 # Header
-st.markdown("""
+st.markdown(
+    """
 <div class="main-header">
     <h1>🛡️ AI Text Detector</h1>
     <p>NLTK-Based Analysis • N-gram Language Models • Statistical Pattern Detection</p>
 </div>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # Text Input
 st.markdown("### 📝 Enter Text for Analysis")
@@ -325,7 +330,9 @@ if text_input:
     with col_info2:
         st.caption(f"📝 {word_count} words")
     with col_info3:
-        quality = "🟢 Good" if char_count >= 200 else "🟡 Short" if char_count >= 50 else "🔴 Very short"
+        quality = (
+            "🟢 Good" if char_count >= 200 else "🟡 Short" if char_count >= 50 else "🔴 Very short"
+        )
         st.caption(f"Quality: {quality}")
 
 # Analyze button
@@ -371,22 +378,28 @@ if analyze_clicked and text_input:
             css_class = verdict_class.get(result.verdict, "verdict-uncertain")
             emoji = verdict_emoji.get(result.verdict, "❓")
 
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div class="verdict-card {css_class}">
                 <h2>{emoji} {result.verdict.value}</h2>
                 <p>Confidence: {result.confidence:.1f}% ({result.confidence_level.value})
                 � Analysis Time: {result.analysis_time:.2f}s</p>
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
             st.caption(build_result_reminder_markdown())
 
             # -- Warnings -- ──
             if result.warnings:
                 for warning in result.warnings:
-                    st.markdown(f"""
+                    st.markdown(
+                        f"""
                     <div class="warning-box">⚠️ {warning}</div>
-                    """, unsafe_allow_html=True)
+                    """,
+                        unsafe_allow_html=True,
+                    )
 
             # ── Key Metrics ──
             st.markdown("### 📊 Key Metrics")
@@ -394,18 +407,27 @@ if analyze_clicked and text_input:
             col1, col2, col3, col4 = st.columns(4)
 
             with col1:
-                st.markdown(f"""
+                perplexity_hint = (
+                    "Lower = more AI-like"
+                    if result.perplexity < 150
+                    else "Higher = more human-like"
+                )
+                st.markdown(
+                    f"""
                 <div class="metric-card">
                     <div class="metric-value">{result.perplexity:.1f}</div>
                     <div class="metric-label">Perplexity</div>
                     <div class="metric-interpretation">
-                        {"Lower = more AI-like" if result.perplexity < 150 else "Higher = more human-like"}
+                        {perplexity_hint}
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """,
+                    unsafe_allow_html=True,
+                )
 
             with col2:
-                st.markdown(f"""
+                st.markdown(
+                    f"""
                 <div class="metric-card">
                     <div class="metric-value">{result.burstiness:.3f}</div>
                     <div class="metric-label">Burstiness</div>
@@ -413,10 +435,13 @@ if analyze_clicked and text_input:
                         {"Uniform usage" if result.burstiness < 0.25 else "Varied usage"}
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """,
+                    unsafe_allow_html=True,
+                )
 
             with col3:
-                st.markdown(f"""
+                st.markdown(
+                    f"""
                 <div class="metric-card">
                     <div class="metric-value">{result.lexical_diversity:.1%}</div>
                     <div class="metric-label">Lexical Diversity</div>
@@ -424,10 +449,13 @@ if analyze_clicked and text_input:
                         {"Low variety" if result.lexical_diversity < 0.5 else "Good variety"}
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """,
+                    unsafe_allow_html=True,
+                )
 
             with col4:
-                st.markdown(f"""
+                st.markdown(
+                    f"""
                 <div class="metric-card">
                     <div class="metric-value">{result.sentence_variance:.3f}</div>
                     <div class="metric-label">Sentence Variance</div>
@@ -435,7 +463,9 @@ if analyze_clicked and text_input:
                         {"Uniform" if result.sentence_variance < 0.25 else "Varied"}
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """,
+                    unsafe_allow_html=True,
+                )
 
             # ── Explanation ──
             st.markdown("### 💡 Analysis Explanation")
@@ -446,21 +476,26 @@ if analyze_clicked and text_input:
 
             for score in result.scores:
                 indicator = "🔴" if score.indicates_ai else "🟢"
-                st.markdown(f"""
+                st.markdown(
+                    f"""
                 <div class="score-row">
                     {indicator} <strong>{score.name}</strong>: {score.value:.4f}
                     (Weight: {score.weight:.0%}) — <em>{score.interpretation}</em>
                 </div>
-                """, unsafe_allow_html=True)
+                """,
+                    unsafe_allow_html=True,
+                )
 
             # ── Visualizations ──
             st.markdown("### 📈 Visualizations")
 
-            tab1, tab2, tab3 = st.tabs([
-                "📊 Word Frequencies",
-                "📐 Score Radar",
-                "📏 Sentence Lengths",
-            ])
+            tab1, tab2, tab3 = st.tabs(
+                [
+                    "📊 Word Frequencies",
+                    "📐 Score Radar",
+                    "📏 Sentence Lengths",
+                ]
+            )
 
             with tab1:
                 # Filter by min word count
@@ -470,7 +505,8 @@ if analyze_clicked and text_input:
                     if count >= min_word_count
                 }
                 fig = charts.create_word_frequency_chart_plotly(
-                    filtered_freq, top_n=top_words,
+                    filtered_freq,
+                    top_n=top_words,
                     title=f"Top {top_words} Content Words (min freq: {min_word_count})",
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -481,9 +517,7 @@ if analyze_clicked and text_input:
 
             with tab3:
                 if result.metrics.sentence_lengths:
-                    fig_sent = charts.create_sentence_length_chart(
-                        result.metrics.sentence_lengths
-                    )
+                    fig_sent = charts.create_sentence_length_chart(result.metrics.sentence_lengths)
                     st.plotly_chart(fig_sent, use_container_width=True)
                 else:
                     st.info("Not enough sentences for length analysis.")
@@ -546,27 +580,24 @@ elif not text_input:
             language=None,
         )
 
-    st.markdown("""
+    st.markdown(
+        """
     <div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.4);">
         👆 Paste some text above and click <strong>Analyze Text</strong> to get started
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 # ─── Footer ──────────────────────────────────────────────────────────────────
 
-st.markdown("""
+st.markdown(
+    """
 <div class="footer">
     <p>🛡️ AI Text Detector v2.0.0 • NLTK Analysis Engine</p>
     <p>⚠️ Results are probabilistic estimates, not definitive classifications.</p>
     <p>No text is stored or transmitted. All processing happens locally.</p>
 </div>
-""", unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
+""",
+    unsafe_allow_html=True,
+)
