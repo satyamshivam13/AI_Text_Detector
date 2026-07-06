@@ -1,6 +1,11 @@
 ﻿# AI Text Detector
 
-A local, explainable toolkit for estimating how likely text is machine-generated using NLTK statistics, GPT-2 perplexity, and an optional ensemble mode.
+![CI](https://github.com/satyamshivam13/AI_Text_Detector/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.8%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Code style](https://img.shields.io/badge/code%20style-black-000000)
+
+A local, explainable toolkit for estimating how likely text is machine-generated using NLTK statistics, GPT-2 perplexity, and an optional ensemble mode. It reports a **verdict, confidence, per-signal metrics, and a narrative explanation** — not a single opaque score — and is honest about its limits.
 
 ## Features
 
@@ -98,6 +103,27 @@ result = analyzer.analyze("Your text here")
 print(result.to_dict())
 ```
 
+## Accuracy and Evaluation
+
+This project ships a real evaluation layer instead of asking you to take accuracy
+on faith. Run it yourself:
+
+```bash
+python -m src.evaluation.benchmark --analyzer ensemble --plots out/
+```
+
+On the small bundled benchmark (`data/benchmark/`), the **calibrated ensemble**
+scores Accuracy/F1/AUROC 1.000 with a **false-positive rate of 0.000** (human
+text is not flagged as AI). See [docs/benchmarks/](docs/benchmarks/) for the full
+report and ROC/calibration plots.
+
+> ⚠️ Those numbers are on a small, in-distribution set — a regression/calibration
+> check, **not** an authoritative accuracy claim. Real-world text (edited,
+> paraphrased, mixed, ESL, technical) is much harder. Evaluate on a large public
+> benchmark (RAID, HC3) via `--dataset` before making any external claim. The
+> NLTK-only signal, in particular, is weak (Brown corpus, 1961) and carries a
+> small ensemble weight for that reason.
+
 ## Limitations and Ethics
 
 - Results are probabilistic and not certainty claims.
@@ -105,7 +131,15 @@ print(result.to_dict())
 - Output should never be used as sole evidence of authorship.
 - Use results as one signal alongside human review and context.
 
+## Contributing and Security
+
+- Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Code of Conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Security policy: [SECURITY.md](SECURITY.md)
+- Changelog: [CHANGELOG.md](CHANGELOG.md)
+
 ## Documentation
 
-- API reference: docs/API.md
-- Deployment guide: docs/DEPLOYMENT.md
+- API reference: [docs/API.md](docs/API.md)
+- Benchmarks: [docs/benchmarks/](docs/benchmarks/)
+- Deployment guide: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
