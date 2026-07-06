@@ -40,23 +40,25 @@ def _mocked_sub_results():
         )
     )
 
+    # AI-typical perplexities under the calibrated mapping (GPT-2 ~15, Brown
+    # ~3000) so the fused verdict reflects real detector behaviour.
     gpt2 = AnalysisResult(
         verdict=Verdict.LIKELY_AI,
         confidence=76.0,
-        perplexity=80.0,
+        perplexity=15.0,
         burstiness=0.15,
         sentence_variance=0.22,
     )
     gpt2.add_score(DetectionScore(name="GPT-2 Perplexity", value=0.84, indicates_ai=True))
 
     nltk = AnalysisResult(
-        verdict=Verdict.LIKELY_HUMAN,
+        verdict=Verdict.LIKELY_AI,
         confidence=64.0,
-        perplexity=210.0,
+        perplexity=3000.0,
         burstiness=0.42,
         sentence_variance=0.37,
     )
-    nltk.add_score(DetectionScore(name="Perplexity", value=0.58, indicates_ai=False))
+    nltk.add_score(DetectionScore(name="Perplexity", value=0.58, indicates_ai=True))
 
     return roberta, gpt2, nltk
 
@@ -76,8 +78,8 @@ class TestEnsembleAnalyzer:
         assert ensemble_analyzer is not None
         assert ensemble_analyzer.method_name == "Ensemble (GPT2+NLTK)"
         assert ensemble_analyzer.weights["roberta"] == 0.0
-        assert ensemble_analyzer.weights["gpt2"] == 0.65
-        assert ensemble_analyzer.weights["nltk"] == 0.35
+        assert ensemble_analyzer.weights["gpt2"] == 0.75
+        assert ensemble_analyzer.weights["nltk"] == 0.25
 
     def test_analyzer_lazy_loading(self, ensemble_analyzer):
         """Test that individual analyzers are lazy-loaded."""
@@ -104,7 +106,9 @@ class TestEnsembleAnalyzer:
         assert result is not None
         assert len(result.warnings) > 0
         assert any(
-            "short" in warning.lower() or "accuracy" in warning.lower() or "characters" in warning.lower()
+            "short" in warning.lower()
+            or "accuracy" in warning.lower()
+            or "characters" in warning.lower()
             for warning in result.warnings
         )
 

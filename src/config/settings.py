@@ -121,6 +121,41 @@ class VisualizationConfig:
     color_secondary: str = "#764ba2"
 
 
+@dataclass(frozen=True)
+class EnsembleConfig:
+    """Calibration and fusion configuration for the ensemble analyzer.
+
+    Perplexity is mapped to a calibrated AI-probability with a per-analyzer
+    logistic (see :mod:`src.analyzers.calibration`). The midpoint is the
+    perplexity at which AI-probability is 0.5 — i.e. the decision boundary —
+    and was chosen from the observed human/AI perplexity separation on the
+    bundled benchmark. Re-run ``python -m src.evaluation.benchmark`` after
+    changing these.
+    """
+
+    # GPT-2: lower perplexity => more AI. Human ~40-106, AI ~10-25 on benchmark.
+    gpt2_ppl_midpoint: float = 30.0
+    gpt2_ppl_slope: float = 0.15
+
+    # Brown-corpus NLTK: higher perplexity => more AI (formal/atypical text).
+    # Human median ~1200, AI median ~1900 on the benchmark, with overlap — a
+    # deliberately weak signal, so it carries a smaller weight below.
+    nltk_ppl_midpoint: float = 1550.0
+    nltk_ppl_slope: float = 0.0015
+
+    # Fusion weights. RoBERTa stays disabled until a fine-tuned checkpoint is
+    # wired in; GPT-2 is the strongest signal and dominates the blend.
+    weight_roberta: float = 0.0
+    weight_gpt2: float = 0.75
+    weight_nltk: float = 0.25
+
+    # Verdict thresholds on the fused, calibrated AI-probability.
+    ai_threshold: float = 0.70
+    likely_ai_threshold: float = 0.55
+    likely_human_threshold: float = 0.45
+    human_threshold: float = 0.30
+
+
 @dataclass
 class Settings:
     """Main application settings."""
@@ -133,6 +168,7 @@ class Settings:
     thresholds: ThresholdConfig = field(default_factory=ThresholdConfig)
     nltk: NLTKConfig = field(default_factory=NLTKConfig)
     gpt2: GPT2Config = field(default_factory=GPT2Config)
+    ensemble: EnsembleConfig = field(default_factory=EnsembleConfig)
     visualization: VisualizationConfig = field(default_factory=VisualizationConfig)
 
     def __post_init__(self):

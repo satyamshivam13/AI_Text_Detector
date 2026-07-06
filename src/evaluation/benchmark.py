@@ -249,7 +249,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     print(_format_summary(result))
 
     if args.output:
-        Path(args.output).write_text(json.dumps(result.to_dict(), indent=2), encoding="utf-8")
+        output_path = Path(args.output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(json.dumps(result.to_dict(), indent=2), encoding="utf-8")
         print(f"Wrote report to {args.output}")
     if args.plots:
         written = save_plots(result, Path(args.plots))

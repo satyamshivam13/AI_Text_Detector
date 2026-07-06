@@ -11,3 +11,10 @@ exclude =
     build,
     dist,
     *.egg-info
+per-file-ignores =
+    # Streamlit entry points must insert src/ on sys.path before importing
+    # src.* (a project-wide invariant documented in AGENTS.md), which trips
+    # E402 (module import not at top of file).
+    app.py:E402
+    test.py:E402
+    ensemble.py:E402
