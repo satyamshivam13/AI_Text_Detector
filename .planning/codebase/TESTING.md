@@ -1,143 +1,64 @@
-# Testing Patterns
+# Testing
 
-**Analysis Date:** 2026-04-02
+**Analysis Date:** 2026-07-06
 
-## Test Framework
+## Framework & Layout
 
-**Runner:**
-- **pytest** (>=7.4.0 per `requirements-dev.txt`).
-- No committed `pytest.ini`, `pyproject.toml`, or `tox.ini` in repo root; behavior is default pytest discovery.
+- **pytest** (`requirements-dev.txt`, `setup.py extras_require[dev]`).
+- `pytest.ini` registers the `slow` marker (`-m "not slow"` deselects
+  model-heavy tests).
+- `tests/conftest.py` prepends `../src` to `sys.path` (no `PYTHONPATH` needed)
+  and provides shared text fixtures (`sample_ai_text`, `sample_human_text`,
+  `short_text`, `empty_text`, `medium_text`, `repetitive_text`).
+- **22 test files, ~231 test functions.** Full-suite coverage ~**92%** of `src/`.
 
-**Assertion Library:**
-- Plain `assert` statements (pytest style).
+## Test Areas
 
-**Plugins (declared):**
-- `pytest-cov` — coverage.
-- `pytest-mock` — available but **not used** in current test modules (no `mock` / `patch` / `mocker` references under `tests/`).
+- **Analyzer unit/contract:** `test_nltk_analyzer.py`, `test_gpt2_analyzer.py`
+  (slow, torch-gated), `test_roberta_analyzer.py`, `test_binoculars_analyzer.py`
+  (mocked + slow real-model), `test_base_analyzer_contract.py`,
+  `test_analyzer_internals.py` (pure verdict/explanation/interpret/input-cap/
+  error-path — no model load).
+- **Calibration/eval:** `test_calibration.py` (logistic mapping),
+  `test_evaluation.py`, `test_metrics`-style cases, `test_dataset_loader.py`
+  (error branches), `test_benchmark_runner.py` (factory, summary, plots, CLI).
+- **Ensemble:** `test_ensemble_analyzer.py` (mocked sub-analyzers),
+  `test_ensemble_weighted_fusion.py` (calibrated fusion, binoculars gating,
+  human-scale-not-flagged regression).
+- **UI:** `test_streamlit_apps.py` (Streamlit **AppTest** headless smoke tests
+  for all 3 entry scripts), `test_ui_components.py`, `test_ui_contract.py`,
+  `test_visualization.py` (ChartGenerator), `test_infra.py` (logging + lazy
+  imports), `test_*_streamlit_contract.py` (static source contracts).
+- **Data model:** `test_result_model.py`.
 
-**Run Commands:**
+## Mocking Strategy
+
+- Sub-analyzers are replaced with lightweight fakes (`EnsembleAnalyzer`) or the
+  `_compute_*` method is monkeypatched (`BinocularsAnalyzer`) so most tests run
+  **without loading transformer or Brown-corpus models**.
+- Genuinely model-dependent paths (`_compute_perplexity_gpt2`,
+  `_compute_binoculars`, real RoBERTa/GPT-2 `analyze`) are marked
+  `@pytest.mark.slow` and excluded from the default/CI run.
+- `NLTKAnalyzer` uses a process-wide model cache, so the Brown model builds once
+  per test process (NLTK suite ~30s instead of ~6min).
+
+## Running
+
 ```bash
-# Recommended (matches Makefile): PYTHONPATH set for src package
-make test
-
-# Equivalent manual invocation from repo root
-PYTHONPATH=src python -m pytest tests/ -v --cov=src --cov-report=html --cov-report=term-missing
+python -m pytest tests/ -m "not slow" -q            # fast (CI default)
+python -m pytest tests/ -q --cov=src --cov-report=term-missing  # full + coverage
+python -m pytest -m slow -v                          # model-backed only
 ```
 
-On Windows PowerShell, set env then run pytest, or use `make test` if GNU Make is available.
+## CI
 
-**README** also documents: `pytest tests/ -v --cov=src --cov-report=html` and single-file runs (e.g. `pytest tests/test_ensemble_analyzer.py -v`).
+`.github/workflows/ci.yml`: **lint** job (flake8 + black --check + isort --check)
+and **test** job over Python 3.9/3.10/3.11 — installs deps, downloads NLTK data,
+runs `pytest -m "not slow" --cov=src`.
 
-## Test File Organization
+## Gaps / Notes
 
-**Location:**
-- All tests under `tests/` (not co-located with `src/`).
-
-**Naming:**
-- `test_<area>.py` (e.g. `tests/test_text_processing.py`, `tests/test_result_model.py`).
-
-**Package:**
-- `tests/__init__.py` present (package layout).
-
-**Structure:**
-```
-tests/
-├── __init__.py
-├── conftest.py              # shared fixtures, path bootstrap
-├── test_ensemble_analyzer.py
-├── test_gpt2_analyzer.py
-├── test_nltk_analyzer.py
-├── test_result_model.py
-├── test_roberta_analyzer.py
-└── test_text_processing.py
-```
-
-## Test Structure
-
-**Suite organization:**
-- **Classes** group related cases: `TestTextCleaning`, `TestNLTKAnalyzerInit`, `TestEnsembleAnalyzer`, etc.
-
-**Example pattern (class + methods):**
-```python
-class TestTextCleaning:
-    def test_clean_empty_text(self):
-        assert TextProcessor.clean_text("") == ""
-```
-
-**Fixtures:**
-- **Shared:** `tests/conftest.py` — `sample_ai_text`, `sample_human_text`, `short_text`, `empty_text`, `medium_text`, `repetitive_text`, `nltk_analyzer`, `text_processor`.
-- **Local:** `@pytest.fixture` in module (e.g. `ensemble_analyzer` in `tests/test_ensemble_analyzer.py`).
-- **Autouse setup:** `autouse=True` fixture on test class for analyzer instance (`tests/test_nltk_analyzer.py`, `tests/test_gpt2_analyzer.py`).
-
-**Parametrization:** Not heavily used; prefer explicit methods per edge case in current codebase.
-
-## Mocking
-
-**Framework:** `pytest-mock` is a dev dependency only; **current tests are integration-style** against real `NLTKAnalyzer`, `GPT2Analyzer`, `EnsembleAnalyzer`, and `TextProcessor`.
-
-**Prescriptive guidance:**
-- Use `pytest-mock`’s `mocker` fixture or `unittest.mock.patch` for Hugging Face / torch downloads, slow I/O, or nondeterministic model output when adding CI-friendly unit tests.
-- Keep heavy model tests behind markers (see below).
-
-## Fixtures and Factories
-
-**Test data:**
-- Long representative strings in `conftest.py` for “AI-like” vs “human-like” prose and edge cases (short, empty, repetitive).
-
-**Factory-style fixtures:**
-- `nltk_analyzer` → `NLTKAnalyzer(ngram_size=3)`.
-- `text_processor` → `TextProcessor()`.
-
-**No separate `fixtures/` directory**; everything lives in `conftest.py` or inline fixtures.
-
-## Coverage
-
-**Requirements:** No enforced coverage threshold in repo config; `Makefile` `test` target runs coverage with HTML + terminal missing-line report.
-
-**View coverage:**
-```bash
-make test
-# Open htmlcov/index.html after run
-```
-
-**Scope:** `--cov=src` limits reporting to the installable package under `src/`.
-
-## Test Types
-
-**Unit tests:**
-- `tests/test_text_processing.py` — pure utilities, fast, no GPU.
-
-**Model / analyzer tests:**
-- `tests/test_nltk_analyzer.py`, `tests/test_result_model.py` — logic close to domain.
-
-**Heavy / ML tests:**
-- `tests/test_gpt2_analyzer.py` — module-level `pytestmark = pytest.mark.skipif(not HAS_TORCH, ...)`; class `TestGPT2Analysis` uses `@pytest.mark.slow` (documented for CI filtering in module docstring).
-- `tests/test_roberta_analyzer.py` and `tests/test_ensemble_analyzer.py` exercise transformers stack (slow, network/model cache dependent).
-
-**E2E / UI:** Streamlit apps are not covered by automated browser tests in `tests/`.
-
-## Common Patterns
-
-**Enum membership:**
-```python
-assert result.verdict in list(Verdict)
-```
-
-**Exception testing:**
-```python
-with pytest.raises(ValueError):
-    analyzer.set_ngram_size(1)
-```
-
-**Structural assertions on results:**
-- `result.to_dict()`, `hasattr` checks, score name substring checks (`"RoBERTa" in name`, etc.) in `tests/test_ensemble_analyzer.py`.
-
-## CI / Automation
-
-**Repository:** No `.github/workflows` or other CI config detected in workspace; quality gates are **local** via `Makefile` (`test`, `lint`, `format`).
-
-**Pre-commit:** Listed in `requirements-dev.txt`; no committed hook config found — treat as optional local setup unless added later.
-
----
-
-*Testing analysis: 2026-04-02*
+- Coverage is **not gated** (`--cov-fail-under` not set) — it can silently erode.
+- Slow model tests **never run in CI** (no scheduled full-suite job).
+- Bundled benchmark (`data/benchmark/samples.jsonl`) is 24 clean in-distribution
+  samples — used for regression/calibration, **not** an accuracy claim.

@@ -1,77 +1,53 @@
-# External Integrations
+# Integrations
 
-**Analysis Date:** 2026-04-02
+**Analysis Date:** 2026-07-06
 
-## APIs & External Services
+The project is **local-first**: core detection requires no third-party API calls
+and no user text leaves the machine. The only external dependency at runtime is
+the Hugging Face Hub, used to download model weights on first use.
 
-**Model & artifact downloads (Hugging Face Hub):**
-- GPT-2 — `GPT2TokenizerFast.from_pretrained` and `GPT2LMHeadModel.from_pretrained` in `src/analyzers/gpt2_analyzer.py` using `settings.gpt2.model_name` (default `gpt2` from `src/config/settings.py`). Optional `cache_dir` from `GPT2Config`.
-- RoBERTa — `RobertaTokenizer.from_pretrained("roberta-base")` and sequence classification model load in `src/analyzers/roberta_analyzer.py`. Ensemble notes RoBERTa disabled by weight `0.0` in `src/analyzers/ensemble_analyzer.py` until fine-tuning.
-- Network: First run (or empty cache) pulls weights from the public Hugging Face Hub; `transformers`/`huggingface_hub` handle HTTP. Docker Compose mounts `model_cache` to `/home/appuser/.cache` for `gpt2-detector` and `ensemble-detector` in `docker-compose.yml`.
+## External Model Downloads (Hugging Face Hub)
 
-**NLTK data:**
-- Remote download via `nltk.download(...)` — Dockerfile runs downloads for punkt, punkt_tab, stopwords, brown, averaged_perceptron_tagger. `NLTKConfig.required_data` in `src/config/settings.py` matches expected packages. Compose service `nltk-detector` persists `nltk_data` volume at `/home/appuser/nltk_data`.
+- **GPT-2** (`gpt2`) — downloaded by `src/analyzers/gpt2_analyzer.py` via
+  `GPT2LMHeadModel.from_pretrained(..., use_safetensors=True, revision=...)`.
+  ~500 MB, cached after first run.
+- **DistilGPT-2** (`distilgpt2`) — the Binoculars "performer" model in
+  `src/analyzers/binoculars_analyzer.py`; observer is `gpt2`. Both share the
+  GPT-2 tokenizer.
+- **RoBERTa** (`roberta-base`) — `src/analyzers/roberta_analyzer.py`. Loaded
+  only when `EnsembleConfig.weight_roberta > 0` (disabled by default: an
+  untrained classification head). Uses `use_safetensors=True`.
+- Loading is hardened: `use_safetensors=True` avoids pickle deserialization, and
+  a configurable `revision` (in `GPT2Config` / `RoBERTaConfig` /
+  `BinocularsConfig`) allows pinning a Hub commit. **Revisions default to
+  `None`** (tracks the default branch) — pin a commit hash for high-assurance
+  deployments.
 
-**No first-party REST API server:**
-- The product is Streamlit apps, not a separate HTTP JSON API. Programmatic use is in-process Python (see `docs/API.md` for analyzer imports). Do not assume OpenAPI routes unless added later.
+## NLTK Corpora (downloaded, then local)
 
-## Data Storage
+`src/utils/text_processing.py::TextProcessor.ensure_nltk_data()` downloads
+`punkt`, `punkt_tab`, `stopwords`, `brown`, `averaged_perceptron_tagger` on first
+use (retried on failure; only marks initialized when all are present). The
+`Dockerfile` pre-downloads these at build time.
 
-**Databases:**
-- Not applicable — No SQL/NoSQL clients, ORMs, or connection strings in application code.
+## Databases / Auth / Webhooks
 
-**File Storage:**
-- Local filesystem and container volumes only — Application code, NLTK data dir, Hugging Face cache under user home (`.cache`) in containers per `docker-compose.yml`.
+- **None.** No database, no authentication provider, no message queue, no
+  webhooks, no outbound telemetry. Streamlit's usage stats are disabled
+  (`STREAMLIT_BROWSER_GATHER_USAGE_STATS=false` in Docker; `.streamlit/config.toml`).
 
-**Caching:**
-- Hugging Face/transformers model cache on disk (path influenced by `cache_dir` in settings and default cache layout).
-- Streamlit `@st.cache_resource` in `app.py` (and analogous patterns in other entry files) caches analyzer and chart generator instances in process memory.
+## CI / Dev-time Integrations
 
-## Authentication & Identity
+- **GitHub Actions** (`.github/workflows/ci.yml`) — lint (flake8/black/isort) +
+  pytest matrix (Python 3.9/3.10/3.11), `pip` cache, NLTK data download step.
+- **GitHub** repo `satyamshivam13/AI_Text_Detector` — PR-based workflow; automated
+  reviewers (Copilot, GitGuardian) run on PRs.
 
-**Auth Provider:**
-- Not applicable for core app — Streamlit apps are unauthenticated single-user sessions unless deployed behind a reverse proxy or platform IAM. No OAuth, API keys, or session stores in `src/`.
+## Deployment Surfaces
 
-## Monitoring & Observability
-
-**Error Tracking:**
-- None integrated — No Sentry, Rollbar, or similar in `requirements.txt` or imports.
-
-**Logs:**
-- Standard library `logging` configured in `src/utils/logging_config.py` (stdout; optional file path). Levels for `transformers`, `torch`, `urllib3`, `filelock` reduced to WARNING to limit noise.
-
-## CI/CD & Deployment
-
-**Hosting:**
-- Documented options in `docs/DEPLOYMENT.md` (Docker, Heroku, AWS, Azure, GCP); not wired as code in this repo snapshot.
-
-**CI Pipeline:**
-- Not detected — No `.github/workflows/` or similar in workspace.
-
-## Environment Configuration
-
-**Required env vars:**
-- None strictly required for local run beyond Python/Streamlit defaults. Optional: `AI_DETECTOR_DEBUG`, `AI_DETECTOR_LOG_LEVEL` in `src/config/settings.py`. Docker sets `PYTHONPATH`, Streamlit server env vars in `Dockerfile` / `docker-compose.yml`.
-
-**Secrets location:**
-- No application secrets required for model download of public GPT-2/roberta-base weights. If adding private Hub tokens or paid APIs, use platform secret stores or `.env` (not committed); `docs/DEPLOYMENT.md` mentions a `.env` example with `LOG_LEVEL`, `NGRAM_ORDER`, etc., which may not match `get_settings()` — treat docs as aspirational until aligned with `src/config/settings.py`.
-
-## Webhooks & Callbacks
-
-**Incoming:**
-- None — No webhook endpoints; Streamlit exposes UI and internal health URL only.
-
-**Outgoing:**
-- None for business logic — Only implicit outbound HTTP from `transformers`/NLTK when fetching models or data.
-
-## Third-Party Python stack notes
-
-**HTTP stack:**
-- `urllib3` appears only as a logging noise reducer in `src/utils/logging_config.py` (dependency of libraries that perform downloads).
-
-**Streamlit health:**
-- `Dockerfile` `HEALTHCHECK` uses `curl` against `http://localhost:8501/_stcore/health`.
-
----
-
-*Integration audit: 2026-04-02*
+- **Docker** (`Dockerfile`, `docker-compose.yml`) — single image, three Compose
+  services (`nltk-detector`, `gpt2-detector`, `ensemble-detector`) differing only
+  by the Streamlit entry script and resource limits. Health check curls
+  `http://localhost:8501/_stcore/health`.
+- **Procfile** — present for PaaS (e.g. Heroku-style) `streamlit run` deploys.
+- No cloud provider SDKs, secrets managers, or IaC are wired in.
