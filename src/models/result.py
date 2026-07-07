@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from src.config.settings import ConfidenceLevel, Verdict
 
@@ -106,6 +106,17 @@ class AnalysisResult:
     def add_score(self, score: DetectionScore) -> None:
         """Add a detection score."""
         self.scores.append(score)
+
+    def get_score(self, name: str) -> Optional[DetectionScore]:
+        """Return the first score with the given name, or None.
+
+        Lets callers address scores by name instead of list position, so the
+        order in which scores are added is not a load-bearing contract.
+        """
+        for score in self.scores:
+            if score.name == name:
+                return score
+        return None
 
     def to_dict(self) -> Dict:
         """Convert to dictionary for serialization."""

@@ -45,6 +45,9 @@ logger = get_logger(__name__)
 class BinocularsAnalyzer(BaseAnalyzer):
     """Cross-perplexity (two-model) AI-text detector."""
 
+    # Primary calibrated score, addressed by name (not list position).
+    PRIMARY_SCORE_NAME = "Binoculars AI Score"
+
     def __init__(self):
         super().__init__()
         self.config = self.settings.binoculars
@@ -162,10 +165,10 @@ class BinocularsAnalyzer(BaseAnalyzer):
         )
         result.perplexity = observer_ppl
 
-        # Primary calibrated score (index 0, mirrors the ensemble contract).
+        # Primary calibrated score, addressed by name (not list position).
         result.add_score(
             DetectionScore(
-                name="Binoculars AI Score",
+                name=self.PRIMARY_SCORE_NAME,
                 value=ai_prob,
                 weight=1.0,
                 interpretation=self._interpret(score, ai_prob),
@@ -191,7 +194,8 @@ class BinocularsAnalyzer(BaseAnalyzer):
 
     def _determine_verdict(self, result: AnalysisResult) -> AnalysisResult:
         """Map the calibrated Binoculars AI-probability to a verdict."""
-        ai_prob = result.scores[0].value if result.scores else 0.5
+        primary = result.get_score(self.PRIMARY_SCORE_NAME)
+        ai_prob = primary.value if primary else 0.5
         confidence = abs(ai_prob - 0.5) * 200  # 0-100
 
         if ai_prob >= 0.75:

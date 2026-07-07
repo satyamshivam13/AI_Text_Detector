@@ -8,6 +8,25 @@ from src.config.settings import ConfidenceLevel, Verdict
 from src.models.result import AnalysisResult, DetectionScore, TextMetrics
 
 
+class TestGetScore:
+    """Tests for AnalysisResult.get_score name-based lookup."""
+
+    def test_returns_matching_score(self):
+        result = AnalysisResult()
+        result.add_score(DetectionScore(name="A", value=0.1))
+        result.add_score(DetectionScore(name="B", value=0.9))
+        assert result.get_score("B").value == 0.9
+
+    def test_returns_none_when_absent(self):
+        assert AnalysisResult().get_score("nope") is None
+
+    def test_returns_first_on_duplicate_names(self):
+        result = AnalysisResult()
+        result.add_score(DetectionScore(name="X", value=0.2))
+        result.add_score(DetectionScore(name="X", value=0.7))
+        assert result.get_score("X").value == 0.2
+
+
 class TestTextMetrics:
     """Tests for TextMetrics model."""
 

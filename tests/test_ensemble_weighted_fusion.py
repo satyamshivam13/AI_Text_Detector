@@ -106,6 +106,28 @@ def test_binoculars_contributes_when_weighted():
     assert ensemble_score >= 0.3 * 0.9
 
 
+def test_verdict_is_robust_to_score_reordering():
+    """The fused score is addressed by name, so inserting scores before it (or
+    reordering) must not change the verdict — guards the old scores[0] contract."""
+    analyzer = EnsembleAnalyzer()
+    base_result = AnalysisResult(metrics=TextMetrics(total_words=40, unique_words=30))
+    roberta_result = analyzer._disabled_roberta_result()
+    gpt2_result = AnalysisResult(verdict=Verdict.LIKELY_AI, perplexity=15.0)
+    nltk_result = AnalysisResult(verdict=Verdict.LIKELY_AI, perplexity=3000.0)
+
+    combined = analyzer._combine_results(base_result, roberta_result, gpt2_result, nltk_result)
+    analyzer._determine_verdict(combined)
+    verdict_before = combined.verdict
+
+    # Move the primary "Ensemble AI Score" out of index 0.
+    primary = combined.get_score(analyzer.ENSEMBLE_SCORE_NAME)
+    combined.scores.remove(primary)
+    combined.scores.append(primary)
+    analyzer._determine_verdict(combined)
+
+    assert combined.verdict == verdict_before
+
+
 def test_disabled_roberta_excluded_from_agreement():
     analyzer = EnsembleAnalyzer()
     base_result = AnalysisResult(metrics=TextMetrics(total_words=40, unique_words=30))
