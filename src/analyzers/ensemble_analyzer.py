@@ -43,6 +43,10 @@ class EnsembleAnalyzer(BaseAnalyzer):
     noise until a fine-tuned checkpoint is wired in.
     """
 
+    # Name of the fused primary score; addressed by name (not list position) so
+    # the order scores are added in is not a load-bearing contract.
+    ENSEMBLE_SCORE_NAME = "Ensemble AI Score"
+
     def __init__(self):
         super().__init__()
         self.method_name = "Ensemble (GPT2+NLTK)"
@@ -271,7 +275,7 @@ class EnsembleAnalyzer(BaseAnalyzer):
         # Add ensemble score (always index 0 by contract).
         result.add_score(
             DetectionScore(
-                name="Ensemble AI Score",
+                name=self.ENSEMBLE_SCORE_NAME,
                 value=ensemble_ai_score,
                 weight=1.0,
                 interpretation=self._interpret_ensemble_score(ensemble_ai_score),
@@ -341,6 +345,12 @@ class EnsembleAnalyzer(BaseAnalyzer):
 
         return result
 
+    def _voter_scores(self, result: AnalysisResult) -> list:
+        """Contributing analyzer scores: everything except the fused primary
+        score, restricted to non-zero weight (so a disabled analyzer's row is
+        never counted as a voter)."""
+        return [s for s in result.scores if s.name != self.ENSEMBLE_SCORE_NAME and s.weight > 0]
+
     def _determine_verdict(self, result: AnalysisResult) -> AnalysisResult:
         """
         Determine final verdict based on ensemble score.
@@ -353,12 +363,13 @@ class EnsembleAnalyzer(BaseAnalyzer):
         """
         cfg = self.ensemble_config
 
-        # Get ensemble AI score (index 0 by contract).
-        ensemble_score = result.scores[0].value if result.scores else 0.5
+        # Get the fused score by name (not list position).
+        primary = result.get_score(self.ENSEMBLE_SCORE_NAME)
+        ensemble_score = primary.value if primary else 0.5
 
         # Agreement only over analyzers that actually contribute (weight > 0):
         # a disabled/zero-weight RoBERTa must not sway confidence or narrative.
-        voters = [s for s in result.scores[1:] if s.weight > 0]
+        voters = self._voter_scores(result)
         ai_votes = sum(1 for s in voters if s.indicates_ai)
         total_votes = len(voters)
         agreement = ai_votes / total_votes if total_votes > 0 else 0.5
@@ -425,7 +436,8 @@ class EnsembleAnalyzer(BaseAnalyzer):
         parts = []
 
         # Ensemble verdict
-        ensemble_score = result.scores[0].value if result.scores else 0.5
+        primary = result.get_score(self.ENSEMBLE_SCORE_NAME)
+        ensemble_score = primary.value if primary else 0.5
         parts.append(
             f"🎯 **Ensemble Analysis**: Combined score of {ensemble_score:.1%} "
             f"indicates **{result.verdict.value}** with {result.confidence:.1f}% confidence."
@@ -454,7 +466,7 @@ class EnsembleAnalyzer(BaseAnalyzer):
         )
 
         # Agreement analysis over contributing analyzers only (weight > 0).
-        voters = [s for s in result.scores[1:] if s.weight > 0]
+        voters = self._voter_scores(result)
         ai_votes = sum(1 for s in voters if s.indicates_ai)
         total_votes = len(voters)
         if total_votes and ai_votes == total_votes:

@@ -51,4 +51,4 @@ jobs:
       - name: Download NLTK data
         run: python -c "import nltk; nltk.download(['punkt','punkt_tab','stopwords','brown','averaged_perceptron_tagger'])"
       - name: Run tests (excluding slow model tests)
-        run: python -m pytest tests/ -m "not slow" -q --cov=src --cov-report=term-missing
+        run: python -m pytest tests/ -m "not slow" -q --cov=src --cov-report=term-missing --cov-fail-under=80

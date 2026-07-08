@@ -1,74 +1,93 @@
 # Technology Stack
 
-**Analysis Date:** 2026-04-02
+**Analysis Date:** 2026-07-06
 
 ## Languages
 
 **Primary:**
-- Python 3 — Application, analyzers, Streamlit UIs; `setup.py` declares `python_requires=">=3.8"` with classifiers through 3.11; `Dockerfile` pins runtime image `python:3.9-slim`.
+- Python 3 - Entire codebase: analyzers (`src/analyzers/`), evaluation harness (`src/evaluation/`), Streamlit UIs (`app.py`, `gpt2_app.py`, `ensemble.py`), shared UI helpers (`src/ui/`), utilities (`src/utils/`)
 
 **Secondary:**
-- Not applicable — No TypeScript, JavaScript bundles, or separate frontend beyond Streamlit-rendered HTML/CSS in `app.py`, `test.py`, and `ensemble.py`.
+- Not applicable - No JavaScript/TypeScript; all HTML/CSS is inline strings rendered through Streamlit (`src/ui/styles.py`, `src/ui/components.py`)
+
+**Version note:** `setup.py` declares `python_requires=">=3.8"` with classifiers through 3.11, but CI (`.github/workflows/ci.yml`) tests only 3.9/3.10/3.11 and `src/utils/logging_config.py` uses `list[logging.Handler]` runtime annotations (3.9+ syntax). Treat 3.9 as the effective floor.
 
 ## Runtime
 
 **Environment:**
-- CPython (see Docker: `python:3.9-slim` in `Dockerfile`).
+- CPython 3.9+ (Docker image pins `python:3.9-slim` in `Dockerfile`; CI matrix runs 3.9, 3.10, 3.11)
+- GPU optional: `GPT2Analyzer.device` auto-selects CUDA when available, else CPU (`src/analyzers/gpt2_analyzer.py`)
 
 **Package Manager:**
-- pip — Used in `Dockerfile` (`pip install -r requirements.txt`).
-- Lockfile: Not detected — No `poetry.lock`, `Pipfile.lock`, or `uv.lock` in repo; pin ranges live in `requirements.txt`.
+- pip (used in `Dockerfile`, `Makefile`, CI)
+- Lockfile: Not detected - version ranges only, pinned in `requirements.txt` (no `poetry.lock`/`Pipfile.lock`/`uv.lock`)
 
 ## Frameworks
 
 **Core:**
-- Streamlit (>=1.28,<2) — Web UI; entry via `streamlit run` with `app.py` (NLTK), `test.py` (GPT-2), or `ensemble.py` (ensemble). See `docker-compose.yml` service `command` overrides.
-- PyTorch (`torch` >=2,<3) — Device selection and model inference in `src/analyzers/gpt2_analyzer.py` and `src/analyzers/roberta_analyzer.py`.
-- Hugging Face Transformers (`transformers` >=4.35,<5) — `GPT2LMHeadModel`, `GPT2TokenizerFast`, `RobertaTokenizer`, `RobertaForSequenceClassification` in those analyzers.
-- NLTK (>=3.8,<4) — N-gram / Brown corpus analysis in `src/analyzers/nltk_analyzer.py`.
+- Streamlit >=1.28,<2 - Sole web/UI framework; three entry points run via `streamlit run`: `app.py` (NLTK), `gpt2_app.py` (GPT-2), `ensemble.py` (ensemble)
+- PyTorch (`torch`) >=2.6,<3 - Model inference and device selection in `src/analyzers/gpt2_analyzer.py`, `src/analyzers/roberta_analyzer.py`, `src/analyzers/binoculars_analyzer.py`
+- Hugging Face Transformers >=4.48,<5 - `GPT2LMHeadModel`, `GPT2TokenizerFast`, `RobertaTokenizer`, `RobertaForSequenceClassification`; all `from_pretrained` calls pass `use_safetensors=True` and a pinnable `revision` (supply-chain hardening; floors chosen to clear known deserialization advisories per comments in `requirements.txt`)
+- NLTK >=3.8.1,<4 - Brown-corpus n-gram language model in `src/analyzers/nltk_analyzer.py`; tokenization/metrics in `src/utils/text_processing.py`
 
 **Testing:**
-- pytest (>=7.4) — Declared in `requirements-dev.txt` and `setup.py` `extras_require.dev`; tests under `tests/`.
+- pytest >=7.4 with pytest-cov, pytest-mock, pytest-asyncio (`requirements-dev.txt`)
+- `pytest.ini` defines a `slow` marker; CI runs `-m "not slow"` with `--cov=src`
+- Test suite: `tests/` (23 test modules covering analyzers, evaluation, UI contracts, Streamlit apps)
 
 **Build/Dev:**
-- setuptools — Package layout in `setup.py` with `packages=find_packages(where="src")`, `package_dir={"": "src"}`.
-- black, flake8, isort, mypy, pylint, pre-commit — Listed in `requirements-dev.txt`.
-- Sphinx + sphinx-rtd-theme — Documentation tooling in `requirements-dev.txt`.
+- setuptools via `setup.py` - `packages=find_packages(where="src")`, `package_dir={"": "src"}`, version 2.0.0
+- black (line length 100), isort (`--profile=black`), flake8 (`.flake8`: max 100, ignores E203/W503, per-file E402 exemptions for the three Streamlit entry points), mypy (`--ignore-missing-imports`), pylint - orchestrated by `Makefile` targets `format`/`lint`
+- pre-commit >=3.3.0 declared in `requirements-dev.txt` (no `.pre-commit-config.yaml` detected at repo root)
+- Sphinx + sphinx-rtd-theme declared in `requirements-dev.txt` (docs tooling; no `docs/conf.py` build detected)
 
 ## Key Dependencies
 
 **Critical:**
-- `streamlit` — Sole HTTP-serving application layer; configuration in `.streamlit/config.toml`.
-- `torch` + `transformers` — GPT-2 and RoBERTa model loading (`from_pretrained`) in `src/analyzers/gpt2_analyzer.py`, `src/analyzers/roberta_analyzer.py`.
-- `nltk` — Corpus and tokenizer resources; Dockerfile pre-downloads punkt, punkt_tab, stopwords, brown, averaged_perceptron_tagger.
+- `streamlit` - The only serving layer; configured via `.streamlit/config.toml`
+- `torch` + `transformers` - GPT-2 (`gpt2`), DistilGPT-2 (`distilgpt2`, Binoculars performer), RoBERTa (`roberta-base`) loading; safetensors-only weight loading enforced in all three transformer analyzers
+- `nltk` - Brown corpus n-gram model; required data packages listed in `NLTKConfig.required_data` (`src/config/settings.py`): punkt, punkt_tab, stopwords, brown, averaged_perceptron_tagger
 
-**Data & visualization:**
-- `numpy`, `pandas` — Numerical/tabular use in analyzers and utilities.
-- `matplotlib` (Agg backend in `src/utils/visualization.py`), `plotly` — Charts for Streamlit (`st.plotly_chart` in `app.py`).
+**Infrastructure:**
+- `numpy` >=1.24,<2 / `pandas` >=2,<3 - Numeric/tabular computation in analyzers, evaluation metrics (`src/evaluation/metrics.py`), and charts
+- `plotly` >=5.18,<6 - Primary interactive charts (`src/utils/visualization.py`, rendered via `st.plotly_chart`)
+- `matplotlib` >=3.7,<4 - Secondary charting with Agg backend (`src/utils/visualization.py`); calibration/ROC images in `docs/benchmarks/`
 
-**Declared but lightly or unused in source:**
-- `pydantic` — Listed in `requirements.txt`; `src/config/settings.py` and `src/models/result.py` use `dataclasses` instead. Prefer aligning future config/models with one approach.
-- `python-dotenv`, `structlog` — Present in `requirements.txt`; no `load_dotenv` or `structlog` usage detected in application Python files; logging uses stdlib in `src/utils/logging_config.py`.
+**Removed (do not reintroduce without cause):**
+- `pydantic`, `structlog`, `python-dotenv` are no longer in `requirements.txt`; config/models use stdlib `dataclasses` (`src/config/settings.py`, `src/models/result.py`) and logging uses stdlib `logging` (`src/utils/logging_config.py`)
 
 ## Configuration
 
 **Environment:**
-- Application toggles: `AI_DETECTOR_DEBUG`, `AI_DETECTOR_LOG_LEVEL` — Read in `Settings.__post_init__` in `src/config/settings.py`.
-- Docker / Streamlit: `PYTHONPATH=/app/src`, `STREAMLIT_SERVER_PORT`, `STREAMLIT_SERVER_ADDRESS`, `STREAMLIT_BROWSER_GATHER_USAGE_STATS` — Set in `Dockerfile` and `docker-compose.yml`.
-- Streamlit server/theme/browser/logger — `.streamlit/config.toml` (e.g. `headless`, `port`, `maxUploadSize`, XSRF).
+- `AI_DETECTOR_DEBUG` (bool, default false) and `AI_DETECTOR_LOG_LEVEL` (default INFO) - read in `Settings.__post_init__` (`src/config/settings.py`)
+- All other configuration is code-level frozen dataclasses: `ThresholdConfig`, `NLTKConfig`, `GPT2Config`, `RoBERTaConfig`, `BinocularsConfig`, `EnsembleConfig`, `VisualizationConfig` in `src/config/settings.py`, accessed via the `@lru_cache` singleton `get_settings()`
+- Docker/Streamlit env: `PYTHONPATH=/app/src`, `STREAMLIT_SERVER_PORT`, `STREAMLIT_SERVER_ADDRESS`, `STREAMLIT_BROWSER_GATHER_USAGE_STATS=false` (`Dockerfile`, `docker-compose.yml`)
+- No `.env` files present; no dotenv loading anywhere
 
 **Build:**
-- `Dockerfile` — Multi-stage base, system `build-essential` + `curl`, NLTK download step, `ENTRYPOINT ["streamlit", "run"]`, default `CMD ["app.py"]`.
-- `docker-compose.yml` — Three services sharing the same image build; different ports and commands for NLTK vs GPT-2 vs ensemble; named volumes `nltk_data` and `model_cache`.
+- `setup.py` - package metadata and install
+- `requirements.txt` / `requirements-dev.txt` - dependency pins
+- `.streamlit/config.toml` - server (headless, port 8501, `maxUploadSize=10`, XSRF on, CORS off), dark theme, telemetry off, logger format
+- `Dockerfile` - `python:3.9-slim`, non-root `appuser`, NLTK data pre-download, `ENTRYPOINT ["streamlit", "run"]`, default `CMD ["app.py"]`, health check on `/_stcore/health`
+- `docker-compose.yml` - three services (nltk-detector :8501, gpt2-detector :8502, ensemble-detector :8503) sharing one image; named volumes `nltk_data` and `model_cache`; per-service memory/CPU limits (2G/4G/6G)
+- `Makefile` - install/run/test/lint/format/docker targets; sets `PYTHONPATH=src` for run/test/lint
+- `Procfile` - Heroku-style: `web: streamlit run app.py --server.port=$PORT ...`
+- `pytest.ini` - `slow` marker registration
 
 ## Platform Requirements
 
 **Development:**
-- Python >=3.8, pip, virtualenv per `docs/DEPLOYMENT.md`; run `streamlit run app.py` from repo root (see `app.py` docstring). Install from `requirements.txt`; dev extras via `requirements-dev.txt` or `pip install -e ".[dev]"` per `setup.py`.
+- Python 3.9+ (effective floor; see version note), pip, virtualenv per `docs/DEPLOYMENT.md`
+- NLTK data download required post-install (`make install` runs it; CI and Dockerfile do the same)
+- First GPT-2/RoBERTa/Binoculars run downloads model weights from Hugging Face Hub (network needed once, then cached)
+- Quality gates before commit: `make format && make lint` (Black 100, isort black-profile, flake8 100)
 
 **Production:**
-- Container: Linux image exposing port 8501; health check curls `http://localhost:8501/_stcore/health` in `Dockerfile`. GPT-2/ensemble paths need more RAM/CPU per `docker-compose.yml` `deploy.resources` limits.
+- Container: Linux, port 8501, health check `curl http://localhost:8501/_stcore/health` (`Dockerfile`)
+- Resource guidance from `docker-compose.yml`: NLTK app ~2G RAM; GPT-2 app ~4G; ensemble ~6G; GPU optional
+- PaaS: `Procfile` supports Heroku-style deployment of the NLTK app
+- CI: GitHub Actions (`.github/workflows/ci.yml`) - lint job on 3.11 (flake8/black/isort over `src/ tests/ app.py gpt2_app.py ensemble.py`) plus test matrix 3.9/3.10/3.11 with NLTK data download and coverage
 
 ---
 
-*Stack analysis: 2026-04-02*
+*Stack analysis: 2026-07-06*
