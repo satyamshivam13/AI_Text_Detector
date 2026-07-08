@@ -6,6 +6,34 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **HC3 evaluation.** `scripts/prepare_hc3.py` builds a balanced sample of the
+  public HC3 corpus (real human text vs real ChatGPT output); the corpus itself is
+  not committed. First out-of-distribution measurement of this detector.
+- `scripts/calibrate_binoculars.py` — fits the Binoculars decision boundary on a
+  calibration half and validates it on a **held-out** half.
+
+### Changed
+- **Binoculars `score_midpoint` recalibrated on real LLM output**: 0.863 → 0.7625.
+  The old value was fitted on the bundled set and sat inside the *real* human
+  cluster, flagging **46% of real human text as AI**. On HC3 the new boundary gives
+  accuracy 1.000 / FPR 0.000, validated on a held-out half.
+- Documentation now leads with HC3 numbers, not the bundled set's.
+
+### Fixed
+- The benchmark harness ignored an analyzer's own calibrated probability unless it
+  was named `"Ensemble AI Score"`, so Binoculars was evaluated through a coarse
+  verdict/confidence step function (distorting ECE and threshold sweeps). It now
+  prefers any calibrated primary score.
+
+### Honesty
+- The bundled `data/benchmark/` "AI" samples are **hand-written imitations of LLM
+  style, not real model output**, and are not machine-like when measured against
+  real ChatGPT text. That set is a pipeline regression fixture only; its scores are
+  **not** accuracy. Documented in `data/benchmark/README.md`.
+- Measured on HC3: **GPT-2 alone flags 50% of real human text as AI**; NLTK alone
+  is below chance (AUROC 0.420).
+
 ## [2.0.0] - 2026-07-08
 
 Remediation of the project audit. Highlights: the ensemble no longer flags

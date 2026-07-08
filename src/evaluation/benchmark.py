@@ -37,6 +37,10 @@ logger = get_logger(__name__)
 _AI_VERDICTS = (Verdict.AI_GENERATED, Verdict.LIKELY_AI)
 _HUMAN_VERDICTS = (Verdict.HUMAN_WRITTEN, Verdict.LIKELY_HUMAN)
 
+# Analyzers that publish a calibrated AI-probability as their primary score.
+# Checked in order; the first match wins.
+_PRIMARY_SCORE_NAMES = ("Ensemble AI Score", "Binoculars AI Score")
+
 
 class _Analyzer(Protocol):
     def analyze(self, text: str) -> AnalysisResult: ...
@@ -45,11 +49,15 @@ class _Analyzer(Protocol):
 def result_to_ai_probability(result: AnalysisResult) -> float:
     """Map an :class:`AnalysisResult` to a single AI-probability in ``[0, 1]``.
 
-    Prefers an explicit ensemble AI score; otherwise derives a monotone score
-    from the verdict direction and confidence.
+    Prefers an analyzer's own **calibrated** primary score when it exposes one
+    (the ensemble and Binoculars do). Only analyzers without a calibrated
+    probability fall back to a coarse monotone score derived from the verdict
+    direction and confidence — that fallback is a step function, so it distorts
+    calibration metrics (ECE) and threshold sweeps.
     """
-    for score in result.scores:
-        if score.name == "Ensemble AI Score":
+    for name in _PRIMARY_SCORE_NAMES:
+        score = result.get_score(name)
+        if score is not None:
             return max(0.0, min(1.0, float(score.value)))
 
     conf = max(0.0, min(1.0, result.confidence / 100.0))

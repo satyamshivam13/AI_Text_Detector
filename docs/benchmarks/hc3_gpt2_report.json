@@ -1,0 +1,1717 @@
+{
+  "analyzer": "gpt2",
+  "n_samples": 200,
+  "metrics_at_0.5": {
+    "threshold": 0.5,
+    "n_samples": 200,
+    "n_positive": 100,
+    "n_negative": 100,
+    "true_positives": 100,
+    "false_positives": 50,
+    "true_negatives": 50,
+    "false_negatives": 0,
+    "accuracy": 0.75,
+    "precision": 0.6666666666666666,
+    "recall": 1.0,
+    "f1": 0.8,
+    "specificity": 0.5,
+    "false_positive_rate": 0.5,
+    "false_negative_rate": 0.0,
+    "roc_auc": 0.7561,
+    "expected_calibration_error": 0.170185
+  },
+  "best_f1_threshold": 0.5,
+  "metrics_at_best_f1": {
+    "threshold": 0.5,
+    "n_samples": 200,
+    "n_positive": 100,
+    "n_negative": 100,
+    "true_positives": 100,
+    "false_positives": 50,
+    "true_negatives": 50,
+    "false_negatives": 0,
+    "accuracy": 0.75,
+    "precision": 0.6666666666666666,
+    "recall": 1.0,
+    "f1": 0.8,
+    "specificity": 0.5,
+    "false_positive_rate": 0.5,
+    "false_negative_rate": 0.0,
+    "roc_auc": 0.7561,
+    "expected_calibration_error": 0.170185
+  },
+  "calibration_bins": [
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 1,
+      "mean_predicted": 0.09899999999999998,
+      "observed_fraction": 0.0
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 33,
+      "mean_predicted": 0.16943939393939397,
+      "observed_fraction": 0.0
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.30000000000000004,
+      "count": 14,
+      "mean_predicted": 0.24432142857142858,
+      "observed_fraction": 0.0
+    },
+    {
+      "bin_lower": 0.30000000000000004,
+      "bin_upper": 0.4,
+      "count": 2,
+      "mean_predicted": 0.3015,
+      "observed_fraction": 0.0
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_predicted": NaN,
+      "observed_fraction": NaN
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6000000000000001,
+      "count": 131,
+      "mean_predicted": 0.5,
+      "observed_fraction": 0.6641221374045801
+    },
+    {
+      "bin_lower": 0.6000000000000001,
+      "bin_upper": 0.7000000000000001,
+      "count": 1,
+      "mean_predicted": 0.6995,
+      "observed_fraction": 0.0
+    },
+    {
+      "bin_lower": 0.7000000000000001,
+      "bin_upper": 0.8,
+      "count": 15,
+      "mean_predicted": 0.7682333333333333,
+      "observed_fraction": 0.6666666666666666
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 3,
+      "mean_predicted": 0.8000000000000002,
+      "observed_fraction": 1.0
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_predicted": NaN,
+      "observed_fraction": NaN
+    }
+  ],
+  "predictions": [
+    {
+      "id": "hc3-human-0055",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 42.6
+    },
+    {
+      "id": "hc3-human-0012",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0076",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.737,
+      "verdict": "Likely AI-Generated",
+      "confidence": 47.4
+    },
+    {
+      "id": "hc3-ai-0076",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0063",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.776,
+      "verdict": "Likely AI-Generated",
+      "confidence": 55.2
+    },
+    {
+      "id": "hc3-ai-0071",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0015",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 32.8
+    },
+    {
+      "id": "hc3-human-0029",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.2,
+      "verdict": "Likely Human-Written",
+      "confidence": 60.0
+    },
+    {
+      "id": "hc3-human-0040",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.1965,
+      "verdict": "Likely Human-Written",
+      "confidence": 60.7
+    },
+    {
+      "id": "hc3-ai-0039",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0001",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.285,
+      "verdict": "Likely Human-Written",
+      "confidence": 43.0
+    },
+    {
+      "id": "hc3-human-0041",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 42.0
+    },
+    {
+      "id": "hc3-ai-0094",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.8,
+      "verdict": "Likely AI-Generated",
+      "confidence": 60.0
+    },
+    {
+      "id": "hc3-ai-0057",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.785,
+      "verdict": "Likely AI-Generated",
+      "confidence": 57.0
+    },
+    {
+      "id": "hc3-ai-0026",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0048",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.7165,
+      "verdict": "Likely AI-Generated",
+      "confidence": 43.3
+    },
+    {
+      "id": "hc3-human-0022",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.233,
+      "verdict": "Likely Human-Written",
+      "confidence": 53.4
+    },
+    {
+      "id": "hc3-human-0083",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.227,
+      "verdict": "Likely Human-Written",
+      "confidence": 54.6
+    },
+    {
+      "id": "hc3-ai-0004",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.785,
+      "verdict": "Likely AI-Generated",
+      "confidence": 57.0
+    },
+    {
+      "id": "hc3-human-0042",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.171,
+      "verdict": "Likely Human-Written",
+      "confidence": 65.8
+    },
+    {
+      "id": "hc3-ai-0090",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0046",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.785,
+      "verdict": "Likely AI-Generated",
+      "confidence": 57.0
+    },
+    {
+      "id": "hc3-human-0098",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.215,
+      "verdict": "Likely Human-Written",
+      "confidence": 57.0
+    },
+    {
+      "id": "hc3-human-0062",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.2695,
+      "verdict": "Likely Human-Written",
+      "confidence": 46.1
+    },
+    {
+      "id": "hc3-human-0068",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0005",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0082",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0006",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 40.3
+    },
+    {
+      "id": "hc3-human-0096",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.777,
+      "verdict": "Likely AI-Generated",
+      "confidence": 55.4
+    },
+    {
+      "id": "hc3-human-0061",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.19,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.0
+    },
+    {
+      "id": "hc3-human-0099",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.3005,
+      "verdict": "Likely Human-Written",
+      "confidence": 39.9
+    },
+    {
+      "id": "hc3-ai-0054",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0042",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0046",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0010",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.1965,
+      "verdict": "Likely Human-Written",
+      "confidence": 60.7
+    },
+    {
+      "id": "hc3-ai-0006",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0078",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.194,
+      "verdict": "Likely Human-Written",
+      "confidence": 61.2
+    },
+    {
+      "id": "hc3-human-0050",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.2245,
+      "verdict": "Likely Human-Written",
+      "confidence": 55.1
+    },
+    {
+      "id": "hc3-ai-0027",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0013",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0086",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.114,
+      "verdict": "Human-Written",
+      "confidence": 77.2
+    },
+    {
+      "id": "hc3-human-0053",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.125,
+      "verdict": "Human-Written",
+      "confidence": 75.0
+    },
+    {
+      "id": "hc3-ai-0008",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0056",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0069",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0031",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.195,
+      "verdict": "Likely Human-Written",
+      "confidence": 61.0
+    },
+    {
+      "id": "hc3-human-0009",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0073",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.197,
+      "verdict": "Likely Human-Written",
+      "confidence": 60.6
+    },
+    {
+      "id": "hc3-ai-0028",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0068",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0002",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0000",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0030",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0065",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0078",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0016",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.8,
+      "verdict": "Likely AI-Generated",
+      "confidence": 60.0
+    },
+    {
+      "id": "hc3-human-0038",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.19,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.0
+    },
+    {
+      "id": "hc3-human-0036",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 36.1
+    },
+    {
+      "id": "hc3-ai-0053",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0058",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.171,
+      "verdict": "Likely Human-Written",
+      "confidence": 65.8
+    },
+    {
+      "id": "hc3-human-0019",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.19,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.0
+    },
+    {
+      "id": "hc3-human-0026",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 41.7
+    },
+    {
+      "id": "hc3-ai-0081",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0039",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.273,
+      "verdict": "Likely Human-Written",
+      "confidence": 45.4
+    },
+    {
+      "id": "hc3-human-0016",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.11,
+      "verdict": "Human-Written",
+      "confidence": 78.0
+    },
+    {
+      "id": "hc3-ai-0035",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.776,
+      "verdict": "Likely AI-Generated",
+      "confidence": 55.2
+    },
+    {
+      "id": "hc3-human-0011",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0051",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0050",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0085",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.138,
+      "verdict": "Human-Written",
+      "confidence": 72.4
+    },
+    {
+      "id": "hc3-human-0069",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.2075,
+      "verdict": "Likely Human-Written",
+      "confidence": 58.5
+    },
+    {
+      "id": "hc3-ai-0023",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0008",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0062",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0022",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0014",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0038",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0073",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0024",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0074",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0023",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.2955,
+      "verdict": "Likely Human-Written",
+      "confidence": 40.9
+    },
+    {
+      "id": "hc3-human-0043",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0072",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0087",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.7465,
+      "verdict": "Likely AI-Generated",
+      "confidence": 49.3
+    },
+    {
+      "id": "hc3-ai-0045",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0004",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0047",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0098",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0020",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0079",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.153,
+      "verdict": "Likely Human-Written",
+      "confidence": 69.4
+    },
+    {
+      "id": "hc3-human-0027",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.19,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.0
+    },
+    {
+      "id": "hc3-ai-0089",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0058",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0077",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 32.4
+    },
+    {
+      "id": "hc3-ai-0049",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0017",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.1565,
+      "verdict": "Likely Human-Written",
+      "confidence": 68.7
+    },
+    {
+      "id": "hc3-human-0084",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.125,
+      "verdict": "Likely Human-Written",
+      "confidence": 75.0
+    },
+    {
+      "id": "hc3-ai-0043",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0099",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0088",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0059",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0090",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 35.6
+    },
+    {
+      "id": "hc3-human-0025",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0044",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.19,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.0
+    },
+    {
+      "id": "hc3-ai-0002",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0097",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 43.0
+    },
+    {
+      "id": "hc3-ai-0021",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0094",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.099,
+      "verdict": "Human-Written",
+      "confidence": 80.2
+    },
+    {
+      "id": "hc3-human-0052",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.2775,
+      "verdict": "Likely Human-Written",
+      "confidence": 44.5
+    },
+    {
+      "id": "hc3-ai-0031",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.785,
+      "verdict": "Likely AI-Generated",
+      "confidence": 57.0
+    },
+    {
+      "id": "hc3-human-0020",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.1785,
+      "verdict": "Likely Human-Written",
+      "confidence": 64.3
+    },
+    {
+      "id": "hc3-ai-0079",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0081",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.731,
+      "verdict": "Likely AI-Generated",
+      "confidence": 46.2
+    },
+    {
+      "id": "hc3-human-0056",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0007",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0089",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.1755,
+      "verdict": "Likely Human-Written",
+      "confidence": 64.9
+    },
+    {
+      "id": "hc3-ai-0003",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.776,
+      "verdict": "Likely AI-Generated",
+      "confidence": 55.2
+    },
+    {
+      "id": "hc3-human-0063",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0029",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0028",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0005",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0092",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0019",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0083",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0092",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.145,
+      "verdict": "Likely Human-Written",
+      "confidence": 71.0
+    },
+    {
+      "id": "hc3-human-0000",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.171,
+      "verdict": "Likely Human-Written",
+      "confidence": 65.8
+    },
+    {
+      "id": "hc3-ai-0032",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0018",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0060",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0085",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0084",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0061",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0049",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 47.1
+    },
+    {
+      "id": "hc3-ai-0034",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0060",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.2445,
+      "verdict": "Likely Human-Written",
+      "confidence": 51.1
+    },
+    {
+      "id": "hc3-ai-0025",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0086",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0001",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0071",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0077",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.8,
+      "verdict": "Likely AI-Generated",
+      "confidence": 60.0
+    },
+    {
+      "id": "hc3-ai-0017",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0095",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.3025,
+      "verdict": "Likely Human-Written",
+      "confidence": 39.5
+    },
+    {
+      "id": "hc3-human-0064",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0067",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0033",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0048",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0051",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0082",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0045",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.1865,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.7
+    },
+    {
+      "id": "hc3-ai-0037",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.781,
+      "verdict": "Likely AI-Generated",
+      "confidence": 56.2
+    },
+    {
+      "id": "hc3-ai-0013",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0012",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0034",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 46.5
+    },
+    {
+      "id": "hc3-ai-0041",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0014",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0072",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0052",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0088",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0030",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.19,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.0
+    },
+    {
+      "id": "hc3-human-0080",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0080",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0093",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 42.1
+    },
+    {
+      "id": "hc3-ai-0009",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0044",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0040",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.7815,
+      "verdict": "Likely AI-Generated",
+      "confidence": 56.3
+    },
+    {
+      "id": "hc3-ai-0024",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0093",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0091",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0065",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0035",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0011",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0015",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0067",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.19,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.0
+    },
+    {
+      "id": "hc3-human-0021",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.171,
+      "verdict": "Likely Human-Written",
+      "confidence": 65.8
+    },
+    {
+      "id": "hc3-ai-0091",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0070",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0003",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.13,
+      "verdict": "Likely Human-Written",
+      "confidence": 74.0
+    },
+    {
+      "id": "hc3-ai-0055",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0096",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0032",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.1815,
+      "verdict": "Likely Human-Written",
+      "confidence": 63.7
+    },
+    {
+      "id": "hc3-ai-0010",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0007",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.19,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.0
+    },
+    {
+      "id": "hc3-human-0075",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.232,
+      "verdict": "Likely Human-Written",
+      "confidence": 53.6
+    },
+    {
+      "id": "hc3-human-0054",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.2365,
+      "verdict": "Likely Human-Written",
+      "confidence": 52.7
+    },
+    {
+      "id": "hc3-ai-0036",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0018",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.11,
+      "verdict": "Human-Written",
+      "confidence": 78.0
+    },
+    {
+      "id": "hc3-human-0033",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 34.4
+    },
+    {
+      "id": "hc3-ai-0095",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0087",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0064",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0057",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.6995,
+      "verdict": "Likely AI-Generated",
+      "confidence": 39.9
+    },
+    {
+      "id": "hc3-human-0037",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.19,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.0
+    },
+    {
+      "id": "hc3-ai-0070",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.785,
+      "verdict": "Likely AI-Generated",
+      "confidence": 57.0
+    },
+    {
+      "id": "hc3-human-0059",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0066",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0047",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0097",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-ai-0075",
+      "label": 1,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    },
+    {
+      "id": "hc3-human-0074",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.19,
+      "verdict": "Likely Human-Written",
+      "confidence": 62.0
+    },
+    {
+      "id": "hc3-human-0066",
+      "label": 0,
+      "source": "hc3-reddit_eli5",
+      "ai_probability": 0.5,
+      "verdict": "Uncertain",
+      "confidence": 50.0
+    }
+  ]
+}

@@ -53,12 +53,18 @@ This project ships **three independent Streamlit apps** — one per detection en
 
 **Not sure which to use?** Start with `app.py` (NLTK) — it is the lightest and needs no model download.
 
-### Experimental: Binoculars (cross-perplexity)
+### Binoculars (cross-perplexity) — the most accurate analyzer
 
-A modern two-model detector (`gpt2` + `distilgpt2`) after Hans et al., 2024 — far
-more robust than single-model perplexity. Available as a standalone analyzer and
-via the benchmark CLI (`--analyzer binoculars`); on the bundled set it scores
-AUROC 1.000 / FPR 0.000. See [docs/benchmarks/](docs/benchmarks/).
+A two-model detector (`gpt2` + `distilgpt2`) after Hans et al., 2024. It scores
+text by the ratio of an observer model's log-perplexity to the observer/performer
+cross-perplexity, which cancels the prompt/topic bias that makes single-model
+perplexity brittle. **On real human-vs-ChatGPT text (HC3) it scores accuracy
+1.000 with FPR 0.000**, with its decision boundary fitted on a held-out split.
+See [docs/benchmarks/](docs/benchmarks/).
+
+It is available standalone and via the benchmark CLI (`--analyzer binoculars`);
+it is **not** in the default ensemble (it needs a second model). To fuse it, give
+`EnsembleConfig.weight_binoculars` a non-zero weight and rebalance.
 
 ```python
 from src.analyzers.binoculars_analyzer import BinocularsAnalyzer
@@ -116,23 +122,37 @@ print(result.to_dict())
 ## Accuracy and Evaluation
 
 This project ships a real evaluation layer instead of asking you to take accuracy
-on faith. Run it yourself:
+on faith. Reproduce it yourself against **real human text vs real ChatGPT output**
+(the public HC3 corpus):
 
 ```bash
-python -m src.evaluation.benchmark --analyzer ensemble --plots out/
+python scripts/prepare_hc3.py                    # downloads + samples HC3
+python -m src.evaluation.benchmark --analyzer binoculars \
+    --dataset data/external/hc3_sample.jsonl
 ```
 
-On the small bundled benchmark (`data/benchmark/`), the **calibrated ensemble**
-scores Accuracy/F1/AUROC 1.000 with a **false-positive rate of 0.000** (human
-text is not flagged as AI). See [docs/benchmarks/](docs/benchmarks/) for the full
-report and ROC/calibration plots.
+**Measured on HC3 (n=200, balanced):**
 
-> ⚠️ Those numbers are on a small, in-distribution set — a regression/calibration
-> check, **not** an authoritative accuracy claim. Real-world text (edited,
-> paraphrased, mixed, ESL, technical) is much harder. Evaluate on a large public
-> benchmark (RAID, HC3) via `--dataset` before making any external claim. The
-> NLTK-only signal, in particular, is weak (Brown corpus, 1961) and carries a
-> small ensemble weight for that reason.
+| Analyzer | Accuracy | AUROC | **FPR** (human flagged AI) |
+|----------|---------:|------:|---------------------------:|
+| **Binoculars** | **1.000** | 1.000 | **0.000** |
+| Ensemble (GPT-2 + NLTK) | 0.950 | 0.998 | 0.100 |
+| GPT-2 alone | 0.750 | 0.756 | **0.500** |
+| NLTK alone | 0.500 | 0.420 | 0.000 |
+
+**Use Binoculars.** GPT-2 alone flags *half of real human text as AI* — single-model
+perplexity is as brittle as the literature says. NLTK alone is below chance, but
+earns its place in the ensemble as a human-side prior that corrects GPT-2's
+over-flagging. Full report, plots, and the held-out calibration procedure:
+[docs/benchmarks/](docs/benchmarks/).
+
+> ⚠️ **Limits of these numbers.** HC3 is ChatGPT-era output; edited, paraphrased,
+> and human/AI-mixed text are harder and unmeasured. 200 samples means wide
+> confidence intervals. There is no evaluation on adversarial "humanizer" attacks,
+> non-English text, or human sub-populations (ESL writers, students) where false
+> positives do real harm. The bundled `data/benchmark/` set is a **pipeline
+> regression fixture only** — its "AI" samples are hand-written imitations, not
+> model output, so its scores are not accuracy.
 
 ## Limitations and Ethics
 
