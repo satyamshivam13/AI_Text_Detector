@@ -6,6 +6,8 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-07-08
+
 Remediation of the project audit. Highlights: the ensemble no longer flags
 ordinary human text as AI, the statistical model is now smoothed and
 discriminating, and there is a real evaluation layer.
@@ -56,6 +58,10 @@ discriminating, and there is a real evaluation layer.
   pollutes ensemble agreement/confidence.
 - Whole codebase now passes `black`, `isort`, and `flake8`.
 - Benchmark `--output` no longer fails when the parent directory is missing.
+- Detection scores are addressed **by name** (`AnalysisResult.get_score`) rather
+  than by list position, so reordering scores can no longer silently break
+  ensemble/Binoculars verdict math.
+- CI enforces a coverage floor (`--cov-fail-under=80`; fast suite is at 85%).
 
 ### Security
 - Safe (non-pickle) model loading via safetensors; patched dependency floors;
