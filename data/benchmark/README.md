@@ -15,12 +15,22 @@ evaluation layer the project previously lacked.
 - `label` is `"human"` or `"ai"` (the positive/AI class is `1`).
 - `source` is a free-text provenance tag.
 
-## Provenance and honesty
+## ⚠️ Provenance and honesty — the "AI" class is synthetic
 
 - **Human** samples are original casual/idiosyncratic prose written for this
   repository (personal notes, reviews, rants, journal entries).
-- **AI** samples are representative of the formal, hedged, list-structured style
-  produced by general-purpose LLMs.
+- **AI** samples are **hand-written imitations** of the formal, hedged,
+  list-structured style produced by general-purpose LLMs. **They are not real
+  model output.**
+
+This matters. Measured against real ChatGPT text, these imitations are not
+machine-like: Binoculars cross-perplexity ratios for real ChatGPT output are
+0.60–0.76, while these hand-written "AI" samples score 0.72–0.84 — overlapping
+the *human* range of real data. A correctly-calibrated detector therefore labels
+most of them human-written, and it is **right** to do so.
+
+**Never cite this set's numbers as detector accuracy.** Use HC3 (see
+`scripts/prepare_hc3.py` and `docs/benchmarks/README.md`) for that.
 
 This set is **intentionally small (24 samples)** and stylistically clean. It is
 designed for:

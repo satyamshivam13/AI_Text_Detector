@@ -98,6 +98,19 @@ class TestAiProbability:
         result.add_score(DetectionScore(name="Ensemble AI Score", value=0.73))
         assert result_to_ai_probability(result) == pytest.approx(0.73)
 
+    def test_prefers_binoculars_calibrated_score(self):
+        """Binoculars exposes a calibrated probability; the coarse verdict/
+        confidence fallback must not be used (it distorts ECE + thresholds)."""
+        result = AnalysisResult(verdict=Verdict.LIKELY_HUMAN, confidence=90)
+        result.add_score(DetectionScore(name="Binoculars AI Score", value=0.31))
+        assert result_to_ai_probability(result) == pytest.approx(0.31)
+
+    def test_falls_back_only_without_calibrated_score(self):
+        result = AnalysisResult(verdict=Verdict.LIKELY_AI, confidence=60)
+        result.add_score(DetectionScore(name="GPT-2 Perplexity", value=42.0))
+        # No calibrated primary score -> verdict/confidence fallback.
+        assert result_to_ai_probability(result) == pytest.approx(0.8)
+
     def test_ai_verdict_maps_above_half(self):
         result = AnalysisResult(verdict=Verdict.AI_GENERATED, confidence=80)
         assert result_to_ai_probability(result) == pytest.approx(0.9)

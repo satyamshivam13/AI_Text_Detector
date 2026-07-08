@@ -139,9 +139,16 @@ class BinocularsConfig:
     performer_model: str = "distilgpt2"
     max_token_length: int = 512
     revision: Optional[str] = None
-    # Lower ratio => more AI. Midpoint calibrated from the benchmark separation
-    # (human scores ~0.88-1.05, AI ~0.72-0.84; boundary between the clusters).
-    score_midpoint: float = 0.863
+    # Lower ratio => more AI. Midpoint fitted on the HC3 corpus (real human text
+    # vs real ChatGPT output): human ratios ~0.77-1.10, AI ~0.60-0.76. Fitted on a
+    # calibration half and validated on a held-out half (accuracy 1.000, FPR
+    # 0.000) via scripts/calibrate_binoculars.py.
+    #
+    # NOTE: the previous value (0.863) was fitted on the tiny bundled benchmark,
+    # whose "AI" samples are hand-written imitations of LLM style rather than real
+    # model output. It sat inside the real human cluster and flagged 46% of real
+    # human text as AI. Re-fit on real LLM output before trusting any new value.
+    score_midpoint: float = 0.7625
     score_slope: float = 20.0
 
 
