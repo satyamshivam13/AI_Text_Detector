@@ -6,6 +6,14 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-07-08
+
+**Corrects an accuracy claim made in v2.0.0.** v2.0.0 headlined "FPR 0.000" from
+the bundled 24-sample set. That set's "AI" class turned out to be hand-written
+imitations of LLM style, not real model output, so it could not falsify the
+detector. Measured against real ChatGPT text (HC3), the picture is different —
+and the Binoculars decision boundary was badly miscalibrated. See below.
+
 ### Added
 - **HC3 evaluation.** `scripts/prepare_hc3.py` builds a balanced sample of the
   public HC3 corpus (real human text vs real ChatGPT output); the corpus itself is

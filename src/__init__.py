@@ -12,6 +12,6 @@ Modules:
     config: Application configuration
 """
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 __author__ = "AI Detection Community"
 __license__ = "MIT"

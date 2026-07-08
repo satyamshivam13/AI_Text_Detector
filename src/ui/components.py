@@ -89,7 +89,7 @@ def render_warnings(result: AnalysisResult) -> None:
 
 
 def render_footer(
-    engine_label: str, icon: str = "🛡️", note: str = "", version: str = "2.0.0"
+    engine_label: str, icon: str = "🛡️", note: str = "", version: str = "2.1.0"
 ) -> None:
     """Render the shared footer with an app-specific engine label and icon.
 

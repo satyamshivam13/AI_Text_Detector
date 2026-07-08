@@ -138,7 +138,7 @@ with st.sidebar:
 
         **Note:** First run downloads the GPT-2 model (~500MB).
 
-        **Version:** 2.0.0
+        **Version:** 2.1.0
         """)
 
     st.markdown("---")

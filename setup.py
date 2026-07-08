@@ -14,7 +14,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="ai-text-detector",
-    version="2.0.0",
+    version="2.1.0",
     author="Satyam Shivam",
     author_email="shivamsatyam35@gmail.com",
     description=(

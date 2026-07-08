@@ -165,7 +165,7 @@ checkpoint is wired in. See README.
 
 **Memory:** 2-3 GB RAM
 
-**Version:** 2.0.0
+**Version:** 2.1.0
 """)
 
     st.markdown("---")
