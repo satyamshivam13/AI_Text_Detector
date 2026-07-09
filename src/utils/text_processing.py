@@ -28,23 +28,26 @@ class TextProcessor:
     _nltk_initialized: bool = False
     _stop_words: Optional[set] = None
 
+    # NLTK package name -> the resource path `nltk.data.find` expects. These are
+    # NOT interchangeable: `find("brown")` always raises LookupError, while
+    # `find("corpora/brown")` resolves. Getting this wrong means the data is
+    # re-downloaded on every call and never registers as present.
+    _NLTK_RESOURCES = {
+        "punkt": "tokenizers/punkt",
+        "punkt_tab": "tokenizers/punkt_tab",
+        "stopwords": "corpora/stopwords",
+        "brown": "corpora/brown",
+        "averaged_perceptron_tagger": "taggers/averaged_perceptron_tagger",
+    }
+
     @classmethod
     def ensure_nltk_data(cls) -> None:
         """Download required NLTK data if not already present."""
         if cls._nltk_initialized:
             return
 
-        required_packages = [
-            "punkt",
-            "punkt_tab",
-            "stopwords",
-            "brown",
-            "averaged_perceptron_tagger",
-        ]
-
         all_available = True
-        for package in required_packages:
-            resource = f"tokenizers/{package}" if "punkt" in package else package
+        for package, resource in cls._NLTK_RESOURCES.items():
             try:
                 nltk.data.find(resource)
                 continue

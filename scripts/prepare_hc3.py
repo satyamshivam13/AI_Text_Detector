@@ -132,7 +132,8 @@ def main(argv: List[str] | None = None) -> int:
     n_ai = sum(1 for s in samples if s["label"] == "ai")
     print(f"Wrote {len(samples)} samples ({len(samples) - n_ai} human / {n_ai} ai) to {out_path}")
     print(
-        f"Benchmark it:\n  python -m src.evaluation.benchmark --analyzer ensemble --dataset {out_path}"
+        "Benchmark it:\n  python -m src.evaluation.benchmark "
+        f"--analyzer ensemble --dataset {out_path}"
     )
     return 0
 

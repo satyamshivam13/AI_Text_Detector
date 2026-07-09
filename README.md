@@ -47,7 +47,7 @@ This project ships **three independent Streamlit apps** — one per detection en
 |------|-----------|----------------|---------|---------------|--------|--------|
 | **NLTK** | `app.py` | `streamlit run app.py` | Statistical detection via NLTK n-gram language models (Brown corpus). No deep-learning model download. | Quick checks; low-resource machines; default starting point | `<1s` | `<1 GB` |
 | **GPT-2** | `gpt2_app.py` | `streamlit run gpt2_app.py` | Perplexity-based detection using the GPT-2 transformer. | Users wanting a deep-learning signal | `2–5s` | `2–3 GB` |
-| **Ensemble** | `ensemble.py` | `streamlit run ensemble.py` | Weighted fusion of GPT-2 + NLTK signals into one verdict (RoBERTa is present but disabled — it is not fine-tuned). | Users wanting the most robust multi-signal verdict | `5–10s` | `2–3 GB` |
+| **Ensemble** | `ensemble.py` | `streamlit run ensemble.py` | Weighted fusion of GPT-2 + NLTK signals. **Inherits GPT-2's bias — see the fairness warning below; do not use for decisions about people.** | Experimentation only | `5–10s` | `2–3 GB` |
 
 ¹ Per-analysis time after models are loaded. The first run is slower: the NLTK mode builds its n-gram model from the Brown corpus, and the GPT-2/Ensemble modes download model weights on first launch (cached thereafter).
 
@@ -141,10 +141,29 @@ python -m src.evaluation.benchmark --analyzer binoculars \
 | NLTK alone | 0.500 | 0.420 | 0.000 |
 
 **Use Binoculars.** GPT-2 alone flags *half of real human text as AI* — single-model
-perplexity is as brittle as the literature says. NLTK alone is below chance, but
-earns its place in the ensemble as a human-side prior that corrects GPT-2's
-over-flagging. Full report, plots, and the held-out calibration procedure:
-[docs/benchmarks/](docs/benchmarks/).
+perplexity is as brittle as the literature says. Full report, plots, and the
+held-out calibration procedure: [docs/benchmarks/](docs/benchmarks/).
+
+### ⚠️ Fairness — false-positive rate by population (human-only)
+
+The number that matters ethically is not overall accuracy, it is who gets falsely
+accused. Measured on 785 **human-authored** samples (any flag is a false positive):
+
+| Population | **Binoculars** | GPT-2 | Ensemble |
+|-----------|---------------:|------:|---------:|
+| **Non-native English writers (TOEFL)** | **5.5%** | 26.4% | **71.4%** |
+| Native-speaker student essays | 0.0% | ~1% | 10–24% |
+| Overall (human) | **1.0%** | 13.5% | 27.1% |
+
+- **GPT-2 reproduces [Liang et al. 2023](https://github.com/Weixin-Liang/ChatGPT-Detector-Bias):**
+  non-native writers are flagged ~26× more than native writers.
+- **The ensemble is the *worst* for fairness** — 71% of non-native writers — because
+  it inherits GPT-2's bias. Its strong aggregate accuracy hid this.
+- **Binoculars is the fairest** (the cross-perplexity ratio cancels the effect),
+  but still not perfect: 5.5% for non-native writers vs 0% for native speakers.
+
+**Do not use any analyzer here to accuse a specific person.** Full breakdown with
+confidence intervals: [docs/benchmarks/FAIRNESS.md](docs/benchmarks/FAIRNESS.md).
 
 > ⚠️ **Limits of these numbers.** HC3 is ChatGPT-era output; edited, paraphrased,
 > and human/AI-mixed text are harder and unmeasured. 200 samples means wide

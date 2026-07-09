@@ -6,6 +6,29 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- **Per-population fairness evaluation** (`scripts/prepare_fairness_set.py`,
+  `scripts/fpr_by_population.py`, `docs/benchmarks/FAIRNESS.md`): false-positive
+  rate on 785 human-authored samples across 10 populations, with Wilson 95% CIs.
+  Data (Liang et al. 2023 essays + HC3 human answers) is not redistributed.
+
+### Fixed
+- **NLTK data was re-downloaded on every call and never cached.**
+  `ensure_nltk_data()` passed bare package names (`"brown"`) to `nltk.data.find`,
+  which needs resource paths (`"corpora/brown"`); the lookup always raised, so a
+  fresh download was attempted every time and initialization never stuck. Fixed
+  with an explicit package→path map and a regression test. (Latent since the v2.0
+  bootstrap-retry change; exposed by the fairness run.)
+
+### Changed / Ethics
+- **The README no longer recommends the ensemble as "most robust".** The fairness
+  evaluation shows the default ensemble has a 27.1% false-positive rate on human
+  text and **71.4% on non-native English writers** — the worst of the three,
+  because it inherits GPT-2's bias. GPT-2 alone flags 26.4% of non-native writers
+  (reproducing Liang et al. 2023). **Binoculars is both the most accurate and the
+  fairest** (1.0% overall, 5.5% for non-native writers) and is now the
+  recommended analyzer. A fairness caveat was added to all three apps' UI.
+
 ## [2.1.0] - 2026-07-08
 
 **Corrects an accuracy claim made in v2.0.0.** v2.0.0 headlined "FPR 0.000" from
