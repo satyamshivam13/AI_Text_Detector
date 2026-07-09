@@ -1,0 +1,100 @@
+{
+  "analyzer": "binoculars",
+  "overall_fpr": 0.0101,
+  "overall_wilson95": [
+    0.0049,
+    0.0207
+  ],
+  "populations": [
+    {
+      "population": "toefl_nonnative",
+      "n": 91,
+      "flagged": 5,
+      "fpr": 0.0549,
+      "wilson95_lo": 0.0237,
+      "wilson95_hi": 0.1222,
+      "ambiguous": false
+    },
+    {
+      "population": "hc3_open_qa",
+      "n": 60,
+      "flagged": 2,
+      "fpr": 0.0333,
+      "wilson95_lo": 0.0092,
+      "wilson95_hi": 0.1136,
+      "ambiguous": false
+    },
+    {
+      "population": "student_us_8th",
+      "n": 88,
+      "flagged": 0,
+      "fpr": 0.0,
+      "wilson95_lo": 0.0,
+      "wilson95_hi": 0.0418,
+      "ambiguous": false
+    },
+    {
+      "population": "college_admission",
+      "n": 70,
+      "flagged": 0,
+      "fpr": 0.0,
+      "wilson95_lo": 0.0,
+      "wilson95_hi": 0.052,
+      "ambiguous": false
+    },
+    {
+      "population": "cs224n_student",
+      "n": 145,
+      "flagged": 0,
+      "fpr": 0.0,
+      "wilson95_lo": 0.0,
+      "wilson95_hi": 0.0258,
+      "ambiguous": false
+    },
+    {
+      "population": "toefl_gpt4_polished",
+      "n": 91,
+      "flagged": 0,
+      "fpr": 0.0,
+      "wilson95_lo": 0.0,
+      "wilson95_hi": 0.0405,
+      "ambiguous": true
+    },
+    {
+      "population": "hc3_reddit_eli5",
+      "n": 60,
+      "flagged": 0,
+      "fpr": 0.0,
+      "wilson95_lo": 0.0,
+      "wilson95_hi": 0.0602,
+      "ambiguous": false
+    },
+    {
+      "population": "hc3_finance",
+      "n": 60,
+      "flagged": 0,
+      "fpr": 0.0,
+      "wilson95_lo": 0.0,
+      "wilson95_hi": 0.0602,
+      "ambiguous": false
+    },
+    {
+      "population": "hc3_medicine",
+      "n": 60,
+      "flagged": 0,
+      "fpr": 0.0,
+      "wilson95_lo": 0.0,
+      "wilson95_hi": 0.0602,
+      "ambiguous": false
+    },
+    {
+      "population": "hc3_wiki_csai",
+      "n": 60,
+      "flagged": 0,
+      "fpr": 0.0,
+      "wilson95_lo": 0.0,
+      "wilson95_hi": 0.0602,
+      "ambiguous": false
+    }
+  ]
+}

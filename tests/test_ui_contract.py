@@ -9,11 +9,15 @@ from src.utils.ui_contract import (
 
 
 def test_limitations_bullets_contract_tokens() -> None:
-    assert len(LIMITATIONS_BULLETS) == 3
+    assert len(LIMITATIONS_BULLETS) == 4
     joined = " ".join(LIMITATIONS_BULLETS)
     assert "probabilistic" in joined
     assert "English-first" in joined
     assert "sole evidence" in joined
+    # The fairness caveat must be present: false positives fall hardest on
+    # non-native writers (see docs/benchmarks/FAIRNESS.md).
+    assert "non-native" in joined
+    assert "FAIRNESS.md" in joined
 
 
 def test_build_limitations_markdown_contains_heading_and_bullets() -> None:

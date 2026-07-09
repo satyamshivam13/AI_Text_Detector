@@ -2,7 +2,31 @@
 Tests for text processing utilities.
 """
 
+import nltk
+
 from src.utils.text_processing import TextProcessor
+
+
+class TestNLTKResourcePaths:
+    """`nltk.data.find` needs a resource *path*, not a package name.
+
+    Regression guard: find("brown") raises, find("corpora/brown") resolves. Using
+    the bare name made ensure_nltk_data() re-download on every call and never
+    mark itself initialized.
+    """
+
+    def test_every_resource_path_resolves(self):
+        for package, resource in TextProcessor._NLTK_RESOURCES.items():
+            nltk.data.find(resource)  # raises LookupError if the path is wrong
+
+    def test_bare_package_names_are_not_used_as_paths(self):
+        for package, resource in TextProcessor._NLTK_RESOURCES.items():
+            assert "/" in resource, f"{package} maps to a bare name, not a resource path"
+
+    def test_ensure_nltk_data_caches(self):
+        TextProcessor._nltk_initialized = False
+        TextProcessor.ensure_nltk_data()
+        assert TextProcessor._nltk_initialized is True
 
 
 class TestTextCleaning:

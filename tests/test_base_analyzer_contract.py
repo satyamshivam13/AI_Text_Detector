@@ -34,7 +34,10 @@ def test_analyze_short_text_contract(short_text):
         "short" in warning.lower() or "minimum" in warning.lower() or "accuracy" in warning.lower()
         for warning in result.warnings
     )
-    assert result.analysis_time > 0
+    # >= 0, not > 0: trivial input can complete in under a millisecond, which
+    # rounds to 0.0. (The old > 0 assertion implicitly relied on the NLTK
+    # re-download bug making every call slow.)
+    assert result.analysis_time >= 0
 
     expected_keys = {
         "verdict",

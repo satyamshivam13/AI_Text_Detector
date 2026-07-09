@@ -1,0 +1,100 @@
+{
+  "analyzer": "gpt2",
+  "overall_fpr": 0.1354,
+  "overall_wilson95": [
+    0.112,
+    0.1629
+  ],
+  "populations": [
+    {
+      "population": "hc3_open_qa",
+      "n": 60,
+      "flagged": 50,
+      "fpr": 0.8333,
+      "wilson95_lo": 0.7197,
+      "wilson95_hi": 0.9069,
+      "ambiguous": false
+    },
+    {
+      "population": "toefl_gpt4_polished",
+      "n": 91,
+      "flagged": 36,
+      "fpr": 0.3956,
+      "wilson95_lo": 0.3013,
+      "wilson95_hi": 0.4983,
+      "ambiguous": true
+    },
+    {
+      "population": "toefl_nonnative",
+      "n": 91,
+      "flagged": 24,
+      "fpr": 0.2637,
+      "wilson95_lo": 0.1841,
+      "wilson95_hi": 0.3625,
+      "ambiguous": false
+    },
+    {
+      "population": "hc3_wiki_csai",
+      "n": 60,
+      "flagged": 6,
+      "fpr": 0.1,
+      "wilson95_lo": 0.0466,
+      "wilson95_hi": 0.2015,
+      "ambiguous": false
+    },
+    {
+      "population": "hc3_medicine",
+      "n": 60,
+      "flagged": 5,
+      "fpr": 0.0833,
+      "wilson95_lo": 0.0361,
+      "wilson95_hi": 0.1807,
+      "ambiguous": false
+    },
+    {
+      "population": "hc3_finance",
+      "n": 60,
+      "flagged": 4,
+      "fpr": 0.0667,
+      "wilson95_lo": 0.0262,
+      "wilson95_hi": 0.1593,
+      "ambiguous": false
+    },
+    {
+      "population": "hc3_reddit_eli5",
+      "n": 60,
+      "flagged": 2,
+      "fpr": 0.0333,
+      "wilson95_lo": 0.0092,
+      "wilson95_hi": 0.1136,
+      "ambiguous": false
+    },
+    {
+      "population": "cs224n_student",
+      "n": 145,
+      "flagged": 2,
+      "fpr": 0.0138,
+      "wilson95_lo": 0.0038,
+      "wilson95_hi": 0.0489,
+      "ambiguous": false
+    },
+    {
+      "population": "student_us_8th",
+      "n": 88,
+      "flagged": 1,
+      "fpr": 0.0114,
+      "wilson95_lo": 0.002,
+      "wilson95_hi": 0.0616,
+      "ambiguous": false
+    },
+    {
+      "population": "college_admission",
+      "n": 70,
+      "flagged": 0,
+      "fpr": 0.0,
+      "wilson95_lo": 0.0,
+      "wilson95_hi": 0.052,
+      "ambiguous": false
+    }
+  ]
+}

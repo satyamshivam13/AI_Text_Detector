@@ -6,6 +6,9 @@ LIMITATIONS_BULLETS = [
     "Results are probabilistic indicators, not definitive proof of authorship.",
     "Tool behavior is English-first and may be less reliable for other languages.",
     "Do not use this result as sole evidence in academic or legal decisions.",
+    "False positives fall hardest on non-native English writers, children, and "
+    "simple/formulaic writing. Weight toward NOT flagging these. See "
+    "docs/benchmarks/FAIRNESS.md.",
 ]
 
 RESULT_LEVEL_REMINDER = "Interpret this score alongside context, writing history, and human review."
