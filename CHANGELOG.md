@@ -6,6 +6,15 @@ to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed (behaviour — ethics)
+- **The default ensemble verdict is now Binoculars-driven** (`weight_binoculars=1.0`,
+  GPT-2/NLTK/RoBERTa weight 0). The fairness evaluation showed the old
+  GPT-2-weighted blend flagged 71% of non-native English writers; Binoculars-only
+  is 5.5%. GPT-2/NLTK still run and their sub-scores display for transparency, but
+  they no longer drive the verdict. `method_name` is now
+  "Ensemble (Binoculars-weighted)". Raise the GPT-2/NLTK weights only if you accept
+  the fairness cost. Ensemble now loads a second small model (distilgpt2).
+
 ### Added
 - **Per-population fairness evaluation** (`scripts/prepare_fairness_set.py`,
   `scripts/fpr_by_population.py`, `docs/benchmarks/FAIRNESS.md`): false-positive

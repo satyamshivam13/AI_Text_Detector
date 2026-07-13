@@ -23,6 +23,16 @@ class _FakeAnalyzer:
         return self._result
 
 
+class _FakeBinoculars:
+    """Fake Binoculars: returns a fixed calibrated AI-probability."""
+
+    def __init__(self, ai_prob: float):
+        self._ai_prob = ai_prob
+
+    def ai_probability(self, _text: str) -> float:
+        return self._ai_prob
+
+
 def _mocked_sub_results():
     roberta = AnalysisResult(
         verdict=Verdict.UNCERTAIN,
@@ -63,11 +73,14 @@ def _mocked_sub_results():
     return roberta, gpt2, nltk
 
 
-def _configure_mock_analyzers(analyzer: EnsembleAnalyzer) -> None:
+def _configure_mock_analyzers(analyzer: EnsembleAnalyzer, binoculars_ai: float = 0.9) -> None:
     roberta, gpt2, nltk = _mocked_sub_results()
     analyzer._roberta_analyzer = _FakeAnalyzer(roberta)
     analyzer._gpt2_analyzer = _FakeAnalyzer(gpt2)
     analyzer._nltk_analyzer = _FakeAnalyzer(nltk)
+    # Binoculars drives the default verdict (weight 1.0), so it must be mocked
+    # too or analyze() would load real gpt2+distilgpt2 models.
+    analyzer._binoculars_analyzer = _FakeBinoculars(binoculars_ai)
 
 
 class TestEnsembleAnalyzer:
@@ -76,10 +89,12 @@ class TestEnsembleAnalyzer:
     def test_initialization(self, ensemble_analyzer):
         """Test analyzer initialization."""
         assert ensemble_analyzer is not None
-        assert ensemble_analyzer.method_name == "Ensemble (GPT2+NLTK)"
+        assert ensemble_analyzer.method_name == "Ensemble (Binoculars-weighted)"
+        # Default verdict is Binoculars-driven; GPT-2/NLTK run but weight 0.
+        assert ensemble_analyzer.weights["binoculars"] == 1.0
+        assert ensemble_analyzer.weights["gpt2"] == 0.0
+        assert ensemble_analyzer.weights["nltk"] == 0.0
         assert ensemble_analyzer.weights["roberta"] == 0.0
-        assert ensemble_analyzer.weights["gpt2"] == 0.75
-        assert ensemble_analyzer.weights["nltk"] == 0.25
 
     def test_analyzer_lazy_loading(self, ensemble_analyzer):
         """Test that individual analyzers are lazy-loaded."""
@@ -87,6 +102,7 @@ class TestEnsembleAnalyzer:
         assert ensemble_analyzer._roberta_analyzer is None
         assert ensemble_analyzer._gpt2_analyzer is None
         assert ensemble_analyzer._nltk_analyzer is None
+        assert ensemble_analyzer._binoculars_analyzer is None
 
     def test_empty_text(self, ensemble_analyzer):
         """Test handling of empty text."""
@@ -212,7 +228,7 @@ class TestEnsembleAnalyzer:
         assert "confidence" in result_dict
         assert "method" in result_dict
         assert "scores" in result_dict
-        assert result_dict["method"] == "Ensemble (GPT2+NLTK)"
+        assert result_dict["method"] == "Ensemble (Binoculars-weighted)"
 
     def test_consistent_results(self, ensemble_analyzer):
         """Test that same text produces consistent results."""

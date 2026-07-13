@@ -47,7 +47,7 @@ This project ships **three independent Streamlit apps** — one per detection en
 |------|-----------|----------------|---------|---------------|--------|--------|
 | **NLTK** | `app.py` | `streamlit run app.py` | Statistical detection via NLTK n-gram language models (Brown corpus). No deep-learning model download. | Quick checks; low-resource machines; default starting point | `<1s` | `<1 GB` |
 | **GPT-2** | `gpt2_app.py` | `streamlit run gpt2_app.py` | Perplexity-based detection using the GPT-2 transformer. | Users wanting a deep-learning signal | `2–5s` | `2–3 GB` |
-| **Ensemble** | `ensemble.py` | `streamlit run ensemble.py` | Weighted fusion of GPT-2 + NLTK signals. **Inherits GPT-2's bias — see the fairness warning below; do not use for decisions about people.** | Experimentation only | `5–10s` | `2–3 GB` |
+| **Ensemble** | `ensemble.py` | `streamlit run ensemble.py` | Verdict is **Binoculars-driven by default** (the fairest signal); GPT-2/NLTK sub-scores are shown but weight 0. | Multi-signal view with a fair default verdict | `5–10s` | `2–3 GB` |
 
 ¹ Per-analysis time after models are loaded. The first run is slower: the NLTK mode builds its n-gram model from the Brown corpus, and the GPT-2/Ensemble modes download model weights on first launch (cached thereafter).
 
@@ -157,8 +157,10 @@ accused. Measured on 785 **human-authored** samples (any flag is a false positiv
 
 - **GPT-2 reproduces [Liang et al. 2023](https://github.com/Weixin-Liang/ChatGPT-Detector-Bias):**
   non-native writers are flagged ~26× more than native writers.
-- **The ensemble is the *worst* for fairness** — 71% of non-native writers — because
-  it inherits GPT-2's bias. Its strong aggregate accuracy hid this.
+- **A GPT-2-weighted ensemble was the *worst*** — 71% of non-native writers — because
+  it inherited GPT-2's bias. **The default ensemble verdict is now Binoculars-driven**
+  (GPT-2/NLTK weight 0), so it inherits Binoculars' fairness instead; the table's
+  "Ensemble" column above reflects the old GPT-2-weighted blend, kept as a warning.
 - **Binoculars is the fairest** (the cross-perplexity ratio cancels the effect),
   but still not perfect: 5.5% for non-native writers vs 0% for native speakers.
 

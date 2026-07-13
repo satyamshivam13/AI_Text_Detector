@@ -5,9 +5,15 @@ from src.analyzers.ensemble_analyzer import EnsembleAnalyzer
 from src.config.settings import Verdict, get_settings
 from src.models.result import AnalysisResult, DetectionScore, TextMetrics
 
+# The default verdict is Binoculars-driven (GPT-2/NLTK weight 0) for fairness.
+# These tests exercise the fusion *mechanics* of the GPT-2/NLTK blend, so they
+# opt into the legacy weighting explicitly.
+_LEGACY_BLEND = {"roberta": 0.0, "gpt2": 0.75, "nltk": 0.25, "binoculars": 0.0}
+
 
 def test_combine_results_uses_calibrated_logistic_fusion():
     analyzer = EnsembleAnalyzer()
+    analyzer.weights = dict(_LEGACY_BLEND)
     cfg = get_settings().ensemble
 
     base_result = AnalysisResult(metrics=TextMetrics(total_words=10, unique_words=7))
@@ -42,7 +48,7 @@ def test_combine_results_uses_calibrated_logistic_fusion():
         2000.0, midpoint=cfg.nltk_ppl_midpoint, slope=cfg.nltk_ppl_slope, direction="higher_is_ai"
     )
     # RoBERTa weight is 0, so it drops out of the blend.
-    expected = (cfg.weight_gpt2 * gpt2_ai) + (cfg.weight_nltk * nltk_ai)
+    expected = (analyzer.weights["gpt2"] * gpt2_ai) + (analyzer.weights["nltk"] * nltk_ai)
 
     assert combined.scores
     assert combined.scores[0].name == "Ensemble AI Score"
@@ -52,6 +58,7 @@ def test_combine_results_uses_calibrated_logistic_fusion():
 def test_human_scale_perplexity_is_not_flagged_ai():
     """Regression for the C2 bias: human-typical GPT-2 perplexity must map below 0.5."""
     analyzer = EnsembleAnalyzer()
+    analyzer.weights = dict(_LEGACY_BLEND)
 
     base_result = AnalysisResult(metrics=TextMetrics(total_words=40, unique_words=30))
     roberta_result = analyzer._disabled_roberta_result()
@@ -70,24 +77,33 @@ def test_human_scale_perplexity_is_not_flagged_ai():
     assert combined.verdict in (Verdict.HUMAN_WRITTEN, Verdict.LIKELY_HUMAN, Verdict.UNCERTAIN)
 
 
-def test_binoculars_off_by_default_no_row_no_effect():
+def test_binoculars_drives_verdict_by_default():
+    """Default: Binoculars weight 1.0, GPT-2/NLTK weight 0, so the fused score
+    equals the Binoculars probability regardless of the GPT-2/NLTK perplexities."""
     analyzer = EnsembleAnalyzer()
-    assert analyzer.weights["binoculars"] == 0.0
+    assert analyzer.weights["binoculars"] == 1.0
+    assert analyzer.weights["gpt2"] == 0.0
+    assert analyzer.weights["nltk"] == 0.0
 
     base_result = AnalysisResult(metrics=TextMetrics(total_words=40, unique_words=30))
     roberta_result = analyzer._disabled_roberta_result()
-    gpt2_result = AnalysisResult(verdict=Verdict.LIKELY_AI, perplexity=58.0)
-    nltk_result = AnalysisResult(verdict=Verdict.LIKELY_HUMAN, perplexity=1200.0)
+    # Deliberately AI-leaning perplexities: they must NOT move the verdict.
+    gpt2_result = AnalysisResult(verdict=Verdict.LIKELY_AI, perplexity=15.0)
+    nltk_result = AnalysisResult(verdict=Verdict.LIKELY_AI, perplexity=3000.0)
 
-    # binoculars_ai defaults to None -> no term, no row.
-    combined = analyzer._combine_results(base_result, roberta_result, gpt2_result, nltk_result)
-    names = [s.name for s in combined.scores]
-    assert "Binoculars Score" not in names
+    combined = analyzer._combine_results(
+        base_result, roberta_result, gpt2_result, nltk_result, binoculars_ai=0.2
+    )
+    assert combined.get_score("Binoculars Score") is not None
+    # Fused score == Binoculars probability (others weight 0).
+    assert abs(combined.scores[0].value - 0.2) < 1e-6
+
+    analyzer._determine_verdict(combined)
+    assert combined.verdict in (Verdict.HUMAN_WRITTEN, Verdict.LIKELY_HUMAN)
 
 
 def test_binoculars_contributes_when_weighted():
     analyzer = EnsembleAnalyzer()
-    # Enable Binoculars and rebalance so weights still sum to 1.
     analyzer.weights = {"roberta": 0.0, "gpt2": 0.5, "nltk": 0.2, "binoculars": 0.3}
 
     base_result = AnalysisResult(metrics=TextMetrics(total_words=40, unique_words=30))
@@ -100,8 +116,6 @@ def test_binoculars_contributes_when_weighted():
     )
     names = [s.name for s in combined.scores]
     assert "Binoculars Score" in names
-    # The strong AI binoculars signal (0.9) at 0.3 weight lifts the ensemble
-    # score above what GPT-2+NLTK (both human-leaning here) would give alone.
     ensemble_score = combined.scores[0].value
     assert ensemble_score >= 0.3 * 0.9
 
@@ -110,6 +124,7 @@ def test_verdict_is_robust_to_score_reordering():
     """The fused score is addressed by name, so inserting scores before it (or
     reordering) must not change the verdict — guards the old scores[0] contract."""
     analyzer = EnsembleAnalyzer()
+    analyzer.weights = dict(_LEGACY_BLEND)
     base_result = AnalysisResult(metrics=TextMetrics(total_words=40, unique_words=30))
     roberta_result = analyzer._disabled_roberta_result()
     gpt2_result = AnalysisResult(verdict=Verdict.LIKELY_AI, perplexity=15.0)
@@ -130,6 +145,7 @@ def test_verdict_is_robust_to_score_reordering():
 
 def test_disabled_roberta_excluded_from_agreement():
     analyzer = EnsembleAnalyzer()
+    analyzer.weights = dict(_LEGACY_BLEND)
     base_result = AnalysisResult(metrics=TextMetrics(total_words=40, unique_words=30))
     roberta_result = analyzer._disabled_roberta_result()
     gpt2_result = AnalysisResult(verdict=Verdict.LIKELY_AI, perplexity=15.0)
@@ -137,6 +153,6 @@ def test_disabled_roberta_excluded_from_agreement():
 
     combined = analyzer._combine_results(base_result, roberta_result, gpt2_result, nltk_result)
     # RoBERTa row carries weight 0 so it is not a voter.
-    voters = [s for s in combined.scores[1:] if s.weight > 0]
+    voters = analyzer._voter_scores(combined)
     assert all("RoBERTa" not in v.name for v in voters)
     assert len(voters) == 2  # GPT-2 + NLTK

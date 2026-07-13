@@ -49,7 +49,7 @@ class EnsembleAnalyzer(BaseAnalyzer):
 
     def __init__(self):
         super().__init__()
-        self.method_name = "Ensemble (GPT2+NLTK)"
+        self.method_name = "Ensemble (Binoculars-weighted)"
         self.ensemble_config = self.settings.ensemble
 
         # Initialize analyzers
@@ -452,9 +452,12 @@ class EnsembleAnalyzer(BaseAnalyzer):
         )
 
         parts.append(
-            f"\n⚖️ **Weights**: RoBERTa {self.weights['roberta'] * 100:.0f}%, "
+            f"\n⚖️ **Verdict weights**: Binoculars {self.weights['binoculars'] * 100:.0f}%, "
             f"GPT-2 {self.weights['gpt2'] * 100:.0f}%, "
-            f"NLTK {self.weights['nltk'] * 100:.0f}%."
+            f"NLTK {self.weights['nltk'] * 100:.0f}%, "
+            f"RoBERTa {self.weights['roberta'] * 100:.0f}%. "
+            f"GPT-2/NLTK scores are shown for transparency but do not drive the "
+            f"default verdict — see docs/benchmarks/FAIRNESS.md."
         )
 
         # Key metrics
