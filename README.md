@@ -62,9 +62,9 @@ perplexity brittle. **On real human-vs-ChatGPT text (HC3) it scores accuracy
 1.000 with FPR 0.000**, with its decision boundary fitted on a held-out split.
 See [docs/benchmarks/](docs/benchmarks/).
 
-It is available standalone and via the benchmark CLI (`--analyzer binoculars`);
-it is **not** in the default ensemble (it needs a second model). To fuse it, give
-`EnsembleConfig.weight_binoculars` a non-zero weight and rebalance.
+It is available standalone, via the benchmark CLI (`--analyzer binoculars`), and
+**drives the default ensemble verdict** (`weight_binoculars=1.0`; GPT-2/NLTK run
+for transparency but weight 0). It needs a second small model (`distilgpt2`).
 
 ```python
 from src.analyzers.binoculars_analyzer import BinocularsAnalyzer
@@ -135,8 +135,8 @@ python -m src.evaluation.benchmark --analyzer binoculars \
 
 | Analyzer | Accuracy | AUROC | **FPR** (human flagged AI) |
 |----------|---------:|------:|---------------------------:|
-| **Binoculars** | **1.000** | 1.000 | **0.000** |
-| Ensemble (GPT-2 + NLTK) | 0.950 | 0.998 | 0.100 |
+| **Binoculars** (= default ensemble verdict) | **1.000** | 1.000 | **0.000** |
+| Ensemble, old GPT-2-weighted blend | 0.950 | 0.998 | 0.100 |
 | GPT-2 alone | 0.750 | 0.756 | **0.500** |
 | NLTK alone | 0.500 | 0.420 | 0.000 |
 
