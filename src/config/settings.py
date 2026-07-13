@@ -190,14 +190,20 @@ class EnsembleConfig:
     nltk_ppl_midpoint: float = 1550.0
     nltk_ppl_slope: float = 0.0015
 
-    # Fusion weights. RoBERTa stays disabled until a fine-tuned checkpoint is
-    # wired in; GPT-2 is the strongest signal and dominates the blend.
-    # Binoculars is available but off by default (it needs a second model); to
-    # enable it, give it a non-zero weight and rebalance so the weights sum to 1.
+    # Fusion weights. The default ensemble VERDICT is driven entirely by
+    # Binoculars (weight 1.0): the per-population fairness evaluation
+    # (docs/benchmarks/FAIRNESS.md) showed that a GPT-2-weighted blend flagged
+    # 71% of non-native English writers as AI, because it inherited GPT-2's
+    # bias. Binoculars' cross-perplexity ratio does not have that bias (5.5% for
+    # the same population), so it is the only signal that should decide the
+    # verdict by default. GPT-2 and NLTK still RUN (their sub-scores are shown
+    # for transparency) but contribute 0 to the verdict; raise their weights
+    # only if you understand the fairness cost. RoBERTa stays disabled (untrained
+    # head). Weights must sum to 1.
     weight_roberta: float = 0.0
-    weight_gpt2: float = 0.75
-    weight_nltk: float = 0.25
-    weight_binoculars: float = 0.0
+    weight_gpt2: float = 0.0
+    weight_nltk: float = 0.0
+    weight_binoculars: float = 1.0
 
     # Verdict thresholds on the fused, calibrated AI-probability.
     ai_threshold: float = 0.70

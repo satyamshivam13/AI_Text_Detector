@@ -107,9 +107,11 @@ inject_css("""
 def load_analyzer() -> EnsembleAnalyzer:
     """Load and cache the Ensemble analyzer."""
     analyzer = EnsembleAnalyzer()
-    # Warm the analyzers that actually contribute to the blend. RoBERTa is
-    # intentionally NOT loaded here: it is disabled (weight 0) and warming it
-    # would trigger a large download and memory use for no contribution.
+    # The default verdict is Binoculars-driven, so warm it. GPT-2/NLTK still run
+    # (their sub-scores are shown for transparency); RoBERTa stays unloaded when
+    # its weight is 0.
+    if analyzer.weights.get("binoculars", 0.0) > 0:
+        _ = analyzer.binoculars_analyzer
     if analyzer.weights.get("roberta", 0.0) > 0:
         _ = analyzer.roberta_analyzer
     _ = analyzer.gpt2_analyzer
@@ -146,18 +148,17 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("### ℹ️ About")
     st.markdown("""
-**Ensemble Analyzer** combines two calibrated detection signals:
+**Verdict signal: Binoculars (100%).**
 
-🧠 **GPT-2** (75% weight)
-- Deep perplexity analysis
-- Transformer-based patterns
+🔭 **Binoculars** — cross-perplexity of two models. It alone drives the default
+verdict, because it is the fairest signal (see below).
 
-📊 **NLTK** (25% weight)
-- Statistical n-gram models
-- Linguistic features
+🧠 **GPT-2** / 📊 **NLTK** (0% weight) — sub-scores shown for transparency, but
+they do **not** decide the verdict. A GPT-2-weighted blend flagged **71% of
+non-native English writers** as AI; Binoculars, 5.5%. See
+`docs/benchmarks/FAIRNESS.md`.
 
-⚠️ **Note**: RoBERTa is disabled (weight 0, not loaded) until a fine-tuned
-checkpoint is wired in. See README.
+⚠️ RoBERTa is disabled (untrained head).
 
 **Benchmarks:** see `docs/benchmarks/`
 
@@ -190,7 +191,7 @@ Combining multiple models provides:
 
 ✅ **Transparent** - See how each analyzer votes
 
-✅ **Weighted fusion** - GPT-2 75% / NLTK 25% (configurable)
+✅ **Fair by default** - verdict is Binoculars-driven (GPT-2/NLTK shown but weight 0)
 """)
 
     st.markdown("---")
