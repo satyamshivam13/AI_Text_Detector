@@ -22,7 +22,12 @@ plus real human answers across five HC3 domains. Neither corpus is redistributed
 
 ## Results (n=785 human samples; % = real people falsely flagged as AI)
 
-| Population | n | **Binoculars** | GPT-2 | Ensemble |
+The **Ensemble** column below is the **old GPT-2-weighted blend**, kept as the
+cautionary baseline. The *current* default ensemble is Binoculars-weighted, so its
+numbers equal the Binoculars column (re-measured: overall 1.0%, non-native 5.5%,
+every native population 0.0%). See "What this means", point 2.
+
+| Population | n | **Binoculars** (= current default ensemble) | GPT-2 | Ensemble (old GPT-2-weighted) |
 |-----------|--:|---------------:|------:|---------:|
 | **Non-native writers (TOEFL)** | 91 | **5.5%** | 26.4% | **71.4%** |
 | US 8th-grade students | 88 | 0.0% | 1.1% | 17.1% |
@@ -47,12 +52,18 @@ fairest: 1.0% overall, and 5.5% [2.4%, 12.2%] on the hardest population. The
 cross-perplexity *ratio* cancels the "simple, predictable text looks AI-generated"
 effect that drives the bias — which is the entire reason the method exists.
 
-**2. The default ensemble is the WORST for fairness, not the best.** 27% of real
-humans overall, and **71% of non-native English writers**, are flagged. Its
-strong aggregate HC3 accuracy (0.95) *masked* this — the essay populations are
-harder than HC3's mixed answers. **Do not use the ensemble to make decisions
-about people, especially non-native speakers.** The README no longer calls it
-"most robust."
+**2. A GPT-2-weighted ensemble is the WORST for fairness.** 27% of real humans
+overall, and **71% of non-native English writers**, were flagged. Its strong
+aggregate HC3 accuracy (0.95) *masked* this — the essay populations are harder
+than HC3's mixed answers.
+
+**This is why the default ensemble verdict is now Binoculars-driven**
+(`weight_binoculars=1.0`, GPT-2/NLTK weight 0). Re-measured with that default,
+the ensemble collapses onto Binoculars' numbers: **overall 1.0% [0.5%, 2.1%],
+non-native 5.5%, every native-speaker population 0.0%.** The Ensemble column in
+the table above is the *old GPT-2-weighted blend*, kept as the cautionary
+baseline. GPT-2/NLTK sub-scores still display for transparency but no longer
+drive the verdict.
 
 **3. GPT-2 reproduces Liang et al. (2023).** 26% of non-native writers vs ~1% of
 native writers. Non-native English is simpler and more predictable, so it has low
