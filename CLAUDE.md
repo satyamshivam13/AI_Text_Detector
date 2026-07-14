@@ -162,6 +162,25 @@ A Python toolkit and set of Streamlit applications that estimate how likely text
 ## Cross-Cutting Concerns
 <!-- GSD:architecture-end -->
 
+## Intent Layer
+
+**Before modifying code in a subdirectory, read its AGENTS.md first** to understand local patterns and invariants.
+
+- **Analyzers**: `src/analyzers/AGENTS.md` — Detection pipeline, BaseAnalyzer contract, lazy imports, EnsembleAnalyzer fusion logic
+- **Utils**: `src/utils/AGENTS.md` — TextProcessor, ChartGenerator, ui_contract helpers, logging setup
+- **Models & Config**: `src/models/AGENTS.md` — AnalysisResult dataclasses, Settings singleton, enums, thresholds
+
+### Global Invariants
+
+- All text analysis flows through `analyzer.analyze(text) → AnalysisResult`. Never call `_perform_analysis` directly.
+- `AnalysisResult`, `TextMetrics`, `DetectionScore` are dataclasses — do not add logic-heavy methods; keep them plain data containers.
+- `get_settings()` is an `@lru_cache` singleton. Never instantiate `Settings()` directly.
+- `BaseAnalyzer.__init__` sets `self.thresholds = self.settings.thresholds` — always use `self.thresholds` in subclasses, never hardcode threshold values.
+- Transformer-backed analyzers (`GPT2Analyzer`, `RoBERTaAnalyzer`, `EnsembleAnalyzer`) are lazily imported from `src/analyzers/__init__.py` so `app.py` runs without `torch`.
+- All Streamlit entry points (`app.py`, `ensemble.py`, `test.py`) do `sys.path.insert(0, ".../src")` at the top — never move this.
+- Error handling contract: on any analysis failure, set `Verdict.UNCERTAIN`, zero confidence, and append a warning — never let exceptions surface to the UI uncaught.
+- Code style: Black @ line length 100, isort `--profile=black`, flake8 max 100. Run `make format && make lint` before committing.
+
 <!-- GSD:workflow-start source:GSD defaults -->
 ## GSD Workflow Enforcement
 
